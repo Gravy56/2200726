@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TABOO TRADE-OFFS // LEO VOMACKA</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f1a;
+    --panel: #111122;
+    --border: #1e1e3a;
+    --accent: #00ff88;
+    --accent2: #00ccff;
+    --red: #ff3355;
+    --gold: #ffcc00;
+    --muted: #445566;
+    --text: #c8d8e8;
+    --dim: #667788;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* ── NAV ── */
+  nav {
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-back {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    padding: 6px 14px;
+    transition: all 0.2s;
+  }
+  .nav-back:hover { background: var(--accent); color: var(--bg); }
+
+  .nav-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--dim);
+  }
+
+  .nav-tag {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+  }
+
+  /* ── MAIN ── */
+  main {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 3rem 2rem 4rem;
+  }
+
+  /* ── SCREEN SYSTEM ── */
+  .screen { display: none; }
+  .screen.active {
+    display: block;
+    animation: fadeUp 0.5s ease forwards;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── INTRO ── */
+  .intro-header {
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    background: var(--panel);
+  }
+
+  .intro-header::before {
+    content: '// PROJECT_04';
+    position: absolute;
+    top: -1px;
+    left: 1.5rem;
+    background: var(--bg);
+    padding: 0 0.5rem;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+    transform: translateY(-50%);
+  }
+
+  .intro-label {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 0.5rem;
+  }
+
+  .intro-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.6rem, 5vw, 2.8rem);
+    font-weight: 900;
+    color: var(--accent2);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 20px rgba(0,204,255,0.3);
+  }
+
+  .intro-sub {
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    margin-bottom: 1.5rem;
+  }
+
+  .intro-desc {
+    font-size: 12px;
+    color: var(--dim);
+    line-height: 1.75;
+    border-left: 2px solid var(--accent);
+    padding-left: 1rem;
+  }
+
+  .intro-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    margin: 1.5rem 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+
+  .stat-cell {
+    background: var(--panel);
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    display: block;
+  }
+
+  .stat-lbl {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  .notice {
+    background: rgba(0,255,136,0.05);
+    border: 1px solid rgba(0,255,136,0.2);
+    padding: 0.75rem 1rem;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+  }
+
+  .notice::before { content: '> '; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--accent2);
+    color: var(--accent2);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent2);
+    transform: translateX(-100%);
+    transition: transform 0.2s;
+    z-index: -1;
+  }
+  .btn-primary:hover { color: var(--bg); }
+  .btn-primary:hover::before { transform: translateX(0); }
+
+  .btn-secondary {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+  .btn-secondary:hover { border-color: var(--dim); color: var(--text); }
+
+  /* ── QUESTION ── */
+  .q-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .q-cat-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1px solid;
+  }
+  .q-cat-tag.Money        { color: var(--gold);   border-color: var(--gold); }
+  .q-cat-tag.Identity     { color: #aa88ff;        border-color: #aa88ff; }
+  .q-cat-tag.Relationships{ color: var(--red);     border-color: var(--red); }
+  .q-cat-tag.Morality     { color: var(--accent);  border-color: var(--accent); }
+
+  .q-counter {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 0.15em;
+  }
+
+  .progress-track {
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 2rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px rgba(0,204,255,0.5);
+  }
+
+  .q-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+  }
+
+  .q-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), transparent);
+  }
+
+  .q-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+  }
+
+  .q-offer {
+    display: inline-block;
+    background: rgba(255,204,0,0.08);
+    border: 1px solid rgba(255,204,0,0.3);
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    padding: 5px 12px;
+    text-transform: uppercase;
+  }
+
+  .choice-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .btn-accept {
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-accept:hover, .btn-accept.active { background: var(--accent); color: var(--bg); }
+
+  .btn-refuse {
+    padding: 1rem;
+    background: transparent;
+    border: 1px solid var(--red);
+    color: var(--red);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-refuse:hover, .btn-refuse.active { background: var(--red); color: #fff; }
+
+  /* Slider */
+  .slider-wrap { margin-top: 1.25rem; }
+  .slider-label { font-size: 10px; color: var(--dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; }
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, var(--accent2) 0%, var(--accent2) var(--val, 44%), var(--border) var(--val, 44%));
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px; height: 14px;
+    background: var(--bg);
+    border: 2px solid var(--accent2);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(0,204,255,0.5);
+  }
+  .slider-ends { display: flex; justify-content: space-between; font-size: 10px; color: var(--dim); margin-top: 6px; }
+  .slider-val { color: var(--accent2); font-size: 12px; }
+
+  .btn-next {
+    display: block;
+    width: 100%;
+    padding: 0.9rem;
+    background: transparent;
+    border: 1px solid var(--dim);
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    opacity: 0.3;
+    pointer-events: none;
+  }
+  .btn-next.ready {
+    opacity: 1;
+    pointer-events: all;
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+  .btn-next.ready:hover { background: rgba(0,204,255,0.08); }
+
+  /* ── SAVING ── */
+  .saving-wrap {
+    text-align: center;
+    padding: 4rem 0;
+  }
+  .saving-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.1rem;
+    color: var(--accent2);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.2em;
+  }
+  .saving-sub { font-size: 11px; color: var(--dim); letter-spacing: 0.15em; }
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* ── RESULTS ── */
+  .results-head {
+    margin-bottom: 2rem;
+  }
+  .results-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 4vw, 2rem);
+    font-weight: 900;
+    color: var(--accent2);
+    text-shadow: 0 0 20px rgba(0,204,255,0.3);
+    margin-bottom: 4px;
+  }
+  .results-sub { font-size: 10px; color: var(--dim); letter-spacing: 0.2em; text-transform: uppercase; }
+
+  .responses-badge {
+    display: inline-block;
+    background: rgba(0,255,136,0.06);
+    border: 1px solid rgba(0,255,136,0.2);
+    color: var(--accent);
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 5px 12px;
+    margin-bottom: 1.5rem;
+  }
+
+  .cat-result {
+    border: 1px solid var(--border);
+    background: var(--panel);
+    padding: 1.25rem;
+    margin-bottom: 0.75rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-result::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .cat-result.Money::before        { background: var(--gold); }
+  .cat-result.Identity::before     { background: #aa88ff; }
+  .cat-result.Relationships::before{ background: var(--red); }
+  .cat-result.Morality::before     { background: var(--accent); }
+
+  .cat-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .cat-name { font-size: 9px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--dim); margin-bottom: 2px; }
+  .cat-verdict { font-family: 'Orbitron', monospace; font-size: 13px; font-weight: 700; color: var(--text); }
+  .cat-score { font-family: 'Orbitron', monospace; font-size: 1.6rem; font-weight: 900; }
+  .cat-score.Money        { color: var(--gold); }
+  .cat-score.Identity     { color: #aa88ff; }
+  .cat-score.Relationships{ color: var(--red); }
+  .cat-score.Morality     { color: var(--accent); }
+  .cat-score-denom { font-size: 10px; color: var(--dim); }
+
+  .compare-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .compare-lbl { font-size: 9px; letter-spacing: 0.12em; color: var(--dim); min-width: 26px; text-transform: uppercase; }
+  .bar-track { flex: 1; height: 5px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 100%; width: 0%; border-radius: 2px; transition: width 1.3s cubic-bezier(0.23,1,0.32,1); }
+  .compare-num { font-size: 10px; min-width: 28px; text-align: right; font-family: 'Share Tech Mono', monospace; }
+
+  .cat-insight { font-size: 11px; color: var(--dim); line-height: 1.65; margin-top: 8px; }
+
+  .overall-panel {
+    border: 1px solid rgba(0,204,255,0.3);
+    background: rgba(0,204,255,0.03);
+    padding: 2rem;
+    text-align: center;
+    margin: 1.5rem 0;
+    position: relative;
+  }
+  .overall-panel::before {
+    content: '// OVERALL_DISPOSITION';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--bg);
+    padding: 0 0.75rem;
+    font-size: 9px;
+    color: var(--accent2);
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+  }
+  .overall-lbl { font-size: 9px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+  .overall-name {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.1rem, 3vw, 1.6rem);
+    font-weight: 900;
+    color: var(--gold);
+    text-shadow: 0 0 16px rgba(255,204,0,0.3);
+    margin-bottom: 8px;
+  }
+  .overall-desc { font-size: 11px; color: var(--dim); line-height: 1.7; max-width: 460px; margin: 0 auto; }
+
+  /* footer */
+  .page-footer {
+    text-align: center;
+    padding: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-top: 2rem;
+  }
+  .page-footer a { color: var(--accent); text-decoration: none; }
+  .page-footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-back">← Portfolio</a>
+  <div class="nav-title">LEO VOMACKA</div>
+  <div class="nav-tag">PROJECT_04</div>
+</nav>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="screen active" id="screen-intro">
+    <div class="intro-header">
+      <div class="intro-label">Social Study · Interactive</div>
+      <div class="intro-title">TABOO<br>TRADE-OFFS</div>
+      <div class="intro-sub">// What is beyond your price?</div>
+      <div class="intro-desc">
+        Every person holds certain values as <em>sacred</em> — beyond negotiation, beyond price.
+        This study presents 16 uncomfortable hypotheticals across four domains.
+        Your responses are pooled anonymously with all other participants.
+      </div>
+    </div>
+
+    <div class="intro-stats">
+      <div class="stat-cell"><span class="stat-num">16</span><span class="stat-lbl">Scenarios</span></div>
+      <div class="stat-cell"><span class="stat-num">4</span><span class="stat-lbl">Categories</span></div>
+      <div class="stat-cell"><span class="stat-num">~5</span><span class="stat-lbl">Minutes</span></div>
+    </div>
+
+    <div class="notice">Responses are stored anonymously and shared with all participants for comparison.</div>
+
+    <button class="btn-primary" onclick="startStudy()">INITIALIZE STUDY →</button>
+  </div>
+
+  <!-- QUESTION -->
+  <div class="screen" id="screen-question">
+    <div class="q-meta">
+      <div class="q-cat-tag" id="q-cat-tag">Category</div>
+      <div class="q-counter" id="q-counter">01 / 16</div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+
+    <div class="q-panel">
+      <p class="q-text" id="q-text"></p>
+      <span class="q-offer" id="q-offer"></span>
+
+      <div class="slider-wrap" id="slider-wrap" style="display:none">
+        <div class="slider-label">How likely are you to accept? &nbsp;<span class="slider-val" id="slider-val">5</span> / 10</div>
+        <input type="range" min="1" max="10" value="5" id="q-slider" oninput="onSlider(this)">
+        <div class="slider-ends"><span>Never</span><span>Definitely</span></div>
+      </div>
+    </div>
+
+    <div class="choice-grid" id="choice-grid">
+      <button class="btn-accept" id="btn-accept" onclick="pick('accept')">[ ✓ ACCEPT ]</button>
+      <button class="btn-refuse" id="btn-refuse" onclick="pick('refuse')">[ ✗ REFUSE ]</button>
+    </div>
+
+    <button class="btn-next" id="btn-next" onclick="nextQ()">NEXT SCENARIO →</button>
+  </div>
+
+  <!-- SAVING -->
+  <div class="screen" id="screen-saving">
+    <div class="saving-wrap">
+      <div class="saving-title">PROCESSING RESULTS<span class="blink">_</span></div>
+      <div class="saving-sub">Comparing with other participants...</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="screen" id="screen-results">
+    <div class="results-head">
+      <div class="results-title">YOUR PROFILE</div>
+      <div class="results-sub">// Taboo Trade-offs · Study Complete</div>
+    </div>
+
+    <div id="responses-badge"></div>
+    <div id="results-cats"></div>
+
+    <div class="overall-panel">
+      <div class="overall-lbl">Overall Disposition</div>
+      <div class="overall-name" id="overall-name">—</div>
+      <div class="overall-desc" id="overall-desc">—</div>
+    </div>
+
+    <button class="btn-primary" onclick="restart()">↺ RETAKE THE STUDY</button>
+    <a href="index.html"><button class="btn-secondary">← RETURN TO PORTFOLIO</button></a>
+  </div>
+
+</main>
+
+<footer class="page-footer">
+  LEO VOMACKA &nbsp;·&nbsp; <a href="index.html">Portfolio v1.0</a> &nbsp;·&nbsp; // ALL PROJECTS BUILT IN VANILLA HTML / CSS / JS
+</footer>
+
+<script>
+const QUESTIONS = [
+  { category:"Money",         scenario:"You can sell your vote in a national election to the highest bidder. No one will ever know.",                                                                          offer:"Offer: $50,000 for your vote",             type:"binary" },
+  { category:"Money",         scenario:"A corporation will legally change your full name to their brand name for one year.",                                                                                   offer:"Offer: $200,000 for your name",            type:"binary" },
+  { category:"Money",         scenario:"You can sell your right to vote in every future election, permanently and irrevocably.",                                                                               offer:"Offer: $500,000 — permanent",              type:"slider" },
+  { category:"Money",         scenario:"A tech company will tattoo their small logo on your forearm. You can laser it off after 5 years.",                                                                     offer:"Offer: $75,000 for 5 years",              type:"binary" },
+  { category:"Identity",      scenario:"You must publicly renounce your citizenship for 3 years — on paper only. You regain it automatically after.",                                                          offer:"Offer: $1,000,000 — 3 years",             type:"binary" },
+  { category:"Identity",      scenario:"You publicly convert to a religion you don't believe in and attend services weekly for one year. Your family believes it is genuine.",                                  offer:"Offer: $150,000 for one year",            type:"slider" },
+  { category:"Identity",      scenario:"You permanently change your first name to one chosen randomly. All legal documents update.",                                                                            offer:"Offer: $300,000 — permanent",             type:"binary" },
+  { category:"Identity",      scenario:"You adopt a completely fabricated personal history and must maintain it in all social situations for 2 years.",                                                         offer:"Offer: $250,000 for 2 years",             type:"slider" },
+  { category:"Relationships", scenario:"You reveal your best friend's most embarrassing secret to their partner. You will never be caught as the source.",                                                      offer:"Offer: $30,000 — anonymous",              type:"binary" },
+  { category:"Relationships", scenario:"You cut off contact with one sibling or close family member completely — no explanation given — for exactly 2 years.",                                                  offer:"Offer: $500,000 for 2 years",             type:"slider" },
+  { category:"Relationships", scenario:"You ghost your closest friend permanently. No explanation, no closure. They spend years wondering what they did wrong.",                                                 offer:"Offer: $1,000,000 — permanent",           type:"binary" },
+  { category:"Relationships", scenario:"You attend every major event in a stranger's life pretending to be a long-lost friend. They believe it fully.",                                                         offer:"Offer: $80,000 over 5 years",             type:"slider" },
+  { category:"Morality",      scenario:"You lie under oath in a civil lawsuit. The lie tips the verdict against a large corporation in favor of an individual — you don't know if they truly deserve it.",      offer:"Offer: $100,000 for one lie",             type:"binary" },
+  { category:"Morality",      scenario:"You know a stranger is about to be mildly humiliated at a party. Staying silent earns you a reward. They will never know you could have helped.",                       offer:"Offer: $5,000 to stay silent",            type:"slider" },
+  { category:"Morality",      scenario:"You take full credit for a coworker's major project. They have no proof it was theirs. The promotion and recognition go to you.",                                       offer:"Offer: Significant career advancement",   type:"binary" },
+  { category:"Morality",      scenario:"You report an innocent person to authorities for a minor infraction you know they didn't commit. They will receive a small fine.",                                      offer:"Offer: $20,000 for the report",           type:"binary" },
+];
+
+const CAT = {
+  Money:         { verdicts:["The Idealist","The Pragmatist","The Realist","The Opportunist"],         insights:["Money holds almost no sway over your principles. Financial trade-offs feel like threats to identity.","Selectively pragmatic — small stakes feel fine, but certain lines stay uncrossable.","A fairly transactional view. You see money as a tool; most things have a price within reason.","Comfortable monetizing what others consider personal. Practical and unsentimental about value."],         myColor:"#ffcc00", avgColor:"#555533" },
+  Identity:      { verdicts:["The Anchored","The Flexible","The Adaptable","The Mutable"],             insights:["Your sense of self is deeply fixed. Altering name, belief, or history feels like a violation.","You hold identity firmly in some areas but can detach in others. Context matters greatly.","Identity is important but not immovable. You can wear different masks when the price is right.","A fluid sense of self — adaptable, unbothered by labels. Identity is a tool, not a temple."],             myColor:"#aa88ff", avgColor:"#443355" },
+  Relationships: { verdicts:["The Loyal","The Cautious","The Calculating","The Detached"],             insights:["Relationships are sacred. The idea of betraying someone for personal gain is nearly unthinkable.","You value connections deeply but acknowledge extreme circumstances create impossible choices.","A mix of warmth and pragmatism. Some ties are unbreakable; others, less so.","Emotional bonds, while real, don't override cost-benefit thinking. Unsentimental, for better or worse."], myColor:"#ff3355", avgColor:"#551122" },
+  Morality:      { verdicts:["The Principled","The Conscientious","The Situational","The Utilitarian"],insights:["Your moral code is near-absolute. Breaking rules — even privately — feels corrosive.","You take ethics seriously and rarely bend them. When you do, you feel it.","You make moral calculations. Context and consequences factor in. Right and wrong are less binary.","You tend toward outcomes over rules. If harm is small or gain is large, you'll color outside the lines."],myColor:"#00ff88", avgColor:"#003322" },
+};
+
+const PROFILES = [
+  { name:"THE PURIST",                range:[0,0.25],   desc:"You treat nearly all scenarios as genuine violations. Your values aren't abstract — they're operational." },
+  { name:"THE CONSCIENTIOUS REALIST", range:[0.25,0.45],desc:"Strong convictions, but you recognize life is complex. You bend rarely, and only where it doesn't feel like betrayal." },
+  { name:"THE MEASURED PRAGMATIST",   range:[0.45,0.6], desc:"You balance principle with practicality. Neither naive nor cynical — context shapes your choices more than rigid rules." },
+  { name:"THE STRATEGIC REALIST",     range:[0.6,0.8],  desc:"Comfortable making difficult trades. Personal codes exist, but they're bendable when you trust your own judgment." },
+  { name:"THE UNBOUND PRAGMATIST",    range:[0.8,1.01], desc:"Virtually nothing is off the table. Whether this reflects radical freedom or detachment — you are, above all, unbothered." },
+];
+
+let qi = 0, answers = [], chosen = null, sliderMoved = false;
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+}
+
+function startStudy() { show('screen-question'); renderQ(); }
+
+function renderQ() {
+  const q = QUESTIONS[qi];
+  chosen = null; sliderMoved = false;
+  document.getElementById('q-cat-tag').textContent = q.category;
+  document.getElementById('q-cat-tag').className = 'q-cat-tag ' + q.category;
+  document.getElementById('q-counter').textContent = String(qi+1).padStart(2,'0') + ' / ' + QUESTIONS.length;
+  document.getElementById('progress-fill').style.width = (qi / QUESTIONS.length * 100) + '%';
+  document.getElementById('q-text').textContent = q.scenario;
+  document.getElementById('q-offer').textContent = q.offer;
+  document.getElementById('btn-accept').classList.remove('active');
+  document.getElementById('btn-refuse').classList.remove('active');
+  document.getElementById('btn-next').classList.remove('ready');
+
+  if (q.type === 'slider') {
+    document.getElementById('slider-wrap').style.display = 'block';
+    document.getElementById('choice-grid').style.display = 'none';
+    const s = document.getElementById('q-slider');
+    s.value = 5; s.style.setProperty('--val','44%');
+    document.getElementById('slider-val').textContent = 5;
+  } else {
+    document.getElementById('slider-wrap').style.display = 'none';
+    document.getElementById('choice-grid').style.display = 'grid';
+  }
+}
+
+function onSlider(el) {
+  const v = el.value;
+  el.style.setProperty('--val', ((v-1)/9*100).toFixed(1)+'%');
+  document.getElementById('slider-val').textContent = v;
+  sliderMoved = true; chosen = parseInt(v);
+  document.getElementById('btn-next').classList.add('ready');
+}
+
+function pick(c) {
+  chosen = c;
+  document.getElementById('btn-accept').classList.toggle('active', c==='accept');
+  document.getElementById('btn-refuse').classList.toggle('active', c==='refuse');
+  document.getElementById('btn-next').classList.add('ready');
+}
+
+function nextQ() {
+  if (chosen === null) return;
+  const q = QUESTIONS[qi];
+  answers.push({ category: q.category, type: q.type, value: chosen });
+  chosen = null; qi++;
+  if (qi >= QUESTIONS.length) finish();
+  else renderQ();
+}
+
+function scoreFor(cat) {
+  const qs = answers.filter(a => a.category === cat);
+  if (!qs.length) return 0;
+  return qs.reduce((s,a) => s + (a.type==='binary' ? (a.value==='accept'?1:0) : (a.value-1)/9), 0) / qs.length;
+}
+
+async function finish() {
+  show('screen-saving');
+  const cats = ['Money','Identity','Relationships','Morality'];
+  const myScores = {}; cats.forEach(c => myScores[c] = scoreFor(c));
+
+  const id = 'sub_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  try { await window.storage.set(id, JSON.stringify({ scores: myScores, ts: Date.now() }), true); } catch(e){}
+
+  let globalAvg = {Money:.5,Identity:.5,Relationships:.5,Morality:.5}, total = 1;
+  try {
+    const list = await window.storage.list('sub_', true);
+    const keys = list?.keys || [];
+    const pool = {Money:[],Identity:[],Relationships:[],Morality:[]};
+    await Promise.all(keys.map(async k => {
+      try { const r = await window.storage.get(k,true); if(r?.value){ const s=JSON.parse(r.value); cats.forEach(c=>{if(typeof s.scores?.[c]==='number') pool[c].push(s.scores[c]);}); } } catch(e){}
+    }));
+    cats.forEach(c => { if(pool[c].length) globalAvg[c] = pool[c].reduce((a,b)=>a+b,0)/pool[c].length; });
+    total = keys.length;
+  } catch(e){}
+
+  renderResults(myScores, globalAvg, total);
+}
+
+function getVerdict(cat, score) {
+  const m = CAT[cat];
+  const i = score>0.75?3:score>0.5?2:score>0.25?1:0;
+  return { verdict: m.verdicts[i], insight: m.insights[i] };
+}
+
+function renderResults(myScores, globalAvg, total) {
+  const cats = ['Money','Identity','Relationships','Morality'];
+
+  document.getElementById('responses-badge').innerHTML =
+    `<div class="responses-badge">// ${total.toLocaleString()} TOTAL RESPONSE${total!==1?'S':''} IN DATASET</div>`;
+
+  let html = '';
+  cats.forEach(cat => {
+    const score = myScores[cat], avg = globalAvg[cat];
+    const { verdict, insight } = getVerdict(cat, score);
+    const myPct = Math.round(score*100), avgPct = Math.round(avg*100);
+    const m = CAT[cat];
+    html += `
+      <div class="cat-result ${cat}">
+        <div class="cat-top">
+          <div>
+            <div class="cat-name">${cat}</div>
+            <div class="cat-verdict">${verdict}</div>
+          </div>
+          <div><span class="cat-score ${cat}">${myPct}</span><span class="cat-score-denom">/100</span></div>
+        </div>
+        <div class="compare-row">
+          <span class="compare-lbl">You</span>
+          <div class="bar-track"><div class="bar-fill" data-w="${myPct}" style="background:${m.myColor}"></div></div>
+          <span class="compare-num" style="color:${m.myColor}">${myPct}%</span>
+        </div>
+        <div class="compare-row">
+          <span class="compare-lbl">Avg</span>
+          <div class="bar-track"><div class="bar-fill" data-w="${avgPct}" style="background:#334455"></div></div>
+          <span class="compare-num" style="color:#556677">${avgPct}%</span>
+        </div>
+        <div class="cat-insight">${insight}</div>
+      </div>`;
+  });
+  document.getElementById('results-cats').innerHTML = html;
+
+  const overall = cats.reduce((s,c)=>s+myScores[c],0)/4;
+  const profile = PROFILES.find(p=>overall>=p.range[0]&&overall<p.range[1])||PROFILES[4];
+  document.getElementById('overall-name').textContent = profile.name;
+  document.getElementById('overall-desc').textContent = profile.desc;
+
+  show('screen-results');
+  setTimeout(()=>{
+    document.querySelectorAll('.bar-fill').forEach(el=>{
+      el.style.width = el.dataset.w + '%';
+    });
+  }, 200);
+}
+
+function restart() {
+  qi=0; answers=[]; chosen=null;
+  show('screen-intro');
+}
+</script>
+</body>
+</html>
