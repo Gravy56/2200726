@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Leo Vomack — Project Portfolio</title>
+<title>Leo Vomacka — Project Portfolio</title>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,6 +17,10 @@
     --text: #c8c8e0;
     --dim: #555570;
     --white: #f0f0ff;
+    .card.green .card-title { color: #00ff88; }
+    .card.green .preview-tag { color: #00ff88; border-color: #00ff88; }
+    .card.green .card-arrow { color: #00ff88; }
+  .card.green:hover { box-shadow: 0 12px 40px rgba(0,255,136,0.12); }
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -317,6 +321,10 @@
   .card.red .card-arrow { color: #e05555; }
   .card.red:hover { box-shadow: 0 12px 40px rgba(192,57,43,0.2); }
 
+  .card.green .card-title { color: #00ff88; }
+  .card.green .preview-tag { color: #00ff88; border-color: #00ff88; }
+  .card.green .card-arrow { color: #00ff88; }
+  .card.green:hover { box-shadow: 0 12px 40px rgba(0,255,136,0.12); }
   /* ── FOOTER ── */
   footer {
     position: relative;
@@ -382,7 +390,7 @@
 <div class="intro-strip">
   <p>A collection of <b>interactive web experiments</b> — from algorithm visualizers and music widgets to full informational presentations. Click any project to open it.</p>
   <div class="project-count">
-    <span>3</span>
+    <span>4</span>
     PROJECTS<br>LOADED
   </div>
 </div>
@@ -461,6 +469,29 @@
     </div>
   </a>
 
+  
+ <a class="card green" href="taboo-tradeoffs.html" target="_blank">
+    <div class="card-preview">
+      <iframe src="taboo-tradeoffs.html" scrolling="no" tabindex="-1"></iframe>
+      <div class="preview-overlay"></div>
+      <div class="preview-tag">AI Game</div>
+    </div>
+    <div class="card-body">
+      <p class="card-eyebrow">Project 04</p>
+      <h2 class="card-title">TABOO TRADE-OFFS</h2>
+      <p class="card-desc">An AI-powered moral dilemma game where players are presented with impossible choices and trade-offs. Built with the Claude API to generate dynamic, thought-provoking scenarios.</p>
+      <div class="card-tags">
+        <span class="tag">HTML</span>
+        <span class="tag">JavaScript</span>
+        <span class="tag">Claude API</span>
+        <span class="tag">AI Game</span>
+      </div>
+      <div class="card-footer">
+        <span class="card-footer-label">Open Project</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </div>
+  </a>
 </main>
 
 <footer>
