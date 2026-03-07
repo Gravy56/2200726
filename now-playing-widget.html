@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOW PLAYING // UNIT-7</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+  :root {
+    --bg: #0a0a0c;
+    --panel: #111116;
+    --panel2: #16161e;
+    --border: #2a2a38;
+    --accent: #e8c840;
+    --accent2: #ff6b35;
+    --cyan: #40e8d0;
+    --text: #d4d4e8;
+    --dim: #5a5a78;
+    --red: #ff3860;
+    --green: #39ff6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Share Tech Mono', monospace;
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 2px,
+      rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* CRT vignette */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.6) 100%);
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .widget {
+    width: 680px;
+    position: relative;
+    user-select: none;
+  }
+
+  /* === TOP: LIVELY TV PANEL === */
+  .tv-panel {
+    position: relative;
+    width: 100%;
+    height: 260px;
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-bottom: none;
+    overflow: hidden;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .tv-screen {
+    position: absolute;
+    inset: 16px 20px;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #000;
+  }
+
+  .tv-screen::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  /* Album art background */
+  #albumBg {
+    position: absolute;
+    inset: -20px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(28px) saturate(2.2) brightness(0.55);
+    transition: background-image 0.8s ease;
+    transform: scale(1.15);
+    z-index: 0;
+  }
+
+  .tv-content {
+    position: relative;
+    z-index: 5;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 22px;
+  }
+
+  /* Album art square */
+  .album-art-container {
+    position: relative;
+    flex-shrink: 0;
+    width: 155px;
+    height: 155px;
+  }
+
+  .album-art-frame {
+    position: absolute;
+    inset: -4px;
+    border: 2px solid var(--accent);
+    opacity: 0.6;
+    animation: frameFlicker 4s ease-in-out infinite;
+  }
+
+  @keyframes frameFlicker {
+    0%,100% { opacity: 0.6; }
+    50% { opacity: 0.9; }
+  }
+
+  #albumArt {
+    width: 155px;
+    height: 155px;
+    object-fit: cover;
+    display: block;
+    image-rendering: pixelated;
+    transition: opacity 0.4s;
+  }
+
+  .album-art-scanlines {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+    );
+    pointer-events: none;
+  }
+
+  /* Track info */
+  .track-info {
+    flex: 1;
+    overflow: hidden;
+  }
+
+  .now-playing-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 9px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    opacity: 0.8;
+  }
+
+  .track-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    line-height: 1.1;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(232,200,64,0.5);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .artist-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    color: rgba(255,255,255,0.65);
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .album-name {
+    font-size: 11px;
+    color: var(--dim);
+    margin-bottom: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Progress bar */
+  .progress-container {
+    position: relative;
+  }
+
+  .progress-track {
+    height: 3px;
+    background: rgba(255,255,255,0.15);
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    transition: width 1s linear;
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 7px;
+    height: 7px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  .time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--dim);
+    margin-top: 5px;
+  }
+
+  /* Audio bars */
+  .audio-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 32px;
+    margin-top: 10px;
+  }
+
+  .bar {
+    width: 4px;
+    background: var(--cyan);
+    border-radius: 1px 1px 0 0;
+    box-shadow: 0 0 4px var(--cyan);
+    animation: barDance var(--spd) ease-in-out infinite alternate;
+    transform-origin: bottom;
+  }
+
+  @keyframes barDance {
+    0% { height: var(--min); opacity: 0.5; }
+    100% { height: var(--max); opacity: 1; }
+  }
+
+  /* TV corner decorations */
+  .tv-corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-color: var(--accent);
+    border-style: solid;
+    opacity: 0.5;
+  }
+  .tv-corner.tl { top: 4px; left: 8px; border-width: 2px 0 0 2px; }
+  .tv-corner.tr { top: 4px; right: 8px; border-width: 2px 2px 0 0; }
+  .tv-corner.bl { bottom: 4px; left: 8px; border-width: 0 0 2px 2px; }
+  .tv-corner.br { bottom: 4px; right: 8px; border-width: 0 2px 2px 0; }
+
+  .tv-label {
+    position: absolute;
+    top: 5px;
+    right: 50%;
+    transform: translateX(50%);
+    font-family: 'Orbitron', monospace;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    opacity: 0.6;
+  }
+
+  /* Status dot */
+  .status-dot {
+    position: absolute;
+    top: 8px;
+    right: 26px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-dot.paused {
+    background: var(--red);
+    box-shadow: 0 0 8px var(--red);
+    animation: none;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  /* === MIDDLE: ROBOT ARM STAGE === */
+  .arm-stage {
+    background: var(--panel2);
+    border: 2px solid var(--border);
+    border-top: 1px solid #222;
+    border-bottom: none;
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Grid floor */
+  .arm-stage::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background:
+      linear-gradient(0deg, rgba(40,40,60,0.8) 0%, transparent 100%),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(42,42,56,0.6) 39px, rgba(42,42,56,0.6) 40px),
+      repeating-linear-gradient(0deg, transparent, transparent 19px, rgba(42,42,56,0.4) 19px, rgba(42,42,56,0.4) 20px);
+  }
+
+  /* Stage label */
+  .stage-label {
+    position: absolute;
+    top: 8px;
+    left: 14px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--dim);
+    text-transform: uppercase;
+  }
+
+  /* SVG Robot Arm */
+  #armSvg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* CD on tray */
+  .cd-display {
+    position: absolute;
+    right: 55px;
+    bottom: 50px;
+  }
+
+  /* === BOTTOM: CONTROL PANEL === */
+  .control-panel {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-top: 1px solid #1a1a24;
+    border-radius: 0 0 4px 4px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ctrl-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--dim);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: all 0.15s;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ctrl-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.15s;
+    z-index: -1;
+    opacity: 0.15;
+  }
+
+  .ctrl-btn:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .ctrl-btn:hover::before {
+    transform: scaleX(1);
+  }
+
+  .ctrl-btn.active {
+    color: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 8px rgba(232,200,64,0.2);
+  }
+
+  .ctrl-btn:active {
+    transform: scale(0.95);
+  }
+
+  .sep {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  .source-label {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .source-display {
+    font-size: 11px;
+    color: var(--cyan);
+    letter-spacing: 1px;
+    flex: 1;
+  }
+
+  .vol-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .vol-label {
+    font-size: 9px;
+    color: var(--dim);
+    letter-spacing: 2px;
+  }
+
+  .vol-bar {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+  }
+
+  .vol-seg {
+    width: 5px;
+    background: var(--dim);
+    border-radius: 1px;
+    transition: background 0.3s;
+    cursor: pointer;
+  }
+
+  .vol-seg.active {
+    background: var(--accent);
+    box-shadow: 0 0 3px var(--accent);
+  }
+
+  /* Error / permission message */
+  .perm-note {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    color: var(--dim);
+    white-space: nowrap;
+    opacity: 0.5;
+  }
+
+  /* Glitch animation for track change */
+  @keyframes glitch {
+    0% { transform: translateX(0); clip-path: inset(0 0 100% 0); }
+    10% { clip-path: inset(20% 0 50% 0); transform: translateX(-4px); }
+    20% { clip-path: inset(60% 0 10% 0); transform: translateX(4px); }
+    30% { clip-path: inset(0 0 0 0); transform: translateX(0); }
+    100% { clip-path: inset(0 0 0 0); transform: translateX(0); }
+  }
+
+  .glitching .track-name {
+    animation: glitch 0.4s steps(1) forwards;
+  }
+
+
+  /* Iridescent CD shimmer layers */
+  @keyframes shimA { 0%,100%{opacity:.18} 45%{opacity:.55} }
+  @keyframes shimB { 0%,100%{opacity:.10} 60%{opacity:.42} }
+  @keyframes shimC { 0%,100%{opacity:.22} 30%{opacity:.60} }
+  .sh-a { animation: shimA 2.1s ease-in-out infinite; }
+  .sh-b { animation: shimB 1.7s ease-in-out infinite 0.5s; }
+  .sh-c { animation: shimC 2.6s ease-in-out infinite 1.1s; }
+  /* Tray slide */
+  @keyframes traySlideOut { 0%{transform:translateX(0)} 100%{transform:translateX(60px)} }
+  @keyframes traySlideIn  { 0%{transform:translateX(60px)} 100%{transform:translateX(0)} }
+  .tray-out { animation: traySlideOut 0.45s cubic-bezier(.4,0,.2,1) forwards; }
+  .tray-in  { animation: traySlideIn  0.45s cubic-bezier(.4,0,.2,1) forwards; }
+
+</style>
+</head>
+<body>
+
+<div class="widget" id="widget">
+
+  <!-- ── TV / NOW PLAYING PANEL ── -->
+  <div class="tv-panel">
+    <div class="tv-screen">
+      <div id="albumBg"></div>
+      <div class="tv-content">
+        <div class="album-art-container">
+          <div class="album-art-frame"></div>
+          <img id="albumArt" src="" alt="Album Art" />
+          <div class="album-art-scanlines"></div>
+        </div>
+        <div class="track-info">
+          <div class="now-playing-label">▶ NOW PLAYING</div>
+          <div class="track-name" id="trackName">—</div>
+          <div class="artist-name" id="artistName">—</div>
+          <div class="album-name" id="albumNameEl">—</div>
+          <div class="progress-container">
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill" style="width:0%"></div>
+            </div>
+            <div class="time-row">
+              <span id="timeElapsed">0:00</span>
+              <span id="timeDuration">0:00</span>
+            </div>
+          </div>
+          <div class="audio-bars" id="audioBars"></div>
+        </div>
+      </div>
+    </div>
+    <div class="tv-corner tl"></div>
+    <div class="tv-corner tr"></div>
+    <div class="tv-corner bl"></div>
+    <div class="tv-corner br"></div>
+    <div class="tv-label">UNIT-7 // LIVELY DISPLAY</div>
+    <div class="status-dot" id="statusDot"></div>
+  </div>
+
+  <!-- ── ROBOT ARM STAGE ── -->
+  <!-- ── ROBOT ARM STAGE ── -->
+  <div class="arm-stage" id="armStage">
+    <div class="stage-label">MECH ARM // CD HANDLER v2</div>
+
+    <svg id="armSvg" viewBox="0 0 680 200" preserveAspectRatio="xMidYMax meet">
+      <defs>
+        <!-- Metallic arm gradient -->
+        <linearGradient id="armGrad" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="#1a1a28"/>
+          <stop offset="40%"  stop-color="#2e2e44"/>
+          <stop offset="100%" stop-color="#16161e"/>
+        </linearGradient>
+        <!-- Highlight stripe on arm -->
+        <linearGradient id="armHL" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%"   stop-color="rgba(255,255,255,0)" />
+          <stop offset="45%"  stop-color="rgba(255,255,255,0.08)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+        </linearGradient>
+        <!-- CD body gradient -->
+        <radialGradient id="cdBodyGrad" cx="38%" cy="35%" r="70%">
+          <stop offset="0%"   stop-color="#dcdcee"/>
+          <stop offset="35%"  stop-color="#b8b8cc"/>
+          <stop offset="70%"  stop-color="#8888a0"/>
+          <stop offset="100%" stop-color="#505068"/>
+        </radialGradient>
+        <!-- Iridescent conic-ish bands via multiple layered gradients -->
+        <linearGradient id="iri1" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stop-color="#ff4466" stop-opacity="0"/>
+          <stop offset="30%"  stop-color="#ff4466" stop-opacity="0.7"/>
+          <stop offset="60%"  stop-color="#44ccff" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#44ccff" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="iri2" x1="1" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#aaff44" stop-opacity="0"/>
+          <stop offset="40%"  stop-color="#aaff44" stop-opacity="0.6"/>
+          <stop offset="70%"  stop-color="#cc44ff" stop-opacity="0.5"/>
+          <stop offset="100%" stop-color="#cc44ff" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="iri3" x1="0.5" y1="0" x2="0.5" y2="1">
+          <stop offset="0%"   stop-color="#ffcc00" stop-opacity="0"/>
+          <stop offset="50%"  stop-color="#ffcc00" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#ff6600" stop-opacity="0"/>
+        </linearGradient>
+        <!-- CD label area gradient -->
+        <radialGradient id="cdLabel" cx="50%" cy="50%" r="50%">
+          <stop offset="0%"   stop-color="#2a2a3e"/>
+          <stop offset="100%" stop-color="#16161e"/>
+        </radialGradient>
+        <!-- Gripper gradient -->
+        <linearGradient id="gripGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#2a2a3e"/>
+          <stop offset="100%" stop-color="#111120"/>
+        </linearGradient>
+        <!-- Player housing gradient -->
+        <linearGradient id="playerGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"   stop-color="#1e1e2c"/>
+          <stop offset="100%" stop-color="#12121a"/>
+        </linearGradient>
+        <!-- Clip for CD circle -->
+        <clipPath id="cdClip">
+          <circle cx="490" cy="118" r="38"/>
+        </clipPath>
+        <clipPath id="cdGripClip">
+          <circle cx="200" cy="18" r="14"/>
+        </clipPath>
+      </defs>
+
+      <!-- ── CD PLAYER HOUSING (right) ── -->
+      <!-- Main body -->
+      <rect x="405" y="80" width="230" height="108" rx="5"
+            fill="url(#playerGrad)" stroke="#2a2a38" stroke-width="1.5"/>
+      <!-- Top highlight edge -->
+      <rect x="405" y="80" width="230" height="3" rx="2" fill="rgba(255,255,255,0.06)"/>
+      <!-- Face plate details -->
+      <rect x="412" y="92" width="100" height="6"  rx="2" fill="#111120" stroke="#222232" stroke-width="0.5"/>
+      <rect x="412" y="102" width="70"  height="4"  rx="1" fill="#111120" stroke="#222232" stroke-width="0.5"/>
+      <!-- LED strip -->
+      <rect x="412" y="110" width="8" height="8" rx="1" fill="#0a0a14" stroke="#222" stroke-width="0.5"/>
+      <circle cx="416" cy="114" r="2.5" fill="#ff3860" id="ledRed" opacity="0.9"/>
+      <rect x="424" y="110" width="8" height="8" rx="1" fill="#0a0a14" stroke="#222" stroke-width="0.5"/>
+      <circle cx="428" cy="114" r="2.5" fill="#e8c840" id="ledYellow" opacity="0.5"/>
+      <rect x="436" y="110" width="8" height="8" rx="1" fill="#0a0a14" stroke="#222" stroke-width="0.5"/>
+      <circle cx="440" cy="114" r="2.5" fill="#39ff6b" id="ledGreen" opacity="0.9"/>
+      <!-- Model text -->
+      <text x="412" y="130" font-family="Share Tech Mono,monospace" font-size="6"
+            fill="#3a3a58" letter-spacing="1.5">CDX-7 // UNIT HANDLER</text>
+      <!-- Tray slot -->
+      <rect x="412" y="136" width="215" height="36" rx="3"
+            fill="#0c0c14" stroke="#1e1e2c" stroke-width="1"/>
+      <!-- Tray slot inner shadow -->
+      <rect x="413" y="137" width="213" height="6" rx="1" fill="rgba(0,0,0,0.6)"/>
+      <!-- Tray slot label -->
+      <text x="415" y="162" font-family="Share Tech Mono,monospace" font-size="6"
+            fill="#2a2a3c" letter-spacing="2">TRAY-A</text>
+      <!-- Eject button -->
+      <rect x="600" y="92" width="28" height="12" rx="2"
+            fill="#1a1a28" stroke="#2a2a3c" stroke-width="1"/>
+      <text x="614" y="101" text-anchor="middle" font-family="Share Tech Mono,monospace"
+            font-size="6" fill="#5a5a78">▲ EJECT</text>
+      <!-- Volume knob -->
+      <circle cx="614" cy="118" r="8" fill="#1c1c2c" stroke="#2a2a3c" stroke-width="1.5"/>
+      <circle cx="614" cy="118" r="5" fill="#141420" stroke="#333348" stroke-width="1"/>
+      <line x1="614" y1="113" x2="614" y2="111" stroke="#e8c840" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- ── TRAY (slides in/out) ── -->
+      <g id="cdTraySlide">
+        <!-- Tray platform -->
+        <rect x="418" y="140" width="200" height="28" rx="2"
+              fill="#141420" stroke="#222232" stroke-width="1"/>
+        <!-- Tray rails -->
+        <line x1="418" y1="143" x2="618" y2="143" stroke="#1c1c2c" stroke-width="1"/>
+        <line x1="418" y1="165" x2="618" y2="165" stroke="#1c1c2c" stroke-width="1"/>
+        <!-- Spindle post -->
+        <circle cx="490" cy="154" r="6"  fill="#1e1e2e" stroke="#2a2a3c" stroke-width="1"/>
+        <circle cx="490" cy="154" r="3"  fill="#141420" stroke="#333348" stroke-width="0.5"/>
+        <circle cx="490" cy="154" r="1"  fill="#e8c840" opacity="0.6"/>
+
+        <!-- ── CD ON TRAY ── -->
+        <g id="cdOnTray">
+          <!-- Main disc surface -->
+          <circle cx="490" cy="118" r="38" fill="url(#cdBodyGrad)"/>
+          <!-- Iridescent layers (shimmer via CSS) -->
+          <circle cx="490" cy="118" r="38" fill="url(#iri1)" clip-path="url(#cdClip)" class="sh-a"/>
+          <circle cx="490" cy="118" r="38" fill="url(#iri2)" clip-path="url(#cdClip)" class="sh-b"/>
+          <circle cx="490" cy="118" r="38" fill="url(#iri3)" clip-path="url(#cdClip)" class="sh-c"/>
+          <!-- Data rings -->
+          <circle cx="490" cy="118" r="35" fill="none" stroke="rgba(0,0,0,0.15)" stroke-width="0.5"/>
+          <circle cx="490" cy="118" r="30" fill="none" stroke="rgba(0,0,0,0.1)"  stroke-width="0.5"/>
+          <circle cx="490" cy="118" r="24" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="0.5"/>
+          <!-- Label area -->
+          <circle cx="490" cy="118" r="16" fill="url(#cdLabel)" stroke="rgba(80,80,120,0.5)" stroke-width="0.5"/>
+          <!-- Label text -->
+          <text x="490" y="114" text-anchor="middle" font-family="Share Tech Mono,monospace"
+                font-size="4.5" fill="#5a5a80" letter-spacing="1">UNIT-7</text>
+          <text x="490" y="121" text-anchor="middle" font-family="Share Tech Mono,monospace"
+                font-size="3.5" fill="#3a3a58" letter-spacing="0.5">AUDIO DISC</text>
+          <!-- Center hub ring -->
+          <circle cx="490" cy="118" r="7"  fill="#1a1a28" stroke="rgba(180,180,200,0.3)" stroke-width="1"/>
+          <circle cx="490" cy="118" r="3.5" fill="#222234"/>
+          <!-- Specular highlight -->
+          <ellipse cx="476" cy="104" rx="8" ry="5"
+                   fill="rgba(255,255,255,0.12)" transform="rotate(-20,476,104)"/>
+        </g>
+      </g>
+
+      <!-- ── BASE MOUNT ── -->
+      <rect x="175" y="158" width="50" height="40" rx="3"
+            fill="#1c1c26" stroke="#2a2a38" stroke-width="1.5"/>
+      <rect x="183" y="152" width="34" height="10" rx="2"
+            fill="#1e1e2e" stroke="#333348" stroke-width="1"/>
+      <!-- Bolt heads -->
+      <circle cx="182" cy="170" r="3.5" fill="#222236" stroke="#333348" stroke-width="1"/>
+      <line  x1="180" y1="170" x2="184" y2="170" stroke="#3a3a52" stroke-width="0.8"/>
+      <circle cx="218" cy="170" r="3.5" fill="#222236" stroke="#333348" stroke-width="1"/>
+      <line  x1="216" y1="170" x2="220" y2="170" stroke="#3a3a52" stroke-width="0.8"/>
+      <!-- Base motor ring -->
+      <circle cx="200" cy="157" r="15" fill="#181826" stroke="#2e2e44" stroke-width="2"/>
+      <circle cx="200" cy="157" r="9"  fill="#1c1c2e" stroke="#383858" stroke-width="1.5"/>
+      <!-- Encoder marks -->
+      <circle cx="200" cy="144" r="1.5" fill="#e8c840" opacity="0.5"/>
+      <circle cx="212" cy="153" r="1.5" fill="#e8c840" opacity="0.3"/>
+      <circle cx="188" cy="153" r="1.5" fill="#e8c840" opacity="0.3"/>
+      <!-- Motor LED -->
+      <circle cx="200" cy="157" r="3"  fill="#40e8d0" id="motorLed" opacity="0.8"/>
+
+      <!-- ── ARM SEGMENT 1 (upper arm) ── -->
+      <g id="armSegment1">
+        <rect x="192" y="72" width="16" height="88" rx="4"
+              fill="url(#armGrad)" stroke="#2a2a3e" stroke-width="1.5"/>
+        <!-- Highlight stripe -->
+        <rect x="192" y="72" width="16" height="88" rx="4" fill="url(#armHL)"/>
+        <!-- Side rivet details -->
+        <circle cx="194" cy="82"  r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <circle cx="194" cy="100" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <circle cx="194" cy="118" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <circle cx="206" cy="82"  r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <circle cx="206" cy="100" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <circle cx="206" cy="118" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+        <!-- Hydraulic tube -->
+        <rect x="205" y="80" width="3" height="65" rx="1" fill="#111120" opacity="0.5"/>
+
+        <!-- Elbow joint -->
+        <circle cx="200" cy="74"  r="13" fill="#181826" stroke="#2e2e44" stroke-width="2"/>
+        <circle cx="200" cy="74"  r="7"  fill="#1c1c2e" stroke="#383858" stroke-width="1.5"/>
+        <circle cx="200" cy="74"  r="2.5" fill="#40e8d0" opacity="0.8"/>
+        <!-- Elbow encoder marks -->
+        <circle cx="200" cy="62"  r="1.5" fill="#ff6b35" opacity="0.4"/>
+        <circle cx="212" cy="71"  r="1.5" fill="#ff6b35" opacity="0.4"/>
+
+        <!-- ── ARM SEGMENT 2 (forearm) ── -->
+        <g id="armSegment2">
+          <rect x="193" y="14" width="14" height="63" rx="4"
+                fill="url(#armGrad)" stroke="#333348" stroke-width="1.5"/>
+          <rect x="193" y="14" width="14" height="63" rx="4" fill="url(#armHL)"/>
+          <!-- Rivets -->
+          <circle cx="195" cy="24" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+          <circle cx="205" cy="24" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+          <circle cx="195" cy="44" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+          <circle cx="205" cy="44" r="1.5" fill="#222236" stroke="#333" stroke-width="0.5"/>
+          <!-- Wrist joint -->
+          <circle cx="200" cy="16" r="11" fill="#181826" stroke="#2e2e44" stroke-width="2"/>
+          <circle cx="200" cy="16" r="6"  fill="#1c1c2e" stroke="#383858" stroke-width="1.5"/>
+          <circle cx="200" cy="16" r="2"  fill="#ff6b35" opacity="0.9"/>
+
+          <!-- ── GRIPPER ── -->
+          <g id="armGripper">
+            <!-- Wrist connector -->
+            <rect x="196" y="3" width="8" height="15" rx="2" fill="#1e1e2e" stroke="#2a2a3e" stroke-width="1"/>
+            <!-- Housing bar -->
+            <rect x="178" y="0" width="44" height="10" rx="3"
+                  fill="url(#gripGrad)" stroke="#2e2e44" stroke-width="1.5"/>
+            <!-- Housing highlight -->
+            <rect x="178" y="0" width="44" height="3" rx="2" fill="rgba(255,255,255,0.05)"/>
+
+            <!-- Left finger group -->
+            <g id="gripL">
+              <rect x="178" y="8"  width="8" height="22" rx="2"
+                    fill="url(#gripGrad)" stroke="#2a2a3c" stroke-width="1"/>
+              <rect x="178" y="28" width="14" height="5"  rx="1"
+                    fill="#1c1c2c" stroke="#2a2a3c" stroke-width="0.8"/>
+              <!-- Grip pad -->
+              <rect x="179" y="30" width="12" height="2" rx="1" fill="#e8c840" opacity="0.3"/>
+            </g>
+
+            <!-- Right finger group -->
+            <g id="gripR">
+              <rect x="214" y="8"  width="8" height="22" rx="2"
+                    fill="url(#gripGrad)" stroke="#2a2a3c" stroke-width="1"/>
+              <rect x="208" y="28" width="14" height="5"  rx="1"
+                    fill="#1c1c2c" stroke="#2a2a3c" stroke-width="0.8"/>
+              <!-- Grip pad -->
+              <rect x="209" y="30" width="12" height="2" rx="1" fill="#e8c840" opacity="0.3"/>
+            </g>
+
+            <!-- Sensor eye -->
+            <circle cx="200" cy="5" r="5"  fill="#0a0a14" stroke="#2a2a3c" stroke-width="1"/>
+            <circle cx="200" cy="5" r="2.5" fill="#40e8d0" id="sensorEye" opacity="0.9"/>
+            <circle cx="199" cy="4" r="0.8" fill="rgba(255,255,255,0.6)"/>
+
+            <!-- CD in gripper -->
+            <g id="cdInGripper" style="opacity:0">
+              <circle cx="200" cy="18" r="15" fill="url(#cdBodyGrad)" stroke="rgba(200,200,230,0.4)" stroke-width="1"/>
+              <circle cx="200" cy="18" r="15" fill="url(#iri1)" clip-path="url(#cdGripClip)" class="sh-a"/>
+              <circle cx="200" cy="18" r="15" fill="url(#iri2)" clip-path="url(#cdGripClip)" class="sh-b"/>
+              <circle cx="200" cy="18" r="8"  fill="url(#cdLabel)" stroke="rgba(80,80,120,0.4)" stroke-width="0.5"/>
+              <circle cx="200" cy="18" r="3"  fill="#1a1a28" stroke="rgba(150,150,180,0.3)" stroke-width="0.5"/>
+              <ellipse cx="194" cy="12" rx="4" ry="3"
+                       fill="rgba(255,255,255,0.1)" transform="rotate(-20,194,12)"/>
+            </g>
+          </g>
+        </g>
+      </g>
+
+      <!-- Arm base shadow -->
+      <ellipse cx="200" cy="197" rx="52" ry="4" fill="rgba(0,0,0,0.5)"/>
+      <!-- Stage floor -->
+      <line x1="0" y1="196" x2="680" y2="196" stroke="#2a2a38" stroke-width="1.5"/>
+      <!-- Floor grid lines -->
+      <line x1="300" y1="196" x2="340" y2="196" stroke="#3a3a50" stroke-width="0.5" opacity="0.5"/>
+      <line x1="350" y1="196" x2="390" y2="196" stroke="#3a3a50" stroke-width="0.5" opacity="0.4"/>
+      <line x1="400" y1="196" x2="440" y2="196" stroke="#3a3a50" stroke-width="0.5" opacity="0.3"/>
+    </svg>
+  </div>
+
+  <!-- ── CONTROL PANEL ── -->
+  <div class="control-panel">
+    <button class="ctrl-btn" id="btnPrev" onclick="prevTrack()">◀◀</button>
+    <button class="ctrl-btn active" id="btnPlay" onclick="togglePlay()">▶ PLAY</button>
+    <button class="ctrl-btn" id="btnNext" onclick="nextTrack()">▶▶</button>
+    <div class="sep"></div>
+    <span class="source-label">SRC:</span>
+    <span class="source-display" id="sourceDisplay">DEMO</span>
+    <div class="sep"></div>
+    <label class="ctrl-btn" id="btnLoad" for="fileInput">⬡ LOAD FILES</label>
+    <input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="loadFiles(this.files)"/>
+    <label class="ctrl-btn" id="btnAddMore" for="fileInputMore">+ ADD</label>
+    <input type="file" id="fileInputMore" accept="audio/*" multiple style="display:none" onchange="addFiles(this.files)"/>
+    <span class="source-display" id="queueDisplay" style="font-size:9px;color:var(--dim)">NO FILES</span>
+    <div class="sep"></div>
+    <div class="vol-container">
+      <span class="vol-label">VOL</span>
+      <div class="vol-bar" id="volBar"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Demo track data ──────────────────────────────────────────────
+const demoTracks = [
+  {
+    name: "Electric Feel",
+    artist: "MGMT",
+    album: "Oracular Spectacular",
+    duration: 231,
+    color: "#7b4fcf",
+    artUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1a/MGMT_-_Oracular_Spectacular.jpg/220px-MGMT_-_Oracular_Spectacular.jpg"
+  },
+  {
+    name: "Solar Power",
+    artist: "Lorde",
+    album: "Solar Power",
+    duration: 209,
+    color: "#c8a020",
+    artUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/8/8b/Lorde_-_Solar_Power.png/220px-Lorde_-_Solar_Power.png"
+  },
+  {
+    name: "Feel Good Inc.",
+    artist: "Gorillaz",
+    album: "Demon Days",
+    duration: 222,
+    color: "#1a5c8a",
+    artUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9f/Gorillaz_-_Demon_Days.jpg/220px-Gorillaz_-_Demon_Days.jpg"
+  },
+  {
+    name: "Take On Me",
+    artist: "a-ha",
+    album: "Hunting High and Low",
+    duration: 225,
+    color: "#2060a0",
+    artUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/2/24/AHa-HuntingHighAndLow.jpg/220px-AHa-HuntingHighAndLow.jpg"
+  },
+];
+
+// ── State ────────────────────────────────────────────────────────
+let currentTrackIndex = 0;
+let currentTime = 0;
+let isPlaying = true;
+let volume = 7;
+let source = "DEMO";
+let progressInterval = null;
+let audioCtx = null;
+let analyser = null;
+let barAnimFrame = null;
+
+// ── Audio Bars ───────────────────────────────────────────────────
+const barsContainer = document.getElementById('audioBars');
+const NUM_BARS = 22;
+
+function buildBars() {
+  barsContainer.innerHTML = '';
+  for (let i = 0; i < NUM_BARS; i++) {
+    const b = document.createElement('div');
+    b.className = 'bar';
+    const min = (4 + Math.random() * 6) + 'px';
+    const max = (12 + Math.random() * 20) + 'px';
+    const spd = (0.3 + Math.random() * 0.5) + 's';
+    b.style.setProperty('--min', min);
+    b.style.setProperty('--max', max);
+    b.style.setProperty('--spd', spd);
+    barsContainer.appendChild(b);
+  }
+}
+buildBars();
+
+// ── Volume Segments ──────────────────────────────────────────────
+const volBar = document.getElementById('volBar');
+const SEGS = 12;
+const HEIGHTS = [6,7,8,9,10,11,12,13,14,15,17,20];
+function buildVolBar() {
+  volBar.innerHTML = '';
+  for (let i = 0; i < SEGS; i++) {
+    const s = document.createElement('div');
+    s.className = 'vol-seg' + (i < volume ? ' active' : '');
+    s.style.height = HEIGHTS[i] + 'px';
+    s.onclick = () => { volume = i + 1; buildVolBar(); if(audioEl) audioEl.volume = volume/12; };
+    volBar.appendChild(s);
+  }
+}
+buildVolBar();
+
+// ── Track Loading ────────────────────────────────────────────────
+function loadTrack(track, skipArmAnim) {
+  if (!skipArmAnim) triggerArmSwap();
+  setTimeout(() => {
+    document.getElementById('widget').classList.add('glitching');
+    document.getElementById('trackName').textContent  = track.name;
+    document.getElementById('artistName').textContent = track.artist;
+    document.getElementById('albumNameEl').textContent = track.album;
+    document.getElementById('albumArt').src = track.artUrl;
+    document.getElementById('albumBg').style.backgroundImage = `url('${track.artUrl}')`;
+    currentTime = 0;
+    updateProgress(track);
+    setTimeout(() => document.getElementById('widget').classList.remove('glitching'), 500);
+  }, skipArmAnim ? 0 : 800);
+}
+
+function updateProgress(track) {
+  track = track || demoTracks[currentTrackIndex];
+  const pct = (currentTime / track.duration) * 100;
+  document.getElementById('progressFill').style.width = Math.min(pct,100) + '%';
+  document.getElementById('timeElapsed').textContent = fmt(currentTime);
+  document.getElementById('timeDuration').textContent = fmt(track.duration);
+}
+
+function fmt(s) {
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + String(sec).padStart(2,'0');
+}
+
+function startProgress() {
+  clearInterval(progressInterval);
+  if (!isPlaying) return;
+  progressInterval = setInterval(() => {
+    const track = demoTracks[currentTrackIndex];
+    if (source === 'FILE') return; // file mode uses audio element timeupdate
+    currentTime++;
+    if (currentTime >= track.duration) {
+      currentTime = 0; nextTrack();
+    } else {
+      updateProgress(track);
+    }
+  }, 1000);
+}
+
+// ── Controls ─────────────────────────────────────────────────────
+function togglePlay() {
+  isPlaying = !isPlaying;
+  const btn = document.getElementById('btnPlay');
+  const dot = document.getElementById('statusDot');
+  if (isPlaying) {
+    btn.textContent = '▶ PLAY'; btn.classList.add('active');
+    dot.classList.remove('paused');
+    if (source === 'FILE' && audioEl) {
+      if (audioCtxFile && audioCtxFile.state === 'suspended') audioCtxFile.resume();
+      audioEl.play().catch(()=>{});
+    } else {
+      startProgress();
+    }
+  } else {
+    btn.textContent = '⏸ PAUSE'; btn.classList.remove('active');
+    dot.classList.add('paused');
+    if (source === 'FILE' && audioEl) audioEl.pause();
+    else clearInterval(progressInterval);
+  }
+}
+
+function nextTrack() {
+  if (source === 'FILE' && queue.length) {
+    playQueueTrack(currentTrackIndex + 1, false);
+  } else if (source === 'DEMO') {
+    currentTrackIndex = (currentTrackIndex + 1) % demoTracks.length;
+    loadTrack(demoTracks[currentTrackIndex]);
+    if (isPlaying) startProgress();
+  }
+}
+
+function prevTrack() {
+  if (source === 'FILE' && queue.length) {
+    if (audioEl && audioEl.currentTime > 3) {
+      audioEl.currentTime = 0; // restart if past 3s
+    } else {
+      playQueueTrack(currentTrackIndex - 1, false);
+    }
+  } else if (source === 'DEMO') {
+    currentTrackIndex = (currentTrackIndex - 1 + demoTracks.length) % demoTracks.length;
+    loadTrack(demoTracks[currentTrackIndex]);
+    if (isPlaying) startProgress();
+  }
+}
+
+// ── Arm Animation Engine (JS tween) ─────────────────────────────
+const arm = {
+  seg1: 0,   // rotation degrees around base (200,157)
+  seg2: 0,   // rotation degrees around elbow (200,74) in seg1 space
+  grip: 0,   // gripper open spread (0=closed, 1=open)
+  cdVis: 0,  // cd in gripper opacity
+  trayX: 0,  // tray slide (0=in, 1=out)
+};
+
+function setArmTransforms() {
+  const s1 = document.getElementById('armSegment1');
+  const s2 = document.getElementById('armSegment2');
+  const gl = document.getElementById('gripL');
+  const gr = document.getElementById('gripR');
+  const cd = document.getElementById('cdInGripper');
+  const tray = document.getElementById('cdTraySlide');
+  const trayCD = document.getElementById('cdOnTray');
+  if (s1) s1.setAttribute('transform', `rotate(${arm.seg1},200,157)`);
+  if (s2) s2.setAttribute('transform', `rotate(${arm.seg2},200,74)`);
+  if (gl) gl.setAttribute('transform', `translate(${-arm.grip * 8},0)`);
+  if (gr) gr.setAttribute('transform', `translate(${arm.grip * 8},0)`);
+  if (cd) cd.style.opacity = arm.cdVis;
+  if (tray) tray.setAttribute('transform', `translate(${arm.trayX * 62},0)`);
+  if (trayCD) trayCD.style.opacity = arm.cdVis > 0.5 ? 0 : 1;
+}
+
+// Lightweight tween: from current value to target over ms, with easing
+function tween(obj, key, target, ms, easeFn) {
+  return new Promise(resolve => {
+    const start = obj[key];
+    const diff  = target - start;
+    const t0    = performance.now();
+    if (Math.abs(diff) < 0.001) { obj[key] = target; resolve(); return; }
+    function step(now) {
+      const p = Math.min((now - t0) / ms, 1);
+      const e = easeFn ? easeFn(p) : p;
+      obj[key] = start + diff * e;
+      setArmTransforms();
+      if (p < 1) requestAnimationFrame(step);
+      else { obj[key] = target; setArmTransforms(); resolve(); }
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+// Easing functions
+const easeInOut = p => p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+const easeOut   = p => 1 - Math.pow(1-p, 3);
+const easeIn    = p => p * p * p;
+
+// Parallel tween helper
+function tweenAll(pairs, ms, easeFn) {
+  return Promise.all(pairs.map(([key, target]) => tween(arm, key, target, ms, easeFn)));
+}
+
+// Idle bob loop
+let idleLoop = null;
+function startIdleLoop() {
+  let t = 0;
+  function tick() {
+    t += 0.018;
+    arm.seg1 = Math.sin(t * 0.7) * 4 - 2;
+    arm.seg2 = Math.sin(t * 1.1 + 1) * 6 + 3;
+    arm.grip = (Math.sin(t * 0.5) * 0.5 + 0.5) * 0.3;
+    setArmTransforms();
+    // Pulse motor LED
+    const led = document.getElementById('motorLed');
+    if (led) led.setAttribute('opacity', 0.5 + Math.sin(t * 2) * 0.3);
+    idleLoop = requestAnimationFrame(tick);
+  }
+  idleLoop = requestAnimationFrame(tick);
+}
+
+function stopIdleLoop() {
+  if (idleLoop) { cancelAnimationFrame(idleLoop); idleLoop = null; }
+}
+
+// CD rotation loop
+let cdAngle = 0, cdRotLoop = null;
+function startCDSpin() {
+  function tick() {
+    cdAngle += isPlaying ? 1.2 : 0;
+    const cd = document.getElementById('cdOnTray');
+    if (cd) cd.setAttribute('transform', `rotate(${cdAngle},490,118)`);
+    cdRotLoop = requestAnimationFrame(tick);
+  }
+  if (!cdRotLoop) cdRotLoop = requestAnimationFrame(tick);
+}
+
+// Sensor eye flicker
+function flashSensor(color, times) {
+  const eye = document.getElementById('sensorEye');
+  if (!eye) return;
+  let i = 0;
+  const iv = setInterval(() => {
+    eye.setAttribute('fill', i % 2 === 0 ? color : '#40e8d0');
+    if (++i >= times * 2) clearInterval(iv);
+  }, 80);
+}
+
+async function triggerArmSwap() {
+  stopIdleLoop();
+
+  // 1. Arm reaches out toward tray — seg1 tilts right, seg2 extends
+  flashSensor('#ff6b35', 2);
+  await tweenAll([['seg1', 38], ['seg2', -55], ['grip', 1]], 600, easeInOut);
+
+  // 2. Tray slides out
+  await tween(arm, 'trayX', 1, 450, easeOut);
+  await new Promise(r => setTimeout(r, 120));
+
+  // 3. Gripper closes on CD — CD appears in gripper, disappears from tray
+  flashSensor('#e8c840', 3);
+  await tweenAll([['grip', 0], ['cdVis', 1]], 350, easeInOut);
+  await new Promise(r => setTimeout(r, 100));
+
+  // 4. Lift up and carry left (big sweep)
+  await tweenAll([['seg1', -55], ['seg2', 40]], 700, easeInOut);
+  await new Promise(r => setTimeout(r, 150));
+
+  // 5. Lower down to "drop" position, slight flourish
+  await tweenAll([['seg1', -20], ['seg2', 60]], 400, easeOut);
+
+  // 6. Tray slides back in while arm holds
+  await tween(arm, 'trayX', 0, 400, easeInOut);
+
+  // 7. Release CD — arm pulls back to idle-ish pose
+  flashSensor('#39ff6b', 3);
+  await tweenAll([['grip', 1], ['cdVis', 0]], 300, easeInOut);
+  await tweenAll([['seg1', -5], ['seg2', 8], ['grip', 0.2]], 550, easeInOut);
+
+  // 8. Resume idle bob
+  startIdleLoop();
+}
+
+// Init arm state and loops
+setArmTransforms();
+startIdleLoop();
+startCDSpin();
+
+
+// ── Local File Playback ──────────────────────────────────────────
+let queue = [];          // array of track objects built from files
+let audioEl = null;      // single <audio> element reused across tracks
+let audioCtxFile = null;
+let analyserFile = null;
+let fileBarFrame = null;
+
+function getOrCreateAudio() {
+  if (!audioEl) {
+    audioEl = new Audio();
+    audioEl.addEventListener('ended', () => nextTrack());
+    audioEl.addEventListener('timeupdate', () => {
+      currentTime = audioEl.currentTime;
+      updateProgress({ duration: audioEl.duration || 1 });
+    });
+    audioEl.volume = volume / 12;
+  }
+  return audioEl;
+}
+
+// Parse ID3v2 tags from an ArrayBuffer, return { title, artist, album, artBlob }
+function parseID3(buffer) {
+  const view  = new DataView(buffer);
+  const bytes = new Uint8Array(buffer);
+  const result = { title: '', artist: '', album: '', artBlob: null };
+
+  // Must start with "ID3"
+  if (bytes[0] !== 0x49 || bytes[1] !== 0x44 || bytes[2] !== 0x33) return result;
+
+  // ID3v2 tag size (syncsafe int at bytes 6-9)
+  const tagSize = ((bytes[6] & 0x7f) << 21) | ((bytes[7] & 0x7f) << 14) |
+                  ((bytes[8] & 0x7f) << 7)  |  (bytes[9] & 0x7f);
+  const version = bytes[3]; // 3 = ID3v2.3, 4 = ID3v2.4
+
+  let offset = 10;
+  const decoder = new TextDecoder('utf-8');
+  const latin1  = new TextDecoder('latin1');
+
+  while (offset < tagSize + 10 && offset + 10 < buffer.byteLength) {
+    const frameID = String.fromCharCode(bytes[offset], bytes[offset+1], bytes[offset+2], bytes[offset+3]);
+    if (frameID === '\0\0\0\0') break;
+
+    let frameSize;
+    if (version === 4) {
+      // Syncsafe in v2.4
+      frameSize = ((bytes[offset+4] & 0x7f) << 21) | ((bytes[offset+5] & 0x7f) << 14) |
+                  ((bytes[offset+6] & 0x7f) <<  7) |  (bytes[offset+7] & 0x7f);
+    } else {
+      frameSize = (bytes[offset+4] << 24) | (bytes[offset+5] << 16) |
+                  (bytes[offset+6] <<  8) |  bytes[offset+7];
+    }
+
+    if (frameSize <= 0 || frameSize > tagSize) break;
+
+    const dataStart = offset + 10;
+    const dataEnd   = dataStart + frameSize;
+
+    if (['TIT2','TPE1','TALB'].includes(frameID)) {
+      const enc = bytes[dataStart];
+      let text = '';
+      if (enc === 0) text = latin1.decode(bytes.slice(dataStart+1, dataEnd));
+      else if (enc === 1 || enc === 2) {
+        // UTF-16 with BOM
+        const sub = bytes.slice(dataStart+1, dataEnd);
+        try { text = new TextDecoder('utf-16').decode(sub); } catch { text = latin1.decode(sub); }
+      } else {
+        text = decoder.decode(bytes.slice(dataStart+1, dataEnd));
+      }
+      text = text.replace(/\0/g, '').trim();
+      if (frameID === 'TIT2') result.title  = text;
+      if (frameID === 'TPE1') result.artist = text;
+      if (frameID === 'TALB') result.album  = text;
+    }
+
+    if (frameID === 'APIC') {
+      // Find mime type null terminator
+      const enc = bytes[dataStart];
+      let pos = dataStart + 1;
+      while (pos < dataEnd && bytes[pos] !== 0) pos++;
+      pos++; // skip null
+      // Skip picture type byte
+      pos++;
+      // Skip description (null-terminated, might be utf16)
+      if (enc === 1 || enc === 2) {
+        while (pos + 1 < dataEnd && !(bytes[pos] === 0 && bytes[pos+1] === 0)) pos++;
+        pos += 2;
+      } else {
+        while (pos < dataEnd && bytes[pos] !== 0) pos++;
+        pos++;
+      }
+      if (pos < dataEnd) {
+        result.artBlob = new Blob([bytes.slice(pos, dataEnd)], { type: 'image/jpeg' });
+      }
+    }
+
+    offset = dataEnd;
+  }
+  return result;
+}
+
+async function fileToTrack(file) {
+  const name = file.name.replace(/\.[^.]+$/, '').replace(/^\d+[\s._-]*/, '');
+  const track = { name, artist: '—', album: '—', duration: 0, artUrl: '', fileUrl: '' };
+
+  track.fileUrl = URL.createObjectURL(file);
+
+  // Read first 256KB for ID3 tags (fast)
+  try {
+    const slice = file.slice(0, 262144);
+    const buf   = await slice.arrayBuffer();
+    const tags  = parseID3(buf);
+    if (tags.title)  track.name   = tags.title;
+    if (tags.artist) track.artist = tags.artist;
+    if (tags.album)  track.album  = tags.album;
+    if (tags.artBlob) track.artUrl = URL.createObjectURL(tags.artBlob);
+  } catch(e) { /* no tags, use filename */ }
+
+  // Get duration via a temp audio element
+  await new Promise(resolve => {
+    const tmp = new Audio();
+    tmp.preload = 'metadata';
+    tmp.onloadedmetadata = () => { track.duration = Math.floor(tmp.duration) || 0; resolve(); };
+    tmp.onerror = resolve;
+    tmp.src = track.fileUrl;
+  });
+
+  return track;
+}
+
+async function loadFiles(files) {
+  if (!files || !files.length) return;
+  showNote('Loading ' + files.length + ' file(s)…');
+
+  // Revoke old object URLs
+  queue.forEach(t => { if(t.fileUrl) URL.revokeObjectURL(t.fileUrl); if(t.artUrl && t.artUrl.startsWith('blob:')) URL.revokeObjectURL(t.artUrl); });
+  queue = [];
+
+  const arr = Array.from(files).sort((a,b) => a.name.localeCompare(b.name));
+  for (const f of arr) {
+    const t = await fileToTrack(f);
+    queue.push(t);
+  }
+
+  document.getElementById('btnLoad').textContent = '✓ LOADED';
+  document.getElementById('btnLoad').classList.add('active');
+  updateQueueDisplay();
+
+  currentTrackIndex = 0;
+  source = 'FILE';
+  playQueueTrack(0, true);
+}
+
+async function addFiles(files) {
+  if (!files || !files.length) return;
+  const arr = Array.from(files).sort((a,b) => a.name.localeCompare(b.name));
+  for (const f of arr) queue.push(await fileToTrack(f));
+  updateQueueDisplay();
+  showNote('Added ' + files.length + ' file(s). Queue: ' + queue.length);
+}
+
+function updateQueueDisplay() {
+  const el = document.getElementById('queueDisplay');
+  if (el) el.textContent = queue.length + ' TRACK' + (queue.length !== 1 ? 'S' : '');
+}
+
+function playQueueTrack(index, skipAnim) {
+  if (!queue.length) return;
+  currentTrackIndex = ((index % queue.length) + queue.length) % queue.length;
+  const track = queue[currentTrackIndex];
+
+  // Wire up audio element
+  const audio = getOrCreateAudio();
+  audio.src = track.fileUrl;
+  audio.volume = volume / 12;
+
+  // Connect analyser for real waveform bars (first time only)
+  if (!audioCtxFile) {
+    audioCtxFile = new (window.AudioContext || window.webkitAudioContext)();
+    analyserFile = audioCtxFile.createAnalyser();
+    analyserFile.fftSize = 64;
+    const srcNode = audioCtxFile.createMediaElementSource(audio);
+    srcNode.connect(analyserFile);
+    analyserFile.connect(audioCtxFile.destination);
+    animateFileBars();
+  }
+
+  if (!skipAnim) triggerArmSwap();
+
+  setTimeout(() => {
+    document.getElementById('widget').classList.add('glitching');
+    document.getElementById('trackName').textContent   = track.name;
+    document.getElementById('artistName').textContent  = track.artist;
+    document.getElementById('albumNameEl').textContent = track.album;
+    if (track.artUrl) {
+      document.getElementById('albumArt').src = track.artUrl;
+      document.getElementById('albumBg').style.backgroundImage = `url('${track.artUrl}')`;
+    } else {
+      document.getElementById('albumArt').src = '';
+      document.getElementById('albumBg').style.backgroundImage = '';
+    }
+    currentTime = 0;
+    updateProgress(track);
+    if (isPlaying) {
+      if (audioCtxFile && audioCtxFile.state === 'suspended') audioCtxFile.resume();
+      audio.play().catch(()=>{});
+    }
+    setTimeout(() => document.getElementById('widget').classList.remove('glitching'), 500);
+  }, skipAnim ? 0 : 900);
+}
+
+function animateFileBars() {
+  const data = new Uint8Array(analyserFile.frequencyBinCount);
+  const bars = document.querySelectorAll('.bar');
+  function tick() {
+    analyserFile.getByteFrequencyData(data);
+    bars.forEach((b, i) => {
+      const idx = Math.floor(i * data.length / bars.length);
+      const h = Math.max(3, (data[idx] / 255) * 32);
+      b.style.setProperty('--min', (h * 0.3) + 'px');
+      b.style.setProperty('--max', h + 'px');
+    });
+    fileBarFrame = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+// ── Helper ───────────────────────────────────────────────────────
+function showNote(msg) {
+  let el = document.querySelector('.perm-note');
+  if (!el) { el = document.createElement('div'); el.className = 'perm-note'; document.querySelector('.arm-stage').appendChild(el); }
+  el.textContent = msg;
+  setTimeout(() => { if(el) el.textContent = ''; }, 4000);
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+loadTrack(demoTracks[0], true);
+startProgress();
+</script>
+</body>
+</html>
