@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terra Sleep — Organic & Natural Mattresses</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --warm-white: #FAF7F2;
+    --sage: #7A8B6F;
+    --sage-dark: #5A6952;
+    --earth: #9B7B5A;
+    --earth-light: #C4A882;
+    --charcoal: #2C2C2A;
+    --linen: #E8DFD0;
+    --moss: #4A5C42;
+    --terracotta: #B5714A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--warm-white);
+    color: var(--charcoal);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px 60px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(155,123,90,0.12);
+    transition: padding 0.3s;
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--charcoal);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--sage); }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--charcoal);
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    background: var(--charcoal);
+    color: var(--cream) !important;
+    padding: 10px 22px;
+    border-radius: 2px;
+    opacity: 1 !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.14em !important;
+  }
+  .nav-cta:hover { background: var(--moss) !important; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding-top: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--earth); margin-bottom: 32px;
+  }
+  .hero-tag::before {
+    content: '';
+    display: block; width: 28px; height: 1px;
+    background: var(--earth);
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 5vw, 5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    color: var(--charcoal);
+    margin-bottom: 28px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--sage-dark);
+  }
+  .hero p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #5a5a55;
+    max-width: 420px;
+    margin-bottom: 48px;
+  }
+  .hero-btns { display: flex; gap: 16px; align-items: center; }
+  .btn-primary {
+    background: var(--moss);
+    color: white;
+    padding: 16px 36px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none; cursor: pointer;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: background 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--sage-dark); transform: translateY(-1px); }
+  .btn-outline {
+    color: var(--charcoal);
+    padding: 16px 36px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid rgba(44,44,42,0.3);
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 2px;
+    transition: border-color 0.25s, transform 0.2s;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--charcoal); transform: translateY(-1px); }
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-visual {
+    width: 100%; height: 100%;
+    background: linear-gradient(145deg, #d5cbb8 0%, #c8b99a 40%, #a8957a 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Decorative SVG bed */
+  .bed-illustration {
+    width: 85%; max-width: 520px;
+    animation: float 6s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  .hero-badge {
+    position: absolute;
+    bottom: 40px; left: 40px;
+    background: rgba(250,247,242,0.92);
+    backdrop-filter: blur(8px);
+    padding: 18px 24px;
+    border-radius: 4px;
+    border-left: 3px solid var(--sage);
+  }
+  .hero-badge .num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--moss);
+    line-height: 1;
+  }
+  .hero-badge .label {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* ── TRUST BAR ── */
+  .trust-bar {
+    background: var(--charcoal);
+    color: var(--cream);
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    padding: 22px 60px;
+    flex-wrap: wrap;
+  }
+  .trust-item {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.8;
+  }
+  .trust-icon { font-size: 1rem; }
+
+  /* ── CERTIFICATIONS ── */
+  .certs {
+    background: var(--linen);
+    padding: 40px 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .cert-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #888;
+    margin-right: 20px;
+  }
+  .cert-badge {
+    display: flex; align-items: center; gap: 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--charcoal);
+    border: 1px solid rgba(44,44,42,0.2);
+    padding: 8px 16px;
+    border-radius: 2px;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-header {
+    text-align: center;
+    margin-bottom: 64px;
+  }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--earth);
+    margin-bottom: 16px;
+  }
+  .section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 300;
+    line-height: 1.2;
+    color: var(--charcoal);
+  }
+  .section-header h2 em { font-style: italic; color: var(--sage-dark); }
+  .section-header p {
+    max-width: 520px;
+    margin: 18px auto 0;
+    color: #6a6a65;
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
+
+  /* ── PRODUCTS ── */
+  .products {
+    padding: 100px 80px;
+    background: var(--warm-white);
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+  }
+  .product-card {
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid rgba(155,123,90,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 50px rgba(44,44,42,0.1);
+  }
+  .product-img {
+    height: 260px;
+    position: relative;
+    overflow: hidden;
+  }
+  .product-card:nth-child(1) .product-img { background: linear-gradient(160deg, #d4c9b4 0%, #b8a888 100%); }
+  .product-card:nth-child(2) .product-img { background: linear-gradient(160deg, #c8d4c0 0%, #a0b895 100%); }
+  .product-card:nth-child(3) .product-img { background: linear-gradient(160deg, #d4bdb0 0%, #b89080 100%); }
+  .product-img svg { width: 70%; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); }
+  .badge-pill {
+    position: absolute; top: 16px; left: 16px;
+    background: var(--charcoal);
+    color: white;
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .badge-pill.green { background: var(--moss); }
+  .badge-pill.earth { background: var(--earth); }
+  .product-info { padding: 28px 28px 32px; }
+  .product-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 6px;
+  }
+  .product-sub {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--earth);
+    margin-bottom: 14px;
+  }
+  .product-desc {
+    font-size: 0.88rem;
+    line-height: 1.7;
+    color: #6a6a65;
+    margin-bottom: 20px;
+  }
+  .product-materials {
+    display: flex; gap: 8px; flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .material-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    background: var(--cream);
+    border-radius: 2px;
+    color: var(--charcoal);
+    border: 1px solid var(--linen);
+  }
+  .product-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 20px;
+    border-top: 1px solid var(--linen);
+  }
+  .product-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
+  .product-price span {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: #888;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .btn-card {
+    background: var(--moss);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background 0.2s;
+  }
+  .btn-card:hover { background: var(--sage-dark); }
+
+  /* ── MATERIALS SECTION ── */
+  .materials {
+    padding: 100px 80px;
+    background: var(--charcoal);
+    color: var(--cream);
+  }
+  .materials .section-header { text-align: left; margin-bottom: 60px; }
+  .materials .section-tag { color: var(--earth-light); }
+  .materials .section-header h2 { color: var(--cream); }
+  .materials-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .materials-list { display: flex; flex-direction: column; gap: 0; }
+  .material-item {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .material-item:hover { opacity: 0.8; }
+  .material-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 300;
+    color: var(--earth-light);
+    opacity: 0.5;
+  }
+  .material-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    margin-bottom: 6px;
+    color: var(--cream);
+  }
+  .material-content p {
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: rgba(245,240,232,0.6);
+  }
+  .materials-visual {
+    position: relative;
+    height: 500px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #4a5c42 0%, #3a4a34 40%, #2c3827 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .materials-visual::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='1' fill='rgba(245,240,232,0.05)'/%3E%3C/svg%3E");
+  }
+  .materials-visual svg { width: 70%; opacity: 0.85; }
+
+  /* ── WHY US ── */
+  .why {
+    padding: 100px 80px;
+    background: var(--cream);
+  }
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+  }
+  .why-card {
+    text-align: center;
+    padding: 40px 24px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid rgba(155,123,90,0.1);
+    transition: transform 0.3s;
+  }
+  .why-card:hover { transform: translateY(-4px); }
+  .why-icon {
+    width: 56px; height: 56px;
+    background: var(--linen);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 1.4rem;
+  }
+  .why-card h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .why-card p {
+    font-size: 0.84rem;
+    line-height: 1.7;
+    color: #6a6a65;
+  }
+
+  /* ── QUIZ BANNER ── */
+  .quiz-banner {
+    margin: 0 80px;
+    background: linear-gradient(135deg, var(--sage-dark) 0%, var(--moss) 100%);
+    border-radius: 8px;
+    padding: 70px 80px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .quiz-banner::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .quiz-banner::after {
+    content: '';
+    position: absolute;
+    top: -100px; right: -100px;
+    width: 450px; height: 450px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .quiz-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 14px;
+  }
+  .quiz-banner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.4rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .quiz-banner p {
+    font-size: 0.9rem;
+    opacity: 0.75;
+    line-height: 1.7;
+    max-width: 480px;
+  }
+  .btn-light {
+    background: white;
+    color: var(--moss);
+    padding: 18px 40px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: none; cursor: pointer;
+    border-radius: 2px;
+    white-space: nowrap;
+    transition: transform 0.2s;
+    font-weight: 500;
+  }
+  .btn-light:hover { transform: translateY(-2px); }
+
+  /* ── TESTIMONIALS ── */
+  .testimonials {
+    padding: 100px 80px;
+    background: var(--warm-white);
+  }
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 60px;
+  }
+  .testimonial-card {
+    padding: 36px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid rgba(155,123,90,0.1);
+  }
+  .stars {
+    color: var(--earth);
+    font-size: 0.85rem;
+    letter-spacing: 3px;
+    margin-bottom: 18px;
+  }
+  .testimonial-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--charcoal);
+    margin-bottom: 24px;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .author-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: white;
+  }
+  .author-name { font-size: 0.84rem; font-weight: 500; }
+  .author-location { font-size: 0.72rem; color: #888; margin-top: 2px; }
+
+  /* ── PROCESS ── */
+  .process {
+    padding: 100px 80px;
+    background: var(--linen);
+  }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 60px;
+    position: relative;
+  }
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 10%; right: 10%;
+    height: 1px;
+    background: var(--earth-light);
+    opacity: 0.4;
+  }
+  .process-step { text-align: center; padding: 0 20px; position: relative; }
+  .step-dot {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--charcoal);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 24px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    position: relative;
+    z-index: 1;
+  }
+  .process-step h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 10px;
+  }
+  .process-step p { font-size: 0.84rem; line-height: 1.7; color: #6a6a65; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #1e1e1c;
+    color: rgba(245,240,232,0.7);
+    padding: 80px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+  .footer-brand .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--cream);
+    margin-bottom: 16px;
+  }
+  .footer-brand .logo span { color: var(--sage); }
+  .footer-brand p { font-size: 0.84rem; line-height: 1.8; max-width: 260px; }
+  .footer-col h4 {
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream);
+    margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul li a {
+    text-decoration: none;
+    color: rgba(245,240,232,0.55);
+    font-size: 0.84rem;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--cream); }
+  .footer-bottom {
+    display: flex; justify-content: space-between; align-items: center;
+    padding-top: 32px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 0.75rem;
+  }
+  .footer-bottom a {
+    color: rgba(245,240,232,0.5);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-bottom a:hover { color: var(--cream); }
+
+  /* ── ANIMATIONS ── */
+  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── SCROLL TOP ── */
+  .scroll-indicator {
+    position: absolute;
+    bottom: 40px; left: 80px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: #888;
+  }
+  .scroll-line {
+    width: 32px; height: 1px;
+    background: var(--earth);
+    animation: scrollDown 2s infinite;
+  }
+  @keyframes scrollDown {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">Terra<span>Sleep</span></a>
+  <ul class="nav-links">
+    <li><a href="#products">Mattresses</a></li>
+    <li><a href="#materials">Materials</a></li>
+    <li><a href="#about">Our Story</a></li>
+    <li><a href="#testimonials">Reviews</a></li>
+    <li><a href="#quiz" class="nav-cta">Find Your Match</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Certified Organic Sleep</div>
+    <h1>Sleep<br>as <em>nature</em><br>intended.</h1>
+    <p>Handcrafted mattresses made from the finest certified organic materials — free from synthetic foams, toxic chemicals, and off-gassing. Because your best sleep should also be your healthiest.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Shop Mattresses</a>
+      <a href="#quiz" class="btn-outline">Take the Sleep Quiz</a>
+    </div>
+    <div class="scroll-indicator">
+      <div class="scroll-line"></div>
+      Scroll to explore
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <!-- Illustrated Bed SVG -->
+      <svg class="bed-illustration" viewBox="0 0 520 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Mattress base -->
+        <rect x="20" y="200" width="480" height="60" rx="6" fill="#8B7355" opacity="0.6"/>
+        <!-- Mattress -->
+        <rect x="30" y="155" width="460" height="55" rx="6" fill="#F5F0E8"/>
+        <rect x="30" y="155" width="460" height="12" rx="6" fill="#E8DFD0"/>
+        <!-- Mattress side detail lines -->
+        <line x1="30" y1="175" x2="490" y2="175" stroke="#D4C9B4" strokeWidth="1" opacity="0.5"/>
+        <!-- Pillow 1 -->
+        <rect x="50" y="110" width="150" height="50" rx="20" fill="white" opacity="0.9"/>
+        <rect x="55" y="115" width="140" height="40" rx="18" fill="#FAF7F2"/>
+        <!-- Pillow 2 -->
+        <rect x="220" y="110" width="150" height="50" rx="20" fill="white" opacity="0.9"/>
+        <rect x="225" y="115" width="140" height="40" rx="18" fill="#FAF7F2"/>
+        <!-- Comforter fold -->
+        <path d="M30 210 Q260 190 490 210" stroke="#D4C9B4" strokeWidth="2" fill="none" opacity="0.5"/>
+        <!-- Headboard -->
+        <rect x="0" y="60" width="520" height="110" rx="4" fill="#7A8B6F" opacity="0.3"/>
+        <rect x="0" y="55" width="520" height="18" rx="4" fill="#7A8B6F" opacity="0.5"/>
+        <!-- Legs -->
+        <rect x="50" y="258" width="12" height="30" rx="2" fill="#6B5B45" opacity="0.5"/>
+        <rect x="458" y="258" width="12" height="30" rx="2" fill="#6B5B45" opacity="0.5"/>
+        <!-- Leaf decorations -->
+        <ellipse cx="440" cy="80" rx="18" ry="10" fill="#7A8B6F" opacity="0.4" transform="rotate(-30 440 80)"/>
+        <ellipse cx="460" cy="68" rx="14" ry="7" fill="#5A6952" opacity="0.35" transform="rotate(-20 460 68)"/>
+        <line x1="445" y1="88" x2="460" y2="60" stroke="#5A6952" strokeWidth="1.5" opacity="0.4"/>
+        <ellipse cx="75" cy="75" rx="16" ry="9" fill="#7A8B6F" opacity="0.4" transform="rotate(25 75 75)"/>
+        <line x1="75" y1="83" x2="78" y2="58" stroke="#5A6952" strokeWidth="1.5" opacity="0.4"/>
+      </svg>
+      <div class="hero-badge">
+        <div class="num">30 yr</div>
+        <div class="label">Craftsmanship Legacy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="trust-item"><span class="trust-icon">🌿</span> No Synthetic Chemicals</div>
+  <div class="trust-item"><span class="trust-icon">✦</span> Free White Glove Delivery</div>
+  <div class="trust-item"><span class="trust-icon">♾️</span> 100-Night Sleep Trial</div>
+  <div class="trust-item"><span class="trust-icon">🏅</span> Lifetime Warranty</div>
+  <div class="trust-item"><span class="trust-icon">♻️</span> Fully Biodegradable</div>
+</div>
+
+<!-- CERTIFICATIONS -->
+<div class="certs">
+  <span class="cert-label">Certified by</span>
+  <div class="cert-badge">🌾 GOTS Certified</div>
+  <div class="cert-badge">🧪 GOLS Certified</div>
+  <div class="cert-badge">🌱 OEKO-TEX</div>
+  <div class="cert-badge">✓ GREENGUARD Gold</div>
+  <div class="cert-badge">🐑 Responsible Wool</div>
+</div>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <div class="section-header fade-in">
+    <div class="section-tag">Our Collection</div>
+    <h2>The <em>finest</em> organic mattresses</h2>
+    <p>Each mattress is handcrafted in small batches using only certified organic and natural materials, tailored for your ideal night's sleep.</p>
+  </div>
+
+  <div class="products-grid">
+    <!-- Card 1 -->
+    <div class="product-card fade-in">
+      <div class="product-img">
+        <span class="badge-pill green">Bestseller</span>
+        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="120" width="260" height="50" rx="4" fill="rgba(255,255,255,0.3)"/>
+          <rect x="20" y="90" width="260" height="34" rx="4" fill="rgba(255,255,255,0.6)"/>
+          <rect x="30" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
+          <rect x="145" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <div class="product-sub">Natural Latex Hybrid</div>
+        <div class="product-name">The Woodland</div>
+        <p class="product-desc">Our signature medium-firm mattress featuring 3" of GOLS-certified natural latex over 8" of individually wrapped organic coils. Exceptionally breathable and resilient.</p>
+        <div class="product-materials">
+          <span class="material-tag">Organic Cotton</span>
+          <span class="material-tag">Natural Latex</span>
+          <span class="material-tag">Joma Wool</span>
+          <span class="material-tag">Pocket Coils</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price"><span>Starting from</span>$2,490</div>
+          <button class="btn-card">Shop Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="product-card fade-in" style="transition-delay: 0.15s">
+      <div class="product-img">
+        <span class="badge-pill">Luxury</span>
+        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="115" width="260" height="55" rx="4" fill="rgba(255,255,255,0.25)"/>
+          <rect x="20" y="82" width="260" height="36" rx="4" fill="rgba(255,255,255,0.55)"/>
+          <rect x="20" y="55" width="260" height="30" rx="4" fill="rgba(255,255,255,0.35)"/>
+          <rect x="30" y="30" width="90" height="28" rx="14" fill="rgba(255,255,255,0.65)"/>
+          <rect x="135" y="30" width="90" height="28" rx="14" fill="rgba(255,255,255,0.65)"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <div class="product-sub">Pure Latex All-Natural</div>
+        <div class="product-name">The Canopy</div>
+        <p class="product-desc">A fully customizable latex mattress with interchangeable comfort layers. Choose your firmness on each side of the bed. GOTS organic cotton and Merino wool throughout.</p>
+        <div class="product-materials">
+          <span class="material-tag">Dunlop Latex</span>
+          <span class="material-tag">Merino Wool</span>
+          <span class="material-tag">Organic Cotton</span>
+          <span class="material-tag">Customizable</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price"><span>Starting from</span>$3,290</div>
+          <button class="btn-card">Shop Now</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="product-card fade-in" style="transition-delay: 0.3s">
+      <div class="product-img">
+        <span class="badge-pill earth">New</span>
+        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="125" width="260" height="45" rx="4" fill="rgba(255,255,255,0.2)"/>
+          <rect x="20" y="95" width="260" height="33" rx="4" fill="rgba(255,255,255,0.5)"/>
+          <rect x="35" y="65" width="105" height="32" rx="14" fill="rgba(255,255,255,0.68)"/>
+          <rect x="155" y="65" width="105" height="32" rx="14" fill="rgba(255,255,255,0.68)"/>
+        </svg>
+      </div>
+      <div class="product-info">
+        <div class="product-sub">Wool & Coil Comfort</div>
+        <div class="product-name">The Meadow</div>
+        <p class="product-desc">Our entry-level organic option. A medium-firm hybrid with a lush organic wool pillowtop, pocket coil core, and a certified organic cotton cover. Perfect for all sleepers.</p>
+        <div class="product-materials">
+          <span class="material-tag">Organic Cotton</span>
+          <span class="material-tag">Joma Wool</span>
+          <span class="material-tag">Pocket Coils</span>
+          <span class="material-tag">Non-Toxic</span>
+        </div>
+        <div class="product-footer">
+          <div class="product-price"><span>Starting from</span>$1,690</div>
+          <button class="btn-card">Shop Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MATERIALS -->
+<section class="materials" id="materials">
+  <div class="section-header fade-in">
+    <div class="section-tag">What's Inside</div>
+    <h2>Only <em>honest</em> materials</h2>
+  </div>
+  <div class="materials-layout">
+    <div class="materials-list">
+      <div class="material-item fade-in">
+        <div class="material-num">01</div>
+        <div class="material-content">
+          <h3>Certified Organic Cotton</h3>
+          <p>GOTS-certified, grown without pesticides or synthetic fertilizers. Breathable, durable, and irresistibly soft — every layer is covered in it.</p>
+        </div>
+      </div>
+      <div class="material-item fade-in">
+        <div class="material-num">02</div>
+        <div class="material-content">
+          <h3>Natural Latex (GOLS)</h3>
+          <p>Sustainably tapped from Hevea rubber trees in small batches. Naturally resistant to mold, dust mites, and bacteria — with buoyant, pressure-relieving support.</p>
+        </div>
+      </div>
+      <div class="material-item fade-in">
+        <div class="material-num">03</div>
+        <div class="material-content">
+          <h3>Joma & Merino Wool</h3>
+          <p>Ethically sourced, naturally flame-resistant, and moisture-wicking. Keeps you cool in summer, warm in winter — no chemical treatments required.</p>
+        </div>
+      </div>
+      <div class="material-item fade-in">
+        <div class="material-num">04</div>
+        <div class="material-content">
+          <h3>Tempered Steel Pocket Coils</h3>
+          <p>Individually wrapped, carbon-neutral steel coils that move independently to minimize motion transfer and provide targeted spinal support.</p>
+        </div>
+      </div>
+    </div>
+    <div class="materials-visual fade-in">
+      <svg viewBox="0 0 300 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cross-section layers illustration -->
+        <!-- Cotton top -->
+        <rect x="20" y="20" width="260" height="48" rx="4" fill="rgba(245,240,232,0.15)" stroke="rgba(245,240,232,0.3)" strokeWidth="1"/>
+        <text x="145" y="49" textAnchor="middle" fill="rgba(245,240,232,0.6)" fontSize="10" fontFamily="Jost">ORGANIC COTTON COVER</text>
+        <!-- Wool -->
+        <rect x="20" y="74" width="260" height="48" rx="2" fill="rgba(196,168,130,0.15)" stroke="rgba(196,168,130,0.3)" strokeWidth="1"/>
+        <text x="145" y="103" textAnchor="middle" fill="rgba(196,168,130,0.7)" fontSize="10" fontFamily="Jost">WOOL BATTING</text>
+        <!-- Latex -->
+        <rect x="20" y="128" width="260" height="72" rx="2" fill="rgba(122,139,111,0.2)" stroke="rgba(122,139,111,0.4)" strokeWidth="1"/>
+        <text x="145" y="168" textAnchor="middle" fill="rgba(122,139,111,0.9)" fontSize="10" fontFamily="Jost">NATURAL LATEX — 3"</text>
+        <!-- Coils -->
+        <rect x="20" y="206" width="260" height="100" rx="2" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+        <!-- Draw coils -->
+        <g stroke="rgba(245,240,232,0.4)" strokeWidth="1.2" fill="none">
+          <path d="M 40 215 Q 50 230 60 215 Q 70 200 80 215 Q 90 230 100 215"/>
+          <path d="M 100 215 Q 110 230 120 215 Q 130 200 140 215 Q 150 230 160 215"/>
+          <path d="M 160 215 Q 170 230 180 215 Q 190 200 200 215 Q 210 230 220 215"/>
+          <path d="M 220 215 Q 230 230 240 215 Q 250 200 260 215 Q 270 230 280 215"/>
+          <path d="M 40 240 Q 50 255 60 240 Q 70 225 80 240 Q 90 255 100 240"/>
+          <path d="M 100 240 Q 110 255 120 240 Q 130 225 140 240 Q 150 255 160 240"/>
+          <path d="M 160 240 Q 170 255 180 240 Q 190 225 200 240 Q 210 255 220 240"/>
+          <path d="M 220 240 Q 230 255 240 240 Q 250 225 260 240 Q 270 255 280 240"/>
+          <path d="M 40 270 Q 50 285 60 270 Q 70 255 80 270 Q 90 285 100 270"/>
+          <path d="M 100 270 Q 110 285 120 270 Q 130 255 140 270 Q 150 285 160 270"/>
+          <path d="M 160 270 Q 170 285 180 270 Q 190 255 200 270 Q 210 285 220 270"/>
+        </g>
+        <text x="145" y="316" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="10" fontFamily="Jost">POCKET COIL CORE — 8"</text>
+        <!-- Base -->
+        <rect x="20" y="322" width="260" height="22" rx="2" fill="rgba(155,123,90,0.2)" stroke="rgba(155,123,90,0.3)" strokeWidth="1"/>
+        <text x="145" y="337" textAnchor="middle" fill="rgba(155,123,90,0.6)" fontSize="9" fontFamily="Jost">ORGANIC COTTON BASE</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="about">
+  <div class="section-header fade-in">
+    <div class="section-tag">Why Terra Sleep</div>
+    <h2>Sleep <em>better</em>, live healthier</h2>
+    <p>We're obsessed with the details that most mattress companies ignore — because what you sleep on every night matters more than you think.</p>
+  </div>
+  <div class="why-grid">
+    <div class="why-card fade-in">
+      <div class="why-icon">🌿</div>
+      <h3>Zero Off-Gassing</h3>
+      <p>No synthetic foams, no petrochemicals, no volatile organic compounds (VOCs). Breathe clean air all night, every night.</p>
+    </div>
+    <div class="why-card fade-in" style="transition-delay:0.1s">
+      <div class="why-icon">🤲</div>
+      <h3>Handcrafted</h3>
+      <p>Every mattress is built to order by skilled craftspeople in small batches — not on an assembly line. Quality you can feel.</p>
+    </div>
+    <div class="why-card fade-in" style="transition-delay:0.2s">
+      <div class="why-icon">🛏️</div>
+      <h3>100-Night Trial</h3>
+      <p>Sleep on it for 100 nights. If you don't love it, we'll pick it up and refund you in full — no questions asked.</p>
+    </div>
+    <div class="why-card fade-in" style="transition-delay:0.3s">
+      <div class="why-icon">🏆</div>
+      <h3>Lifetime Warranty</h3>
+      <p>We stand behind every stitch, every spring, every layer. Your mattress is built to last — and warranted to prove it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ BANNER -->
+<div class="quiz-banner fade-in" id="quiz">
+  <div>
+    <div class="quiz-tag">Personalized Recommendation</div>
+    <h2>Not sure which<br>mattress is right for you?</h2>
+    <p>Our 2-minute sleep quiz analyzes your sleep position, temperature preferences, and health goals to match you with your perfect organic mattress.</p>
+  </div>
+  <button class="btn-light" onclick="alert('Quiz feature — connect to your quiz tool!')">Take the Sleep Quiz →</button>
+</div>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-header fade-in">
+    <div class="section-tag">Real Customers</div>
+    <h2>Thousands sleep <em>better</em> already</h2>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-in">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Finding an all-natural, truly non-toxic mattress felt impossible — until Terra Sleep. The difference in how I feel waking up is remarkable. No more morning headaches."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background: var(--sage-dark)">J</div>
+        <div>
+          <div class="author-name">Jennifer B.</div>
+          <div class="author-location">Seattle, WA — The Woodland</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in" style="transition-delay:0.15s">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"The service was superb — they truly listened to what I needed and helped me navigate every option. The mattress arrived perfectly, and the white glove setup was seamless."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background: var(--earth)">M</div>
+        <div>
+          <div class="author-name">Michael T.</div>
+          <div class="author-location">Boston, MA — The Canopy</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in" style="transition-delay:0.3s">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"We've been sleeping on ours for 3 years now — it's still perfect. Knowing there are no chemicals off-gassing around my kids gives me so much peace of mind."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar" style="background: var(--moss)">S</div>
+        <div>
+          <div class="author-name">Sarah K.</div>
+          <div class="author-location">Denver, CO — The Meadow</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="section-header fade-in">
+    <div class="section-tag">How It Works</div>
+    <h2>From forest to <em>bedroom</em></h2>
+  </div>
+  <div class="process-steps">
+    <div class="process-step fade-in">
+      <div class="step-dot">1</div>
+      <h3>Take the Quiz</h3>
+      <p>Answer a few questions about your sleep style and preferences to get your personalized recommendation.</p>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.1s">
+      <div class="step-dot">2</div>
+      <h3>Built to Order</h3>
+      <p>Your mattress is handcrafted by our artisans using certified organic materials sourced from ethical suppliers.</p>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.2s">
+      <div class="step-dot">3</div>
+      <h3>White Glove Delivery</h3>
+      <p>We deliver to your room, set up your mattress, and remove all packaging — free of charge, anywhere in the US.</p>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.3s">
+      <div class="step-dot">4</div>
+      <h3>Sleep Beautifully</h3>
+      <p>Enjoy 100 nights to fall in love. If you don't, we'll refund you in full and find the mattress a new home.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">Terra<span>Sleep</span></div>
+      <p>Purveyors of the finest organic and natural sleep systems. Handcrafted with care, certified for health, delivered with love.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li><a href="#">All Mattresses</a></li>
+        <li><a href="#">The Woodland</a></li>
+        <li><a href="#">The Canopy</a></li>
+        <li><a href="#">The Meadow</a></li>
+        <li><a href="#">Pillows & Toppers</a></li>
+        <li><a href="#">Organic Bedding</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Learn</h4>
+      <ul>
+        <li><a href="#">Our Materials</a></li>
+        <li><a href="#">Certifications</a></li>
+        <li><a href="#">Why Organic?</a></li>
+        <li><a href="#">Sleep Guide</a></li>
+        <li><a href="#">Our Story</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">100-Night Trial</a></li>
+        <li><a href="#">Lifetime Warranty</a></li>
+        <li><a href="#">Delivery Info</a></li>
+        <li><a href="#">Contact Us</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Terra Sleep. All rights reserved.</span>
+    <div style="display:flex;gap:24px">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="#">Accessibility</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Intersection Observer for fade-in animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Nav shrink on scroll
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 60) {
+      nav.style.padding = '14px 60px';
+    } else {
+      nav.style.padding = '22px 60px';
+    }
+  });
+</script>
+</body>
+</html>

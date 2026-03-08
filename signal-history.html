@@ -1,0 +1,1681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal — A History of Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&family=Courier+Prime:wght@400;700&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#1a1008;}
+
+#world{
+  position:absolute;
+  top:0;left:0;
+  height:100vh;
+  display:flex;
+  align-items:stretch;
+  transition:transform 1.4s cubic-bezier(0.77,0,0.175,1);
+  will-change:transform;
+}
+
+/* ── WIRE CONNECTOR ── */
+.wire-segment{
+  width:300px;
+  min-width:300px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  overflow:visible;
+}
+.wire-segment svg{width:100%;height:100%;position:absolute;top:0;left:0;overflow:visible;}
+
+/* ── ERA PANELS ── */
+.era{
+  height:100vh;
+  flex-shrink:0;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* ── YEAR BADGE ── */
+.year-badge{
+  position:absolute;
+  top:2rem;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:'Special Elite',serif;
+  font-size:clamp(1rem,2vw,1.4rem);
+  color:rgba(255,255,255,0.5);
+  letter-spacing:0.3em;
+  text-transform:uppercase;
+  z-index:20;
+}
+
+/* ── INSTRUCTION BUBBLE ── */
+.instruction{
+  position:absolute;
+  bottom:2.5rem;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.15);
+  padding:0.7rem 1.5rem;
+  font-size:0.75rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+  z-index:20;
+  text-align:center;
+  backdrop-filter:blur(8px);
+  white-space:nowrap;
+}
+
+/* ══════════════════════════════════
+   1. MORSE TELEGRAPH — 1844
+══════════════════════════════════ */
+#era-morse{background:linear-gradient(160deg,#1a1005 0%,#2a1a08 60%,#1a1205 100%);}
+#era-morse::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' fill='rgba(255,200,100,0.03)'/%3E%3C/svg%3E");pointer-events:none;}
+
+.telegraph-desk{
+  width:min(600px,85vw);
+  position:relative;
+}
+
+.telegraph-machine{
+  background:linear-gradient(145deg,#3d2810,#2a1a08,#3d2810);
+  border:2px solid #6b4a1e;
+  border-radius:8px;
+  padding:2rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,200,100,0.1);
+  position:relative;
+}
+.telegraph-machine::after{
+  content:'';position:absolute;inset:0;border-radius:8px;
+  background:linear-gradient(135deg,rgba(255,200,100,0.05) 0%,transparent 50%);
+  pointer-events:none;
+}
+
+.morse-display{
+  font-family:'Special Elite',serif;
+  font-size:1.1rem;
+  color:#c8a060;
+  background:rgba(0,0,0,0.5);
+  border:1px solid #4a3010;
+  padding:0.8rem 1rem;
+  margin-bottom:1.2rem;
+  min-height:3rem;
+  letter-spacing:0.15em;
+  text-align:center;
+  position:relative;
+}
+.morse-display::before{content:'INCOMING:';position:absolute;top:-0.5rem;left:0.5rem;font-size:0.55rem;letter-spacing:0.2em;color:#6b4a1e;background:#2a1a08;padding:0 0.3rem;}
+
+.morse-target{
+  font-family:'Special Elite',serif;
+  font-size:0.9rem;
+  color:#8b6030;
+  text-align:center;
+  margin-bottom:1rem;
+  letter-spacing:0.1em;
+}
+.morse-target span{color:#c8a060;}
+
+.morse-input-display{
+  font-family:'Courier Prime',monospace;
+  font-size:1.3rem;
+  color:#e8c878;
+  background:rgba(0,0,0,0.7);
+  border:1px solid #4a3010;
+  border-bottom:2px solid #c8a060;
+  padding:0.6rem 1rem;
+  margin-bottom:1.2rem;
+  min-height:2.5rem;
+  letter-spacing:0.3em;
+  text-align:center;
+}
+
+.telegraph-key{
+  width:100%;
+  height:80px;
+  background:linear-gradient(145deg,#c8a060,#8b6030,#c8a060);
+  border:none;
+  border-radius:6px 6px 4px 4px;
+  cursor:pointer;
+  position:relative;
+  box-shadow:0 6px 0 #4a3010,0 8px 20px rgba(0,0,0,0.6);
+  transition:transform 0.05s,box-shadow 0.05s;
+  font-family:'Special Elite',serif;
+  font-size:0.9rem;
+  color:#1a1008;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+}
+.telegraph-key:active,.telegraph-key.pressed{
+  transform:translateY(4px);
+  box-shadow:0 2px 0 #4a3010,0 4px 10px rgba(0,0,0,0.6);
+}
+.telegraph-key::before{
+  content:'';position:absolute;top:8px;left:8px;right:8px;height:3px;
+  background:rgba(255,255,255,0.2);border-radius:2px;
+}
+
+.morse-feedback{
+  position:absolute;
+  top:-2rem;left:50%;transform:translateX(-50%);
+  font-family:'Special Elite',serif;
+  font-size:0.8rem;
+  color:#e8c878;
+  opacity:0;
+  transition:opacity 0.3s;
+  white-space:nowrap;
+}
+.morse-feedback.show{opacity:1;}
+
+/* ══════════════════════════════════
+   2. ROTARY PHONE — 1876
+══════════════════════════════════ */
+#era-phone{background:linear-gradient(160deg,#0d1520 0%,#1a2535 60%,#0a1018 100%);}
+
+.phone-scene{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:1.5rem;
+}
+
+.phone-body{
+  width:min(320px,75vw);
+  background:linear-gradient(145deg,#2a2018,#1a1510,#2a2018);
+  border:2px solid #4a3828;
+  border-radius:12px 12px 40% 40% / 8px 8px 20px 20px;
+  padding:1.5rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,220,160,0.08);
+  position:relative;
+  cursor:pointer;
+}
+.phone-body.ringing{animation:phoneRing 0.5s ease infinite alternate;}
+@keyframes phoneRing{from{transform:rotate(-2deg);}to{transform:rotate(2deg);}}
+
+.phone-earpiece{
+  width:60%;margin:0 auto 1rem;height:20px;
+  background:linear-gradient(90deg,#1a1510,#3a2a20,#1a1510);
+  border-radius:10px;
+  border:1px solid #4a3828;
+}
+
+.rotary-dial{
+  width:180px;height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#4a3828,#1a1510,#0a0a08);
+  border:3px solid #5a4838;
+  margin:0 auto;
+  position:relative;
+  cursor:pointer;
+  box-shadow:inset 0 4px 12px rgba(0,0,0,0.8),0 0 0 8px #2a1a10;
+  transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);
+}
+.rotary-center{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:40px;height:40px;border-radius:50%;
+  background:radial-gradient(circle,#6a5040,#3a2820);
+  border:2px solid #4a3828;
+}
+.dial-hole{
+  position:absolute;
+  width:22px;height:22px;
+  border-radius:50%;
+  background:rgba(0,0,0,0.8);
+  border:1px solid #4a3828;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Special Elite',serif;
+  font-size:0.7rem;
+  color:#8a6a50;
+  cursor:pointer;
+  transition:background 0.1s;
+}
+.dial-hole:hover{background:rgba(255,200,100,0.1);}
+.dial-hole.dialing{background:rgba(255,200,100,0.2);}
+
+.phone-display{
+  font-family:'Special Elite',serif;
+  font-size:1rem;
+  color:#c8a060;
+  text-align:center;
+  background:rgba(0,0,0,0.5);
+  border:1px solid #3a2820;
+  padding:0.5rem;
+  letter-spacing:0.2em;
+  margin-top:0.8rem;
+  min-height:2rem;
+}
+
+.ring-bell{
+  display:flex;gap:1rem;justify-content:center;margin-bottom:0.5rem;
+}
+.bell{
+  width:30px;height:30px;border-radius:50% 50% 0 0;
+  background:linear-gradient(145deg,#d4a850,#8a6030);
+  border:1px solid #c8a060;
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* ══════════════════════════════════
+   3. RADIO — 1895
+══════════════════════════════════ */
+#era-radio{background:linear-gradient(160deg,#0a1505 0%,#152010 60%,#0a1205 100%);}
+
+.radio-scene{display:flex;flex-direction:column;align-items:center;gap:1.5rem;}
+
+.radio-body{
+  width:min(480px,85vw);
+  background:linear-gradient(145deg,#3d2a10,#281c08,#3d2a10);
+  border:2px solid #6b4a1e;
+  border-radius:8px 8px 4px 4px;
+  padding:1.5rem 2rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  position:relative;
+}
+
+.radio-speaker{
+  width:100%;height:80px;
+  background:repeating-linear-gradient(90deg,#1a1008 0px,#1a1008 3px,#2a1a08 3px,#2a1a08 8px);
+  border:2px solid #4a3010;
+  border-radius:4px;
+  margin-bottom:1.5rem;
+  position:relative;
+  overflow:hidden;
+}
+.radio-speaker::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(180deg,transparent 0px,transparent 5px,rgba(0,0,0,0.3) 5px,rgba(0,0,0,0.3) 6px);
+}
+.signal-wave{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:0;height:2px;background:#c8a060;
+  transition:width 0.3s ease;
+  box-shadow:0 0 8px #c8a060;
+}
+.signal-wave.active{width:80%;}
+
+.freq-display{
+  font-family:'VT323',monospace;
+  font-size:2rem;
+  color:#00ff88;
+  background:#0a0a00;
+  border:1px solid #2a2a00;
+  padding:0.3rem 0.8rem;
+  text-align:center;
+  margin-bottom:1rem;
+  text-shadow:0 0 10px #00ff88;
+  letter-spacing:0.1em;
+}
+
+.dial-wrapper{
+  display:flex;align-items:center;gap:1rem;margin-bottom:1rem;
+}
+.freq-label{font-family:'Special Elite',serif;font-size:0.8rem;color:#8b6030;letter-spacing:0.1em;}
+
+.freq-slider{
+  -webkit-appearance:none;flex:1;height:4px;
+  background:linear-gradient(90deg,#1a1008,#c8a060,#1a1008);
+  outline:none;cursor:pointer;border-radius:2px;
+}
+.freq-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:30px;
+  background:linear-gradient(145deg,#d4a850,#8a6030);
+  border-radius:3px;cursor:pointer;
+  border:1px solid #c8a060;
+  box-shadow:0 2px 8px rgba(0,0,0,0.5);
+}
+
+.static-text{
+  font-family:'VT323',monospace;font-size:1rem;
+  color:rgba(200,160,96,0.4);text-align:center;
+  letter-spacing:0.05em;transition:opacity 0.5s;
+}
+.static-text.locked{color:#00ff88;opacity:1;text-shadow:0 0 8px #00ff88;}
+
+/* ══════════════════════════════════
+   4. TV ANTENNA — 1936
+══════════════════════════════════ */
+#era-tv{background:linear-gradient(160deg,#0a0808 0%,#1a1210 60%,#0a0a08 100%);}
+
+.tv-scene{display:flex;flex-direction:column;align-items:center;gap:1rem;}
+
+.tv-body{
+  width:min(420px,80vw);
+  background:linear-gradient(145deg,#2a2018,#1a1510,#2a2018);
+  border:3px solid #3a2820;
+  border-radius:16px;
+  padding:1.5rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  position:relative;
+}
+.tv-screen-wrap{
+  background:#000;border:3px inset #1a1510;
+  border-radius:8px;overflow:hidden;margin-bottom:1rem;
+  position:relative;aspect-ratio:4/3;
+}
+.tv-screen{
+  width:100%;height:100%;
+  background:#050508;
+  position:relative;overflow:hidden;
+}
+.tv-scanlines{
+  position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.3) 2px,rgba(0,0,0,0.3) 4px);
+  pointer-events:none;z-index:5;
+}
+.tv-static{
+  position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity:1;transition:opacity 1s;
+}
+.tv-static.cleared{opacity:0;}
+.tv-image{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Special Elite',serif;font-size:1.2rem;color:#c8c8a0;
+  opacity:0;transition:opacity 1s;
+  text-align:center;padding:1rem;
+  text-shadow:0 0 8px rgba(200,200,160,0.5);
+}
+.tv-image.visible{opacity:1;}
+
+.antenna-controls{
+  display:flex;gap:2rem;justify-content:center;margin-top:0.5rem;
+}
+.antenna-wrap{
+  display:flex;flex-direction:column;align-items:center;gap:0.5rem;
+}
+.antenna-label{font-family:'Special Elite',serif;font-size:0.7rem;color:#6a5040;letter-spacing:0.15em;}
+input[type=range].antenna-slider{
+  -webkit-appearance:none;width:100px;height:3px;
+  background:rgba(255,255,255,0.15);outline:none;cursor:pointer;
+  transform:rotate(-90deg);margin:2rem 0;
+}
+input[type=range].antenna-slider::-webkit-slider-thumb{
+  -webkit-appearance:none;width:14px;height:14px;
+  background:linear-gradient(145deg,#c8c8a0,#8a8870);
+  border-radius:2px;cursor:pointer;
+}
+
+.tv-knobs{display:flex;gap:1rem;justify-content:flex-end;margin-top:0.5rem;}
+.tv-knob{
+  width:28px;height:28px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#4a3828,#1a1510);
+  border:1px solid #3a2820;cursor:pointer;
+}
+
+/* ══════════════════════════════════
+   5. ARPANET TERMINAL — 1969
+══════════════════════════════════ */
+#era-arpanet{background:#000;}
+
+.terminal-scene{
+  width:min(680px,90vw);
+  font-family:'VT323',monospace;
+}
+.terminal-body{
+  background:#050a00;
+  border:2px solid #00aa44;
+  border-radius:4px;
+  box-shadow:0 0 40px rgba(0,180,80,0.15),inset 0 0 60px rgba(0,50,0,0.3);
+  overflow:hidden;
+}
+.terminal-header{
+  background:#001a00;
+  border-bottom:1px solid #00aa44;
+  padding:0.4rem 1rem;
+  display:flex;justify-content:space-between;
+  font-size:0.8rem;color:#00aa44;letter-spacing:0.15em;
+}
+.terminal-output{
+  padding:1rem;
+  min-height:260px;
+  max-height:260px;
+  overflow-y:auto;
+  font-size:1.1rem;
+  color:#00dd66;
+  line-height:1.4;
+  text-shadow:0 0 6px rgba(0,220,100,0.4);
+}
+.terminal-output::-webkit-scrollbar{width:4px;}
+.terminal-output::-webkit-scrollbar-thumb{background:#00aa44;}
+
+.terminal-line{margin-bottom:0.2rem;}
+.terminal-line.error{color:#ff4444;}
+.terminal-line.success{color:#88ff88;}
+.terminal-line.dim{color:#006622;}
+
+.terminal-input-row{
+  display:flex;align-items:center;
+  border-top:1px solid #00aa44;
+  padding:0.5rem 1rem;
+  gap:0.5rem;
+}
+.terminal-prompt{color:#00dd66;font-size:1.1rem;white-space:nowrap;}
+.terminal-input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:'VT323',monospace;font-size:1.1rem;
+  color:#00dd66;caret-color:#00dd66;
+  text-shadow:0 0 6px rgba(0,220,100,0.4);
+}
+
+/* ══════════════════════════════════
+   6. NOKIA SMS — 1992
+══════════════════════════════════ */
+#era-sms{background:linear-gradient(160deg,#0a0a15 0%,#10101a 100%);}
+
+.nokia-scene{display:flex;flex-direction:column;align-items:center;gap:1rem;}
+.nokia-body{
+  width:200px;
+  background:linear-gradient(145deg,#2a2a35,#1a1a25,#2a2a35);
+  border:2px solid #3a3a4a;
+  border-radius:20px 20px 30px 30px;
+  padding:1rem;
+  box-shadow:0 20px 60px rgba(0,0,0,0.8);
+  position:relative;
+}
+.nokia-screen{
+  background:#90a878;
+  border:3px solid #2a2a35;
+  border-radius:4px;
+  padding:0.5rem;
+  margin-bottom:0.8rem;
+  min-height:80px;
+  font-family:'Courier Prime',monospace;
+  font-size:0.75rem;
+  color:#1a2a10;
+  letter-spacing:0.05em;
+  line-height:1.4;
+  position:relative;
+}
+.nokia-screen::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 10px,rgba(0,0,0,0.04) 10px,rgba(0,0,0,0.04) 11px);
+  pointer-events:none;
+}
+.nokia-brand{
+  text-align:center;font-family:'Special Elite',serif;
+  font-size:0.6rem;color:#5a5a6a;letter-spacing:0.3em;
+  margin-bottom:0.5rem;
+}
+.nokia-keys{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:4px;
+}
+.nokia-key{
+  background:linear-gradient(145deg,#3a3a4a,#25252f);
+  border:1px solid #4a4a5a;
+  border-radius:4px;padding:6px 2px;
+  text-align:center;cursor:pointer;
+  transition:all 0.08s;
+  position:relative;
+}
+.nokia-key:active,.nokia-key.pressed{
+  background:linear-gradient(145deg,#25252f,#3a3a4a);
+  transform:scale(0.95);
+}
+.nokia-key .main{font-family:'Courier Prime',monospace;font-size:0.9rem;color:#d0d0e0;display:block;}
+.nokia-key .sub{font-family:'Special Elite',serif;font-size:0.45rem;color:#7a7a8a;letter-spacing:0.05em;display:block;}
+.sms-target{
+  font-family:'Special Elite',serif;font-size:0.85rem;
+  color:#8a8a9a;text-align:center;letter-spacing:0.1em;
+}
+.sms-target span{color:#c0c0d0;}
+
+/* ══════════════════════════════════
+   7. AIM — 1997
+══════════════════════════════════ */
+#era-aim{background:linear-gradient(160deg,#c0c8d8 0%,#a8b4c8 100%);}
+
+.aim-scene{display:flex;flex-direction:column;align-items:center;}
+.aim-window{
+  width:min(400px,85vw);
+  border:2px solid #4a6898;
+  border-radius:4px 4px 0 0;
+  box-shadow:4px 4px 0 rgba(0,0,0,0.3);
+  overflow:hidden;
+  font-family:'Courier Prime',monospace;
+}
+.aim-titlebar{
+  background:linear-gradient(90deg,#2a4a8a,#4a6ab8);
+  padding:4px 8px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.aim-title{color:#fff;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;}
+.aim-controls{display:flex;gap:4px;}
+.aim-btn{width:14px;height:14px;border-radius:2px;border:1px solid rgba(255,255,255,0.3);
+  background:rgba(255,255,255,0.2);font-size:0.6rem;color:#fff;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;}
+
+.aim-chat{
+  background:#fff;
+  padding:0.8rem;
+  min-height:200px;
+  max-height:200px;
+  overflow-y:auto;
+  font-size:0.8rem;
+  line-height:1.5;
+}
+.aim-msg{margin-bottom:0.3rem;}
+.aim-msg .sender{font-weight:700;}
+.aim-msg.them .sender{color:#2a4a8a;}
+.aim-msg.you .sender{color:#8a2a2a;}
+.aim-msg .text{color:#333;}
+
+.aim-input-area{
+  background:#e8eaf0;
+  border-top:1px solid #4a6898;
+  display:flex;flex-direction:column;
+}
+.aim-toolbar{
+  background:#d0d4e0;
+  border-bottom:1px solid #b0b4c0;
+  padding:3px 6px;
+  display:flex;gap:4px;
+}
+.aim-tool{
+  width:18px;height:18px;background:#fff;border:1px solid #8a9ab0;
+  font-size:0.6rem;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-weight:700;
+}
+.aim-input{
+  padding:0.5rem;border:none;outline:none;background:#fff;
+  font-family:'Courier Prime',monospace;font-size:0.8rem;
+  min-height:50px;resize:none;width:100%;
+}
+.aim-send-row{
+  display:flex;justify-content:flex-end;padding:4px 6px;
+  background:#d0d4e0;gap:4px;
+}
+.aim-send-btn{
+  background:linear-gradient(145deg,#e8eaf8,#c8cce0);
+  border:1px solid #8a9ab0;border-radius:2px;
+  padding:3px 12px;font-family:'Courier Prime',monospace;
+  font-size:0.75rem;cursor:pointer;color:#1a2a4a;
+}
+.aim-send-btn:hover{background:linear-gradient(145deg,#d8daf0,#b8bcd8);}
+.aim-buddy{
+  position:absolute;bottom:1rem;right:1rem;
+  width:60px;
+  background:linear-gradient(145deg,#e8eaf8,#c0c8e0);
+  border:2px solid #4a6898;
+  border-radius:4px;
+  padding:0.5rem;
+  text-align:center;
+  font-family:'Courier Prime',monospace;
+  font-size:0.55rem;color:#2a3a5a;
+  box-shadow:3px 3px 0 rgba(0,0,0,0.2);
+}
+
+/* ══════════════════════════════════
+   8. iPHONE — 2007
+══════════════════════════════════ */
+#era-iphone{background:linear-gradient(160deg,#1a1a1a 0%,#2a2a2a 100%);}
+
+.iphone-scene{display:flex;flex-direction:column;align-items:center;}
+.iphone-body{
+  width:220px;
+  background:linear-gradient(145deg,#2a2a2a,#1a1a1a,#2a2a2a);
+  border:2px solid #3a3a3a;
+  border-radius:28px;
+  padding:1rem 0.8rem;
+  box-shadow:0 30px 80px rgba(0,0,0,0.8),inset 0 1px 0 rgba(255,255,255,0.08);
+  position:relative;
+}
+.iphone-speaker{
+  width:50px;height:5px;background:#111;border-radius:3px;
+  margin:0 auto 0.8rem;border:1px solid #333;
+}
+.iphone-screen{
+  background:#000;border-radius:8px;overflow:hidden;
+  position:relative;aspect-ratio:9/16;margin-bottom:0.8rem;
+}
+.iphone-lockscreen{
+  width:100%;height:100%;
+  background:linear-gradient(160deg,#1a2a4a,#0a0a1a);
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:0.5rem;
+  cursor:pointer;transition:opacity 0.5s;
+}
+.iphone-time{
+  font-family:'Courier Prime',monospace;font-size:2rem;
+  color:#fff;font-weight:700;
+}
+.iphone-date{font-family:'Courier Prime',monospace;font-size:0.55rem;color:rgba(255,255,255,0.7);letter-spacing:0.1em;}
+.slide-hint{
+  position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
+  font-family:'Courier Prime',monospace;font-size:0.5rem;
+  color:rgba(255,255,255,0.5);letter-spacing:0.1em;white-space:nowrap;
+}
+.swipe-arrow{
+  font-size:0.8rem;color:rgba(255,255,255,0.4);
+  animation:swipeAnim 2s ease infinite;
+}
+@keyframes swipeAnim{0%,100%{transform:translateX(-10px);opacity:0.3;}50%{transform:translateX(10px);opacity:1;}}
+
+.iphone-home{
+  width:100%;height:100%;
+  background:linear-gradient(160deg,#1a3a6a,#2a1a5a);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:flex-end;
+  padding-bottom:1rem;
+  opacity:0;transition:opacity 0.5s;
+}
+.iphone-home.visible{opacity:1;}
+.iphone-message-app{
+  width:40px;height:40px;border-radius:10px;
+  background:linear-gradient(145deg,#4aaa4a,#2a8a2a);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.5);
+}
+.iphone-message-screen{
+  width:100%;height:100%;
+  background:#f0f0f0;
+  display:flex;flex-direction:column;
+  opacity:0;transition:opacity 0.5s;position:absolute;inset:0;
+}
+.iphone-message-screen.visible{opacity:1;}
+.imsg-header{
+  background:linear-gradient(180deg,#e8e8e8,#d8d8d8);
+  padding:0.4rem;text-align:center;border-bottom:1px solid #c0c0c0;
+  font-family:'Courier Prime',monospace;font-size:0.6rem;color:#333;font-weight:700;
+}
+.imsg-bubbles{
+  flex:1;padding:0.5rem;overflow-y:auto;
+  display:flex;flex-direction:column;gap:4px;
+}
+.imsg-bubble{
+  max-width:75%;padding:4px 8px;border-radius:12px;
+  font-family:'Courier Prime',monospace;font-size:0.55rem;line-height:1.4;
+}
+.imsg-bubble.them{background:#e0e0e0;color:#333;align-self:flex-start;border-bottom-left-radius:2px;}
+.imsg-bubble.me{background:#4aaa4a;color:#fff;align-self:flex-end;border-bottom-right-radius:2px;}
+.imsg-input-row{
+  display:flex;align-items:center;gap:4px;
+  padding:4px;background:#f8f8f8;border-top:1px solid #d0d0d0;
+}
+.imsg-input{
+  flex:1;background:#fff;border:1px solid #d0d0d0;border-radius:10px;
+  padding:2px 6px;font-family:'Courier Prime',monospace;font-size:0.55rem;
+  outline:none;
+}
+.imsg-send{
+  width:20px;height:20px;background:#4aaa4a;border:none;border-radius:50%;
+  color:#fff;font-size:0.7rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+
+.home-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 40% 40%,#3a3a3a,#1a1a1a);
+  border:2px solid #3a3a3a;margin:0 auto;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.1);
+}
+
+/* ══════════════════════════════════
+   9. THE FUTURE — ???
+══════════════════════════════════ */
+#era-future{background:#000;}
+.future-scene{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:2rem;text-align:center;
+}
+.future-cursor{
+  font-family:'VT323',monospace;font-size:4rem;
+  color:#fff;animation:blink 1s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+.future-text{
+  font-family:'Special Elite',serif;font-size:1.1rem;
+  color:rgba(255,255,255,0.3);letter-spacing:0.2em;
+  max-width:500px;line-height:1.8;
+}
+.future-year{
+  font-family:'VT323',monospace;font-size:1.5rem;
+  color:rgba(255,255,255,0.15);letter-spacing:0.5em;
+}
+
+/* ── PROGRESS BAR ── */
+#progress{
+  position:fixed;bottom:0;left:0;right:0;height:2px;
+  background:rgba(255,255,255,0.05);z-index:100;
+}
+#progress-fill{height:100%;background:rgba(255,255,255,0.3);width:0%;transition:width 1.4s ease;}
+
+/* ── SUCCESS FLASH ── */
+.success-flash{
+  position:absolute;inset:0;background:rgba(255,255,255,0);
+  pointer-events:none;z-index:50;
+  transition:background 0.1s;
+}
+.success-flash.flash{background:rgba(255,255,255,0.15);}
+</style>
+</head>
+<body>
+
+<div id="world">
+
+  <!-- ══ ERA 1: MORSE ══ -->
+  <div class="era" id="era-morse">
+    <div class="year-badge">1844 — Samuel Morse · Washington D.C.</div>
+    <div class="success-flash" id="flash-morse"></div>
+    <div class="telegraph-desk">
+      <div class="telegraph-machine">
+        <div class="morse-display" id="morse-display">— — .  ·  . . . .  ·  . — .  ·  . —  ·  — .</div>
+        <div class="morse-target">Send: <span id="morse-target-word">W</span> &nbsp;·&nbsp; <span style="font-size:0.7rem;color:#6b4a1e" id="morse-hint">( .— )</span></div>
+        <div class="morse-input-display" id="morse-input">
+          <span id="morse-typed"></span><span class="morse-feedback" id="morse-fb"></span>
+        </div>
+        <div style="position:relative;">
+          <div class="morse-feedback" id="morse-word-fb"></div>
+          <button class="telegraph-key" id="morse-key">Telegraph Key</button>
+        </div>
+      </div>
+    </div>
+    <div class="instruction">Hold for dash (—) · Tap for dot (·) · Space to submit letter · Complete: WHAT</div>
+  </div>
+
+  <!-- ══ WIRE 1→2 ══ -->
+  <div class="wire-segment" id="wire-1">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 Q75,30 150,50 Q225,70 300,50" fill="none" stroke="#4a3010" stroke-width="3"/>
+      <circle cx="10" cy="50" r="6" fill="#6b4a1e"/>
+      <circle cx="290" cy="50" r="6" fill="#6b4a1e"/>
+      <line x1="10" y1="50" x2="10" y2="20" stroke="#4a3010" stroke-width="2"/>
+      <line x1="150" y1="50" x2="150" y2="15" stroke="#4a3010" stroke-width="2"/>
+      <line x1="290" y1="50" x2="290" y2="20" stroke="#4a3010" stroke-width="2"/>
+      <rect x="5" y="10" width="10" height="14" fill="#5a4020" rx="1"/>
+      <rect x="145" y="5" width="10" height="14" fill="#5a4020" rx="1"/>
+      <rect x="285" y="10" width="10" height="14" fill="#5a4020" rx="1"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 2: ROTARY PHONE ══ -->
+  <div class="era" id="era-phone">
+    <div class="year-badge">1876 — Alexander Graham Bell · Boston</div>
+    <div class="phone-scene">
+      <div class="ring-bell"><div class="bell"></div><div class="bell"></div></div>
+      <div class="phone-body" id="phone-body" onclick="pickUpPhone()">
+        <div class="phone-earpiece"></div>
+        <div class="rotary-dial" id="rotary-dial">
+          <div class="rotary-center"></div>
+        </div>
+        <div class="phone-display" id="phone-display">Ring... Ring...</div>
+      </div>
+      <div class="instruction" id="phone-instruction">Click phone to answer · Then dial: 1-8-7-6</div>
+    </div>
+  </div>
+
+  <!-- ══ WIRE 2→3 ══ -->
+  <div class="wire-segment" id="wire-2">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,45 Q100,55 200,40 Q250,35 300,45" fill="none" stroke="#3a3a3a" stroke-width="3"/>
+      <path d="M0,55 Q100,65 200,50 Q250,45 300,55" fill="none" stroke="#3a3a3a" stroke-width="2"/>
+      <circle cx="5" cy="50" r="5" fill="#5a5a5a"/>
+      <circle cx="295" cy="50" r="5" fill="#5a5a5a"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 3: RADIO ══ -->
+  <div class="era" id="era-radio">
+    <div class="year-badge">1895 — Guglielmo Marconi · Bologna</div>
+    <div class="radio-scene">
+      <div class="radio-body">
+        <div class="radio-speaker">
+          <div class="signal-wave" id="signal-wave"></div>
+        </div>
+        <div class="freq-display" id="freq-display">000.0 MHz</div>
+        <div class="dial-wrapper">
+          <span class="freq-label">TUNE</span>
+          <input type="range" class="freq-slider" id="freq-slider" min="0" max="1000" value="0" oninput="tuneRadio(this.value)">
+          <span class="freq-label">FREQ</span>
+        </div>
+        <div class="static-text" id="static-text">·-·-·· ··· - ·-· · ·-· -- -·-· --- -·· ·</div>
+      </div>
+    </div>
+    <div class="instruction">Drag the dial to tune — find the right frequency</div>
+  </div>
+
+  <!-- ══ WIRE 3→4 ══ -->
+  <div class="wire-segment" id="wire-3">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 L300,50" fill="none" stroke="#888" stroke-width="4"/>
+      <path d="M0,50 L300,50" fill="none" stroke="#aaa" stroke-width="1" stroke-dasharray="8,6"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 4: TV ANTENNA ══ -->
+  <div class="era" id="era-tv">
+    <div class="year-badge">1936 — BBC · Alexandra Palace, London</div>
+    <div class="tv-scene">
+      <div class="tv-body">
+        <!-- Antenna SVG on top -->
+        <svg width="100%" height="60" viewBox="0 0 300 60" style="display:block;margin-bottom:0.5rem;">
+          <line x1="150" y1="60" x2="150" y2="30" stroke="#888" stroke-width="3"/>
+          <line id="ant-left"  x1="150" y1="30" x2="80"  y2="5"  stroke="#aaa" stroke-width="2" style="transform-origin:150px 30px;transform:rotate(0deg);transition:transform 0.3s;"/>
+          <line id="ant-right" x1="150" y1="30" x2="220" y2="5"  stroke="#aaa" stroke-width="2" style="transform-origin:150px 30px;transform:rotate(0deg);transition:transform 0.3s;"/>
+          <circle cx="150" cy="30" r="5" fill="#888"/>
+        </svg>
+        <div class="tv-screen-wrap">
+          <div class="tv-screen">
+            <div class="tv-static" id="tv-static"></div>
+            <div class="tv-image" id="tv-image">📺 BBC<br>WORLD<br>SERVICE</div>
+            <div class="tv-scanlines"></div>
+          </div>
+        </div>
+        <div class="antenna-controls">
+          <div class="antenna-wrap">
+            <span class="antenna-label">LEFT</span>
+            <input type="range" class="antenna-slider" id="ant-l-slider" min="-60" max="60" value="-45" oninput="adjustAntenna()">
+          </div>
+          <div class="antenna-wrap">
+            <span class="antenna-label">RIGHT</span>
+            <input type="range" class="antenna-slider" id="ant-r-slider" min="-60" max="60" value="45" oninput="adjustAntenna()">
+          </div>
+        </div>
+        <div class="tv-knobs">
+          <div class="tv-knob"></div><div class="tv-knob"></div><div class="tv-knob"></div>
+        </div>
+      </div>
+    </div>
+    <div class="instruction">Adjust both antenna sliders to tune in the signal</div>
+  </div>
+
+  <!-- ══ WIRE 4→5 ══ -->
+  <div class="wire-segment" id="wire-4">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 Q150,20 300,50" fill="none" stroke="#006622" stroke-width="2" stroke-dasharray="10,5"/>
+      <path d="M0,50 Q150,20 300,50" fill="none" stroke="#00aa44" stroke-width="1" opacity="0.4"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 5: ARPANET ══ -->
+  <div class="era" id="era-arpanet">
+    <div class="year-badge">1969 — ARPANET · UCLA Node 1</div>
+    <div class="terminal-scene">
+      <div class="terminal-body">
+        <div class="terminal-header">
+          <span>ARPANET IMP TERMINAL v1.0</span>
+          <span id="terminal-status">ONLINE</span>
+        </div>
+        <div class="terminal-output" id="terminal-output">
+          <div class="terminal-line dim">ARPANET INTERFACE MESSAGE PROCESSOR</div>
+          <div class="terminal-line dim">NODE: UCLA-NMC · IMP #1</div>
+          <div class="terminal-line dim">DATE: 29 OCT 1969 · 22:30</div>
+          <div class="terminal-line">&nbsp;</div>
+          <div class="terminal-line">READY TO TRANSMIT TO SRI NODE 2.</div>
+          <div class="terminal-line">TYPE YOUR COMMAND TO BEGIN.</div>
+          <div class="terminal-line">&nbsp;</div>
+          <div class="terminal-line dim">HINT: TYPE "LOGIN" TO CONNECT</div>
+        </div>
+        <div class="terminal-input-row">
+          <span class="terminal-prompt">UCLA> </span>
+          <input class="terminal-input" id="terminal-input" type="text" autocomplete="off" spellcheck="false" placeholder="type command...">
+        </div>
+      </div>
+    </div>
+    <div class="instruction">Type commands into the terminal to send the first packet</div>
+  </div>
+
+  <!-- ══ WIRE 5→6 ══ -->
+  <div class="wire-segment" id="wire-5">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 Q75,60 150,50 Q225,40 300,50" fill="none" stroke="#555" stroke-width="3"/>
+      <circle cx="10" cy="50" r="4" fill="#777"/><circle cx="290" cy="50" r="4" fill="#777"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 6: NOKIA SMS ══ -->
+  <div class="era" id="era-sms">
+    <div class="year-badge">1992 — Nokia · First SMS</div>
+    <div class="nokia-scene">
+      <div class="sms-target">Type: <span id="sms-target">HI</span></div>
+      <div class="nokia-body">
+        <div class="nokia-brand">NOKIA</div>
+        <div class="nokia-screen" id="nokia-screen">
+          <div id="sms-typed"></div>
+        </div>
+        <div class="nokia-keys" id="nokia-keys"></div>
+      </div>
+    </div>
+    <div class="instruction">Use T9 multi-tap — press 4 twice for H, 4 once for I</div>
+  </div>
+
+  <!-- ══ WIRE 6→7 ══ -->
+  <div class="wire-segment" id="wire-6">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 Q150,70 300,50" fill="none" stroke="#4a6898" stroke-width="3"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 7: AIM ══ -->
+  <div class="era" id="era-aim">
+    <div class="year-badge">1997 — AOL Instant Messenger</div>
+    <div class="aim-scene">
+      <div class="aim-window">
+        <div class="aim-titlebar">
+          <span class="aim-title">🔶 Instant Message from: xXSuperDave99Xx</span>
+          <div class="aim-controls">
+            <div class="aim-btn">_</div>
+            <div class="aim-btn">□</div>
+            <div class="aim-btn">×</div>
+          </div>
+        </div>
+        <div class="aim-chat" id="aim-chat">
+          <div class="aim-msg them"><span class="sender">xXSuperDave99Xx:</span> <span class="text">hey!! asl?? 😄</span></div>
+          <div class="aim-msg them"><span class="sender">xXSuperDave99Xx:</span> <span class="text">type "hey" back lol</span></div>
+        </div>
+        <div class="aim-input-area">
+          <div class="aim-toolbar">
+            <div class="aim-tool">B</div><div class="aim-tool">I</div>
+            <div class="aim-tool">U</div><div class="aim-tool">:)</div>
+          </div>
+          <textarea class="aim-input" id="aim-input" placeholder="Type a message..." rows="2"></textarea>
+          <div class="aim-send-row">
+            <button class="aim-send-btn" onclick="sendAIM()">Send</button>
+            <button class="aim-send-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+      <div class="aim-buddy">
+        <div style="font-size:1.2rem;margin-bottom:2px;">🟡</div>
+        <div>Buddy List</div>
+        <div style="margin-top:4px;color:#4a6898;">xXSuperDave99Xx</div>
+        <div style="color:#888">away</div>
+      </div>
+    </div>
+    <div class="instruction">Type "hey" in the message box and hit Send</div>
+  </div>
+
+  <!-- ══ WIRE 7→8 ══ -->
+  <div class="wire-segment" id="wire-7">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 Q75,40 150,50 Q225,60 300,50" fill="none" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+      <path d="M0,50 Q75,40 150,50 Q225,60 300,50" fill="none" stroke="#555" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 8: iPHONE ══ -->
+  <div class="era" id="era-iphone">
+    <div class="year-badge">2007 — Steve Jobs · Macworld, San Francisco</div>
+    <div class="iphone-scene">
+      <div class="iphone-body">
+        <div class="iphone-speaker"></div>
+        <div class="iphone-screen">
+          <div class="iphone-lockscreen" id="iphone-lock" onclick="unlockIphone()">
+            <div class="iphone-time">9:41</div>
+            <div class="iphone-date">TUESDAY, JANUARY 9</div>
+            <div class="slide-hint">
+              <div class="swipe-arrow">→</div>
+              <div style="font-size:0.45rem;color:rgba(255,255,255,0.4);letter-spacing:0.15em;">SLIDE TO UNLOCK</div>
+            </div>
+          </div>
+          <div class="iphone-home" id="iphone-home">
+            <div class="iphone-message-app" onclick="openMessages()">💬</div>
+          </div>
+          <div class="iphone-message-screen" id="iphone-messages">
+            <div class="imsg-header">Messages — Mom</div>
+            <div class="imsg-bubbles" id="imsg-bubbles">
+              <div class="imsg-bubble them">Can you hear me now? 📱</div>
+              <div class="imsg-bubble them">Reply "hello" to complete!</div>
+            </div>
+            <div class="imsg-input-row">
+              <input class="imsg-input" id="imsg-input" type="text" placeholder="iMessage" autocomplete="off">
+              <button class="imsg-send" onclick="sendIMessage()">▲</button>
+            </div>
+          </div>
+        </div>
+        <div class="home-btn"></div>
+      </div>
+    </div>
+    <div class="instruction">Slide to unlock → tap Messages → type "hello" → send</div>
+  </div>
+
+  <!-- ══ WIRE 8→9 ══ -->
+  <div class="wire-segment" id="wire-8">
+    <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+      <path d="M0,50 L300,50" fill="none" stroke="#111" stroke-width="6"/>
+      <path d="M0,50 L300,50" fill="none" stroke="#222" stroke-width="2"/>
+      <circle cx="150" cy="50" r="3" fill="#333"/>
+    </svg>
+  </div>
+
+  <!-- ══ ERA 9: THE FUTURE ══ -->
+  <div class="era" id="era-future">
+    <div class="year-badge">???? — Unknown</div>
+    <div class="future-scene">
+      <div class="future-year">2 0 _ _</div>
+      <div class="future-cursor">_</div>
+      <div class="future-text">
+        From a single wire stretched between two rooms,<br>
+        to a signal bouncing off satellites.<br><br>
+        Every generation believed they had reached<br>
+        the final form of human connection.<br><br>
+        They were always wrong.
+      </div>
+      <div style="font-family:'Special Elite',serif;font-size:0.7rem;color:rgba(255,255,255,0.15);letter-spacing:0.4em;margin-top:2rem;">END OF SIGNAL</div>
+    </div>
+  </div>
+
+</div><!-- end world -->
+
+<div id="progress"><div id="progress-fill"></div></div>
+
+<script>
+// ══════════════════════════════════════════════
+//  SCROLL ENGINE
+// ══════════════════════════════════════════════
+const TOTAL_ERAS = 9;
+const WIRE_WIDTH = 300;
+let currentEra = 0;
+let scrolling = false;
+
+const world = document.getElementById('world');
+
+function getEraWidth(){ return window.innerWidth; }
+
+function setWorldWidth(){
+  const total = TOTAL_ERAS * getEraWidth() + (TOTAL_ERAS - 1) * WIRE_WIDTH;
+  world.style.width = total + 'px';
+}
+setWorldWidth();
+
+// Also fix each era and wire to use px not vw
+function resizeEras(){
+  setWorldWidth();
+  const ew = getEraWidth();
+  document.querySelectorAll('.era').forEach(el => {
+    el.style.width = ew + 'px';
+    el.style.minWidth = ew + 'px';
+  });
+}
+resizeEras();
+
+function scrollToEra(n, callback){
+  if(scrolling) return;
+  scrolling = true;
+  const offset = n * (getEraWidth() + WIRE_WIDTH);
+  world.style.transform = `translateX(-${offset}px)`;
+  document.getElementById('progress-fill').style.width = ((n / (TOTAL_ERAS-1)) * 100) + '%';
+  setTimeout(() => {
+    scrolling = false;
+    currentEra = n;
+    if(callback) callback();
+  }, 1500);
+}
+
+function advance(){
+  if(currentEra < TOTAL_ERAS - 1){
+    flash(currentEra);
+    setTimeout(() => scrollToEra(currentEra + 1), 400);
+  }
+}
+
+function flash(era){
+  const ids = ['morse','phone','radio','tv','arpanet','sms','aim','iphone','future'];
+  const el = document.getElementById('flash-' + ids[era]);
+  if(el){ el.classList.add('flash'); setTimeout(()=>el.classList.remove('flash'),300); }
+}
+
+// Resize
+window.addEventListener('resize', () => {
+  world.style.transition = 'none';
+  resizeEras();
+  const offset = currentEra * (getEraWidth() + WIRE_WIDTH);
+  world.style.transform = `translateX(-${offset}px)`;
+  setTimeout(()=> world.style.transition = 'transform 1.4s cubic-bezier(0.77,0,0.175,1)', 50);
+});
+
+// ── Audio context ──
+let audioCtx = null;
+function getAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  return audioCtx;
+}
+function beep(freq, dur, vol=0.3, type='sine'){
+  const ctx = getAudio();
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.value = vol;
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + dur);
+}
+function playClick(){ beep(800, 0.05, 0.2, 'square'); }
+function playSuccess(){ 
+  [523, 659, 784, 1047].forEach((f,i) => setTimeout(()=>beep(f,0.15,0.2),i*80));
+}
+function playStatic(){
+  const ctx = getAudio();
+  const buf = ctx.createBuffer(1, ctx.sampleRate*0.3, ctx.sampleRate);
+  const d = buf.getChannelData(0);
+  for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*0.15;
+  const s = ctx.createBufferSource(), g = ctx.createGain();
+  s.buffer = buf; g.gain.value = 0.3;
+  s.connect(g); g.connect(ctx.destination); s.start();
+}
+function playDoor(){
+  [300,250,200].forEach((f,i)=>setTimeout(()=>beep(f,0.08,0.3,'square'),i*60));
+}
+function playRing(){
+  [880,880].forEach((f,i)=>setTimeout(()=>beep(f,0.15,0.2),i*200));
+}
+function playDial(n){ beep(300+n*40, 0.1, 0.15, 'sine'); }
+
+// ══════════════════════════════════════════════
+//  ERA 1: MORSE CODE
+// ══════════════════════════════════════════════
+const MORSE_CODE = {
+  'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..'
+};
+const MORSE_TARGET = ['W','H','A','T'];
+let morseWordIdx = 0;
+let morseLetterInput = '';
+let morseWordInput = [];
+let keyPressTime = 0;
+let morseTimer = null;
+const DOT_THRESHOLD = 200;
+const LETTER_GAP = 800;
+
+function updateMorseDisplay(){
+  const word = MORSE_TARGET[morseWordIdx];
+  document.getElementById('morse-target-word').textContent = word;
+  document.getElementById('morse-hint').textContent = '( ' + MORSE_CODE[word] + ' )';
+  document.getElementById('morse-typed').textContent = morseLetterInput;
+}
+
+// Key hold logic
+const morseKeyEl = document.getElementById('morse-key');
+
+function morseDown(){
+  getAudio();
+  keyPressTime = Date.now();
+  morseKeyEl.classList.add('pressed');
+  beep(600, 10, 0.3, 'square');
+  clearTimeout(morseTimer);
+}
+
+function morseUp(){
+  morseKeyEl.classList.remove('pressed');
+  const held = Date.now() - keyPressTime;
+  if(held < DOT_THRESHOLD){
+    morseLetterInput += '.';
+    beep(800, 0.06, 0.25, 'square');
+  } else {
+    morseLetterInput += '-';
+    beep(500, 0.18, 0.25, 'square');
+  }
+  updateMorseDisplay();
+
+  // Auto-submit after gap
+  morseTimer = setTimeout(submitMorseLetter, LETTER_GAP);
+}
+
+morseKeyEl.addEventListener('mousedown', morseDown);
+morseKeyEl.addEventListener('mouseup', morseUp);
+morseKeyEl.addEventListener('touchstart', e=>{e.preventDefault();morseDown();});
+morseKeyEl.addEventListener('touchend', e=>{e.preventDefault();morseUp();});
+
+document.addEventListener('keydown', e => {
+  if(currentEra !== 0) return;
+  if(e.code === 'Space' && !e.repeat){ e.preventDefault(); morseDown(); }
+});
+document.addEventListener('keyup', e => {
+  if(currentEra !== 0) return;
+  if(e.code === 'Space'){ e.preventDefault(); morseUp(); }
+});
+
+function submitMorseLetter(){
+  const target = MORSE_TARGET[morseWordIdx];
+  const correct = MORSE_CODE[target];
+  const fb = document.getElementById('morse-word-fb');
+
+  if(morseLetterInput === correct){
+    morseWordInput.push(target);
+    morseWordIdx++;
+    fb.textContent = '✓ ' + target;
+    fb.style.color = '#88ff88';
+    fb.classList.add('show');
+    beep(1000, 0.1, 0.2);
+    setTimeout(()=>fb.classList.remove('show'), 600);
+
+    if(morseWordIdx >= MORSE_TARGET.length){
+      // Complete!
+      setTimeout(()=>{
+        playSuccess();
+        document.getElementById('morse-display').textContent = 'WHAT HATH GOD WROUGHT — TRANSMITTED';
+        setTimeout(advance, 1200);
+      }, 300);
+    } else {
+      updateMorseDisplay();
+    }
+  } else {
+    fb.textContent = '✗ Try: ' + correct;
+    fb.style.color = '#ff6666';
+    fb.classList.add('show');
+    beep(200, 0.15, 0.2, 'square');
+    setTimeout(()=>fb.classList.remove('show'), 1000);
+  }
+  morseLetterInput = '';
+  document.getElementById('morse-typed').textContent = '';
+}
+
+updateMorseDisplay();
+
+// ══════════════════════════════════════════════
+//  ERA 2: ROTARY PHONE
+// ══════════════════════════════════════════════
+const PHONE_CODE = ['1','8','7','6'];
+let phonePickedUp = false;
+let phoneDialed = [];
+
+// Build rotary holes
+const dial = document.getElementById('rotary-dial');
+const digits = ['1','2','3','4','5','6','7','8','9','0'];
+digits.forEach((d, i) => {
+  const angle = (i / 10) * 360 - 90;
+  const r = 68;
+  const x = 90 + r * Math.cos(angle * Math.PI/180);
+  const y = 90 + r * Math.sin(angle * Math.PI/180);
+  const hole = document.createElement('div');
+  hole.className = 'dial-hole';
+  hole.textContent = d;
+  hole.style.left = (x - 11) + 'px';
+  hole.style.top  = (y - 11) + 'px';
+  hole.addEventListener('click', () => dialDigit(d));
+  dial.appendChild(hole);
+});
+
+// Set dial size in CSS
+dial.style.width = '180px';
+dial.style.height = '180px';
+
+function pickUpPhone(){
+  if(phonePickedUp) return;
+  phonePickedUp = true;
+  const body = document.getElementById('phone-body');
+  body.classList.remove('ringing');
+  body.style.cursor = 'default';
+  document.getElementById('phone-display').textContent = 'Line open...';
+  document.getElementById('phone-instruction').textContent = 'Now dial: 1 · 8 · 7 · 6';
+  beep(440, 0.5, 0.15, 'sine');
+  // Ring interval
+  clearInterval(ringInterval);
+}
+
+// Ring the phone
+let ringInterval = setInterval(() => {
+  if(!phonePickedUp){
+    playRing();
+    document.getElementById('phone-body').classList.toggle('ringing');
+  }
+}, 1500);
+
+function dialDigit(d){
+  if(!phonePickedUp) return;
+  playDial(parseInt(d)||10);
+
+  // Animate dial spin
+  const spin = document.getElementById('rotary-dial');
+  spin.style.transition = 'transform 0.3s ease-out';
+  spin.style.transform = 'rotate(30deg)';
+  setTimeout(()=>{
+    spin.style.transition = 'transform 0.6s cubic-bezier(0.4,0,0.2,1)';
+    spin.style.transform = 'rotate(0deg)';
+  },300);
+
+  phoneDialed.push(d);
+  document.getElementById('phone-display').textContent = phoneDialed.join(' · ');
+
+  const expected = PHONE_CODE[phoneDialed.length - 1];
+  if(d !== expected){
+    setTimeout(()=>{
+      phoneDialed = [];
+      document.getElementById('phone-display').textContent = 'Wrong number — try again';
+      beep(200, 0.2, 0.2, 'square');
+    }, 500);
+    return;
+  }
+
+  if(phoneDialed.length === PHONE_CODE.length){
+    document.getElementById('phone-display').textContent = 'Connected! ✓';
+    playSuccess();
+    setTimeout(advance, 1200);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  ERA 3: RADIO
+// ══════════════════════════════════════════════
+const TARGET_FREQ = 660; // out of 1000
+const FREQ_TOLERANCE = 25;
+
+function tuneRadio(val){
+  getAudio();
+  const freq = parseFloat(val);
+  const mhz = (88 + freq * 0.1).toFixed(1);
+  document.getElementById('freq-display').textContent = mhz + ' MHz';
+
+  const diff = Math.abs(freq - TARGET_FREQ);
+  const clarity = Math.max(0, 1 - diff / 120);
+
+  // Static noise
+  const wave = document.getElementById('signal-wave');
+  const staticEl = document.getElementById('static-text');
+
+  if(clarity > 0.1){
+    wave.classList.add('active');
+    const vol = clarity * 0.15;
+    playStatic();
+  } else {
+    wave.classList.remove('active');
+  }
+
+  // Scramble/unscramble text
+  if(clarity > 0.85){
+    document.getElementById('static-text').textContent = 'RADIO SIGNAL LOCKED — MARCONI';
+    document.getElementById('static-text').classList.add('locked');
+    document.getElementById('signal-wave').style.background = '#00ff88';
+    document.getElementById('signal-wave').style.boxShadow = '0 0 12px #00ff88';
+    if(!radioLocked){
+      radioLocked = true;
+      playSuccess();
+      setTimeout(advance, 1200);
+    }
+  } else {
+    const scramble = '·-·-·· ··· - ·-· · ·-· -- -·-· --- -·· ·'.split('').map(c =>
+      Math.random() < clarity ? c : ['·','-','·','·','-'][Math.floor(Math.random()*5)]
+    ).join('');
+    document.getElementById('static-text').textContent = scramble;
+    document.getElementById('static-text').classList.remove('locked');
+    document.getElementById('signal-wave').style.background = '#c8a060';
+    document.getElementById('signal-wave').style.boxShadow = '0 0 8px #c8a060';
+  }
+}
+let radioLocked = false;
+
+// ══════════════════════════════════════════════
+//  ERA 4: TV ANTENNA
+// ══════════════════════════════════════════════
+const ANT_TARGET_L = -10;
+const ANT_TARGET_R = 10;
+const ANT_TOLERANCE = 18;
+let tvCleared = false;
+
+function adjustAntenna(){
+  getAudio();
+  const l = parseFloat(document.getElementById('ant-l-slider').value);
+  const r = parseFloat(document.getElementById('ant-r-slider').value);
+
+  // Animate antenna SVG
+  document.getElementById('ant-left').style.transform  = `rotate(${l * 0.6}deg)`;
+  document.getElementById('ant-right').style.transform = `rotate(${r * 0.6}deg)`;
+
+  const diffL = Math.abs(l - ANT_TARGET_L);
+  const diffR = Math.abs(r - ANT_TARGET_R);
+  const clarity = Math.max(0, 1 - (diffL + diffR) / (ANT_TOLERANCE * 4));
+
+  document.getElementById('tv-static').style.opacity = 1 - clarity;
+
+  if(clarity > 0.75 && !tvCleared){
+    tvCleared = true;
+    document.getElementById('tv-static').classList.add('cleared');
+    document.getElementById('tv-image').classList.add('visible');
+    playSuccess();
+    setTimeout(advance, 1500);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  ERA 5: ARPANET TERMINAL
+// ══════════════════════════════════════════════
+const TERMINAL_SEQUENCE = [
+  { cmd: 'login', response: ['CONNECTING TO SRI NODE 2...','AUTHENTICATION: OK','TYPE "send lo" TO TRANSMIT FIRST PACKET'] },
+  { cmd: 'send lo', response: ['PACKET QUEUED: "LO"','TRANSMISSION INITIATED...','...L RECEIVED AT SRI','...O RECEIVED AT SRI','FIRST ARPANET MESSAGE SENT ✓','SYSTEM CRASH AFTER 2 LETTERS','(THIS IS HOW IT ACTUALLY HAPPENED)'] },
+  { cmd: 'next', response: ['ADVANCING...'] },
+];
+let terminalStep = 0;
+let terminalDone = false;
+
+document.getElementById('terminal-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const val = e.target.value.trim().toLowerCase();
+    e.target.value = '';
+    handleTerminal(val);
+  }
+});
+
+function terminalPrint(lines, cb){
+  const out = document.getElementById('terminal-output');
+  let i = 0;
+  function next(){
+    if(i >= lines.length){ if(cb) cb(); return; }
+    const div = document.createElement('div');
+    div.className = 'terminal-line';
+    if(lines[i].startsWith('✓')||lines[i].includes('✓')) div.classList.add('success');
+    div.textContent = lines[i];
+    out.appendChild(div);
+    out.scrollTop = out.scrollHeight;
+    beep(400+Math.random()*100, 0.03, 0.05, 'square');
+    i++;
+    setTimeout(next, 120 + Math.random()*80);
+  }
+  next();
+}
+
+function handleTerminal(cmd){
+  const out = document.getElementById('terminal-output');
+  const echo = document.createElement('div');
+  echo.className = 'terminal-line';
+  echo.textContent = '> ' + cmd;
+  out.appendChild(echo);
+
+  const expected = TERMINAL_SEQUENCE[terminalStep];
+  if(!expected) return;
+
+  if(cmd === expected.cmd){
+    terminalPrint(expected.response, () => {
+      terminalStep++;
+      if(terminalStep === 2){
+        // After "send lo" — show next hint
+        terminalPrint(['','TYPE "next" TO PROCEED']);
+      }
+      if(terminalStep >= TERMINAL_SEQUENCE.length && !terminalDone){
+        terminalDone = true;
+        playSuccess();
+        setTimeout(advance, 1200);
+      }
+    });
+  } else {
+    terminalPrint(['COMMAND NOT RECOGNIZED: ' + cmd.toUpperCase(), 'HINT: ' + expected.cmd.toUpperCase()]);
+  }
+}
+
+// ══════════════════════════════════════════════
+//  ERA 6: NOKIA T9 SMS
+// ══════════════════════════════════════════════
+const T9_MAP = {
+  '2':['A','B','C'], '3':['D','E','F'], '4':['G','H','I'],
+  '5':['J','K','L'], '6':['M','N','O'], '7':['P','Q','R','S'],
+  '8':['T','U','V'], '9':['W','X','Y','Z'], '0':[' ']
+};
+const SMS_TARGET = 'HI';
+let smsTyped = '';
+let t9State = { key: null, count: 0, timer: null };
+
+// Build Nokia keys
+const keyLayout = [
+  ['1','',''],['2','ABC',''],['3','DEF',''],
+  ['4','GHI',''],['5','JKL',''],['6','MNO',''],
+  ['7','PQRS',''],['8','TUV',''],['9','WXYZ',''],
+  ['*','',''],['0','SPC',''],['#','','']
+];
+const nokiaKeysEl = document.getElementById('nokia-keys');
+keyLayout.forEach(([main, sub]) => {
+  const key = document.createElement('div');
+  key.className = 'nokia-key';
+  key.innerHTML = `<span class="main">${main}</span><span class="sub">${sub}</span>`;
+  key.addEventListener('click', () => pressT9(main));
+  nokiaKeysEl.appendChild(key);
+});
+
+function pressT9(k){
+  getAudio();
+  playClick();
+
+  if(!T9_MAP[k]){
+    if(k === '*'){
+      // Backspace
+      smsTyped = smsTyped.slice(0, -1);
+      document.getElementById('sms-typed').textContent = smsTyped;
+      t9State = { key: null, count: 0, timer: null };
+      return;
+    }
+    return;
+  }
+
+  clearTimeout(t9State.timer);
+
+  if(t9State.key === k){
+    t9State.count = (t9State.count + 1) % T9_MAP[k].length;
+  } else {
+    // Commit previous
+    t9State.key = k;
+    t9State.count = 0;
+  }
+
+  const chars = T9_MAP[k];
+  const letter = chars[t9State.count];
+
+  // Show pending letter
+  document.getElementById('nokia-screen').querySelector('#sms-typed').textContent = smsTyped + letter + '|';
+
+  t9State.timer = setTimeout(() => {
+    smsTyped += letter;
+    document.getElementById('sms-typed').textContent = smsTyped;
+    t9State = { key: null, count: 0, timer: null };
+
+    if(smsTyped.toUpperCase() === SMS_TARGET){
+      playSuccess();
+      document.getElementById('nokia-screen').querySelector('#sms-typed').textContent = smsTyped + ' ✓';
+      setTimeout(advance, 1200);
+    }
+  }, 700);
+}
+
+// ══════════════════════════════════════════════
+//  ERA 7: AIM
+// ══════════════════════════════════════════════
+function sendAIM(){
+  getAudio();
+  const input = document.getElementById('aim-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+
+  const chat = document.getElementById('aim-chat');
+  const div = document.createElement('div');
+  div.className = 'aim-msg you';
+  div.innerHTML = `<span class="sender">Me:</span> <span class="text">${msg}</span>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  playDoor();
+
+  if(msg.toLowerCase() === 'hey'){
+    setTimeout(() => {
+      const reply = document.createElement('div');
+      reply.className = 'aim-msg them';
+      reply.innerHTML = `<span class="sender">xXSuperDave99Xx:</span> <span class="text">omg heyyy!! brb gonna eat dinner 🍕</span>`;
+      chat.appendChild(reply);
+      chat.scrollTop = chat.scrollHeight;
+      playDoor();
+      playSuccess();
+      setTimeout(advance, 1500);
+    }, 1000);
+  }
+}
+
+document.getElementById('aim-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter' && !e.shiftKey){ e.preventDefault(); sendAIM(); }
+});
+
+// ══════════════════════════════════════════════
+//  ERA 8: iPHONE
+// ══════════════════════════════════════════════
+let iphoneUnlocked = false;
+let messagesOpen = false;
+
+function unlockIphone(){
+  getAudio();
+  if(iphoneUnlocked) return;
+  iphoneUnlocked = true;
+  beep(880, 0.1, 0.2);
+  document.getElementById('iphone-lock').style.opacity = '0';
+  document.getElementById('iphone-lock').style.pointerEvents = 'none';
+  setTimeout(() => {
+    document.getElementById('iphone-home').classList.add('visible');
+  }, 300);
+}
+
+function openMessages(){
+  getAudio();
+  beep(660, 0.08, 0.15);
+  document.getElementById('iphone-messages').classList.add('visible');
+  messagesOpen = true;
+}
+
+function sendIMessage(){
+  getAudio();
+  const input = document.getElementById('imsg-input');
+  const msg = input.value.trim();
+  if(!msg) return;
+  input.value = '';
+
+  const bubbles = document.getElementById('imsg-bubbles');
+  const b = document.createElement('div');
+  b.className = 'imsg-bubble me';
+  b.textContent = msg;
+  bubbles.appendChild(b);
+  bubbles.scrollTop = bubbles.scrollHeight;
+  beep(1000, 0.06, 0.15);
+
+  if(msg.toLowerCase() === 'hello'){
+    playSuccess();
+    setTimeout(() => {
+      const reply = document.createElement('div');
+      reply.className = 'imsg-bubble them';
+      reply.textContent = 'Hello! 👋 The future awaits...';
+      bubbles.appendChild(reply);
+      bubbles.scrollTop = bubbles.scrollHeight;
+      setTimeout(advance, 1500);
+    }, 800);
+  }
+}
+
+document.getElementById('imsg-input').addEventListener('keydown', e => {
+  if(e.key === 'Enter'){ e.preventDefault(); sendIMessage(); }
+});
+
+// ══════════════════════════════════════════════
+//  ADD SUCCESS FLASH to each era
+// ══════════════════════════════════════════════
+['phone','radio','tv','arpanet','sms','aim','iphone','future'].forEach(id => {
+  const era = document.getElementById('era-' + id);
+  if(era && !era.querySelector('.success-flash')){
+    const fl = document.createElement('div');
+    fl.className = 'success-flash';
+    fl.id = 'flash-' + id;
+    era.appendChild(fl);
+  }
+});
+</script>
+</body>
+</html>
