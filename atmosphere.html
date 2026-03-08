@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atmosphere</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Jost:wght@200;300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:'Jost',sans-serif;font-weight:300}
+#glcanvas{position:fixed;inset:0;width:100%;height:100%;display:block}
+#overlay{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;justify-content:flex-end;padding:2.5rem 3rem;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%)}
+#scene-info{margin-bottom:1.8rem}
+#scene-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(2.5rem,6vw,5rem);color:#fff;line-height:1;opacity:0;transition:opacity 1.5s ease,transform 1.5s ease;transform:translateY(10px);text-shadow:0 2px 30px rgba(0,0,0,0.8)}
+#scene-name.visible{opacity:1;transform:translateY(0)}
+#scene-sub{font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-top:0.6rem;opacity:0;transition:opacity 1.5s ease 0.3s}
+#scene-sub.visible{opacity:1}
+#controls{display:flex;align-items:center;gap:1.5rem;pointer-events:all}
+#vol-wrap{display:flex;align-items:center;gap:10px;opacity:0;transition:opacity 0.8s ease}
+#vol-wrap.visible{opacity:1}
+#vol-label{font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:rgba(255,255,255,0.4)}
+input[type=range]#vol{-webkit-appearance:none;width:140px;height:1px;background:rgba(255,255,255,0.3);outline:none;cursor:pointer}
+input[type=range]#vol::-webkit-slider-thumb{-webkit-appearance:none;width:11px;height:11px;background:#fff;border-radius:50%;cursor:pointer;box-shadow:0 0 8px rgba(255,255,255,0.6)}
+
+#scene-btns{position:fixed;top:50%;right:2.5rem;transform:translateY(-50%);z-index:10;display:flex;flex-direction:column;gap:10px}
+.sbtn{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.12);backdrop-filter:blur(12px);cursor:pointer;transition:all 0.3s;color:rgba(255,255,255,0.55);font-family:'Jost',sans-serif;font-weight:300;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;white-space:nowrap}
+.sbtn:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.35)}
+.sbtn.active{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.6);color:#fff}
+.sbtn-icon{font-size:16px;line-height:1}
+
+#stop-btn{position:fixed;top:2rem;right:2.5rem;z-index:10;padding:8px 20px;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);font-family:'Jost',sans-serif;font-weight:300;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;backdrop-filter:blur(8px);opacity:0;pointer-events:none}
+#stop-btn.visible{opacity:1;pointer-events:all}
+#stop-btn:hover{color:#fff;border-color:rgba(255,255,255,0.5)}
+
+#idle-msg{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;z-index:10;transition:opacity 1s ease}
+#idle-msg h1{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:clamp(3rem,7vw,6rem);color:rgba(255,255,255,0.15);letter-spacing:0.02em}
+#idle-msg p{font-size:10px;letter-spacing:0.5em;text-transform:uppercase;color:rgba(255,255,255,0.2);margin-top:1rem}
+#idle-msg.hidden{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+<canvas id="glcanvas"></canvas>
+
+<div id="idle-msg">
+  <h1>Atmosphere</h1>
+  <p>Select a scene →</p>
+</div>
+
+<div id="scene-btns">
+  <button class="sbtn" data-scene="storm"      onclick="switchScene('storm')">      <span class="sbtn-icon">⛈</span> Thunderstorm</button>
+  <button class="sbtn" data-scene="ocean"      onclick="switchScene('ocean')">      <span class="sbtn-icon">🌊</span> Ocean</button>
+  <button class="sbtn" data-scene="rainforest" onclick="switchScene('rainforest')"> <span class="sbtn-icon">🌿</span> Rainforest</button>
+  <button class="sbtn" data-scene="fire"       onclick="switchScene('fire')">       <span class="sbtn-icon">🔥</span> Fireplace</button>
+  <button class="sbtn" data-scene="night"      onclick="switchScene('night')">      <span class="sbtn-icon">🌙</span> Night Field</button>
+  <button class="sbtn" data-scene="wind"       onclick="switchScene('wind')">       <span class="sbtn-icon">🍃</span> Wind</button>
+</div>
+
+<button id="stop-btn" onclick="stopAll()">■ Stop</button>
+
+<div id="overlay">
+  <div id="scene-info">
+    <div id="scene-name"></div>
+    <div id="scene-sub"></div>
+  </div>
+  <div id="controls">
+    <div id="vol-wrap">
+      <span id="vol-label">Volume</span>
+      <input type="range" id="vol" min="0" max="100" value="65" oninput="setVolume(this)">
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     VERTEX SHADER (shared)
+════════════════════════════════════ -->
+<script id="vert" type="x-shader/x-vertex">
+attribute vec2 a_pos;
+void main(){gl_Position=vec4(a_pos,0.,1.);}
+</script>
+
+<!-- ════════════════════════════════════
+     THUNDERSTORM SHADER
+════════════════════════════════════ -->
+<script id="frag-storm" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+uniform float u_lightning;
+uniform float u_lightning2;
+
+// Hash & noise
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float hash1(float n){return fract(sin(n)*43758.5453);}
+
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),
+             mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+
+float fbm(vec2 p){
+  float v=0.,a=0.5;
+  for(int i=0;i<7;i++){v+=a*noise(p);p=p*2.1+vec2(1.3,2.7);a*=0.5;}
+  return v;
+}
+
+// Volumetric clouds
+float cloudDensity(vec2 uv, float t){
+  vec2 q=uv*vec2(2.5,1.8);
+  q.x+=t*0.04;
+  float base=fbm(q);
+  float detail=fbm(q*2.+vec2(t*0.02,0.));
+  float c=base*0.7+detail*0.3;
+  c=smoothstep(0.38,0.78,c);
+  return c;
+}
+
+// Lightning bolt
+float lightning(vec2 uv, float seed, float t){
+  if(t<=0.)return 0.;
+  float x0=hash1(seed)*0.6+0.2;
+  float bolt=0.;
+  vec2 p=uv;
+  float bx=x0;
+  for(float i=0.;i<12.;i++){
+    float sy=1.-i/12.;
+    float ex=1.-(i+1.)/12.;
+    float jitter=hash1(seed*100.+i)*0.08-0.04;
+    float nx=bx+jitter;
+    if(p.y<sy&&p.y>ex){
+      float fx=bx+(nx-bx)*((p.y-sy)/(ex-sy));
+      float d=abs(p.x-fx);
+      bolt=max(bolt,exp(-d*180.)*1.5*t);
+      // branches
+      if(i==4.||i==7.){
+        float blen=hash1(seed+i)*0.15+0.05;
+        float ba=hash1(seed+i+0.5)*0.6-0.3;
+        float bx2=fx+ba*(p.y-sy);
+        float bd=abs(p.x-bx2);
+        if(p.y<sy&&p.y>sy-blen)
+          bolt=max(bolt,exp(-bd*300.)*0.6*t);
+      }
+    }
+    bx=nx;
+  }
+  return bolt;
+}
+
+// Rain streaks using noise field
+float rain(vec2 uv, float t){
+  vec2 p=uv*vec2(60.,30.);
+  p.x+=t*2.;
+  p.y+=t*35.;
+  p.x+=p.y*0.15;
+  vec2 cell=floor(p);
+  vec2 f=fract(p);
+  float r=0.;
+  for(int dx=-1;dx<=1;dx++){
+    for(int dy=-1;dy<=1;dy++){
+      vec2 c=cell+vec2(dx,dy);
+      float h=hash(c);
+      float h2=hash(c+vec2(7.3,2.1));
+      vec2 off=vec2(h,h2);
+      vec2 d=f-vec2(dx,dy)-off;
+      float streak=max(0.,1.-abs(d.x)*40.)*max(0.,1.-abs(d.y)*2.5)*smoothstep(0.4,0.6,h);
+      r+=streak;
+    }
+  }
+  return clamp(r,0.,1.);
+}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+  vec2 uva=vec2(uv.x*aspect,uv.y);
+
+  // Sky gradient — stormy purple-grey
+  vec3 skyTop=vec3(0.04,0.045,0.06);
+  vec3 skyBot=vec3(0.09,0.08,0.07);
+  vec3 sky=mix(skyBot,skyTop,pow(uv.y,0.7));
+
+  // Ground / wet road reflection at bottom
+  float groundLine=0.22;
+  float isGround=smoothstep(groundLine+0.02,groundLine,uv.y);
+  vec3 groundCol=vec3(0.05,0.05,0.06);
+  // puddle reflections
+  float puddleNoise=fbm(vec2(uva.x*3.,uv.y*8.+u_time*0.1));
+  vec3 puddle=mix(groundCol,vec3(0.1,0.12,0.18)*1.5,puddleNoise*0.4);
+
+  // Clouds — layered
+  float c1=cloudDensity(vec2(uva.x*0.5,uv.y*0.8+0.1),u_time);
+  float c2=cloudDensity(vec2(uva.x*0.4+10.,uv.y*0.6+0.2),u_time*0.7);
+  float cloud=clamp(c1*0.7+c2*0.5,0.,1.);
+  vec3 cloudCol=mix(vec3(0.08,0.09,0.11),vec3(0.22,0.22,0.25),cloud);
+  cloud*=smoothstep(groundLine,groundLine+0.25,uv.y);
+
+  // horizon glow
+  float hg=exp(-abs(uv.y-groundLine)*12.)*0.4;
+  cloudCol+=vec3(0.12,0.1,0.08)*hg;
+
+  vec3 sceneCol=mix(sky,cloudCol,cloud*0.9);
+
+  // Rain
+  float r=rain(uva,u_time)*0.28*smoothstep(groundLine,groundLine+0.1,uv.y);
+  sceneCol+=vec3(0.55,0.65,0.75)*r;
+
+  // Lightning 1
+  float lt=u_lightning;
+  float l1=lightning(vec2(uva.x/aspect,uv.y),3.7,lt);
+  sceneCol+=vec3(0.85,0.9,1.)*l1;
+  // lightning ambient flash
+  sceneCol+=vec3(0.6,0.65,0.8)*lt*0.35*smoothstep(groundLine,1.,uv.y);
+
+  // Lightning 2
+  float lt2=u_lightning2;
+  float l2=lightning(vec2(uva.x/aspect,uv.y),9.1,lt2);
+  sceneCol+=vec3(0.9,0.88,1.)*l2;
+  sceneCol+=vec3(0.5,0.55,0.75)*lt2*0.25*smoothstep(groundLine,1.,uv.y);
+
+  // Ground composite
+  sceneCol=mix(sceneCol,puddle,isGround);
+  // reflect lightning in puddle
+  sceneCol+=vec3(0.4,0.45,0.7)*(l1+l2)*isGround*0.6;
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  float vig=1.-dot(vc,vc)*1.8;
+  sceneCol*=clamp(vig,0.,1.);
+
+  // Film grain
+  float grain=hash(uv+fract(u_time*100.))*0.04-0.02;
+  sceneCol+=grain;
+
+  gl_FragColor=vec4(clamp(sceneCol,0.,1.),1.);
+}
+</script>
+
+<!-- ════════════════════════════════════
+     OCEAN SHADER
+════════════════════════════════════ -->
+<script id="frag-ocean" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){
+  vec2 i=floor(p),f=fract(p);
+  vec2 u=f*f*(3.-2.*f);
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+float fbm(vec2 p){float v=0.,a=0.5;for(int i=0;i<6;i++){v+=a*noise(p);p=p*2.+vec2(1.9,2.3);a*=0.52;}return v;}
+
+// Gerstner wave
+vec3 gerstner(vec2 pos, float t, vec2 dir, float steep, float wave, float spd){
+  float k=2.*3.14159/wave;
+  float c=sqrt(9.8/k);
+  float f=k*(dot(dir,pos)-c*spd*t);
+  float a=steep/k;
+  return vec3(dir.x*a*cos(f), a*sin(f), dir.y*a*cos(f));
+}
+
+float oceanHeight(vec2 p, float t){
+  vec3 w=vec3(0.);
+  w+=gerstner(p,t,normalize(vec2(1.,.3)),0.5,8.,1.);
+  w+=gerstner(p,t,normalize(vec2(.8,-.6)),0.3,4.,1.3);
+  w+=gerstner(p,t,normalize(vec2(-.4,.7)),0.2,2.,1.8);
+  w+=gerstner(p,t,normalize(vec2(.3,.9)),0.15,1.2,2.5);
+  return w.y;
+}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+
+  // Horizon line
+  float horizon=0.42+fbm(vec2(uv.x*2.,u_time*0.03))*0.04;
+
+  // Sky
+  vec3 skyZenith=vec3(0.05,0.08,0.18);
+  vec3 skyHorizon=vec3(0.35,0.5,0.65);
+  vec3 skyClouds=vec3(0.7,0.72,0.78);
+  float st=(uv.y-horizon)/(1.-horizon);
+  vec3 sky=mix(skyHorizon,skyZenith,pow(clamp(st,0.,1.),0.6));
+
+  // Cloud layer
+  float cf=fbm(vec2(uv.x*1.5+u_time*0.025,uv.y*3.+0.5));
+  float cf2=fbm(vec2(uv.x*3.-u_time*0.015,uv.y*5.+1.));
+  float clouds=smoothstep(0.45,0.7,cf*0.6+cf2*0.4)*smoothstep(horizon,horizon+0.3,uv.y);
+  sky=mix(sky,skyClouds,clouds*0.7);
+
+  // Sun
+  vec2 sunPos=vec2(0.72,horizon+0.22);
+  float sunDist=length(uv-sunPos);
+  float sun=smoothstep(0.04,0.01,sunDist);
+  float sunGlow=exp(-sunDist*8.)*0.4;
+  sky+=vec3(1.,0.9,0.6)*sun;
+  sky+=vec3(0.8,0.65,0.3)*sunGlow;
+
+  // Sun path on water
+  vec2 wuv=vec2((uv.x-0.5)*aspect*6.,(1.-horizon)*8.-(1.-uv.y)*8.);
+  float h=oceanHeight(wuv,u_time);
+
+  // Water color
+  vec3 deepWater=vec3(0.01,0.04,0.12);
+  vec3 shallowWater=vec3(0.04,0.18,0.38);
+  vec3 foamCol=vec3(0.75,0.82,0.88);
+
+  float waveH=h*0.5+0.5;
+  vec3 waterCol=mix(deepWater,shallowWater,waveH);
+
+  // Specular sun reflection
+  float specAngle=abs(uv.x-sunPos.x)*3.;
+  float spec=exp(-specAngle*specAngle*2.-abs(uv.y-horizon)*20.)*0.8;
+  spec*=(h*0.5+0.5)*1.5;
+  waterCol+=vec3(1.,0.92,0.6)*spec;
+
+  // Foam on wave peaks
+  float foam=smoothstep(0.6,0.9,waveH)*noise(wuv*3.+u_time)*0.35;
+  waterCol=mix(waterCol,foamCol,foam);
+
+  // Fresnel — darker at shallow angle
+  float fresnel=pow(1.-clamp(uv.y/horizon,0.,1.),2.)*0.5;
+  waterCol=mix(waterCol,sky*0.4,fresnel);
+
+  // Composite
+  float isWater=smoothstep(horizon+0.01,horizon-0.01,uv.y);
+  vec3 col=mix(sky,waterCol,isWater);
+
+  // Atmosphere haze at horizon
+  float haze=exp(-abs(uv.y-horizon)*25.)*0.3;
+  col=mix(col,skyHorizon*1.2,haze*(1.-isWater));
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  col*=1.-dot(vc,vc)*1.4;
+
+  float grain=hash(uv+fract(u_time*73.))*0.025-0.012;
+  col+=grain;
+
+  gl_FragColor=vec4(clamp(col,0.,1.),1.);
+}
+</script>
+
+<!-- ════════════════════════════════════
+     RAINFOREST SHADER
+════════════════════════════════════ -->
+<script id="frag-rainforest" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float hash1(float n){return fract(sin(n)*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float v=0.,a=0.5;for(int i=0;i<6;i++){v+=a*noise(p);p=p*2.1+vec2(1.7,2.3);a*=0.5;}return v;}
+
+// Leaf silhouette
+float leaf(vec2 p){
+  p=p*2.-1.;
+  float d=length(p*vec2(0.6,1.))-0.5;
+  d=max(d,-length(p*vec2(1.,0.5))+0.6);
+  return smoothstep(0.05,0.0,d);
+}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+  vec2 uva=vec2(uv.x*aspect,uv.y);
+
+  // Background — deep jungle atmosphere
+  vec3 bgDeep=vec3(0.01,0.04,0.01);
+  vec3 bgMid=vec3(0.02,0.09,0.03);
+  vec3 bgLight=vec3(0.15,0.35,0.08);
+
+  float bgN=fbm(uva*1.5+vec2(u_time*0.01,0.));
+  vec3 bg=mix(bgDeep,bgMid,bgN);
+
+  // God rays — shafts of light from canopy
+  float rayCol=0.;
+  for(int i=0;i<5;i++){
+    float fi=float(i);
+    float rx=0.1+fi*0.18+sin(u_time*0.08+fi)*0.05;
+    float rw=0.015+hash1(fi)*0.02;
+    float ray=exp(-pow((uv.x-rx)/rw,2.))*smoothstep(1.,0.5,uv.y)*smoothstep(0.,0.08,uv.y);
+    ray*=fbm(vec2(uv.x*3.+fi,uv.y*2.-u_time*0.05+fi*10.))*1.5;
+    rayCol+=ray*(0.6+hash1(fi)*0.4);
+  }
+  bg+=vec3(0.4,0.7,0.15)*rayCol*0.5;
+
+  // Mist / volumetric fog layers
+  float mist=fbm(vec2(uva.x*2.+u_time*0.015,uv.y*3.));
+  float mistMask=smoothstep(0.6,0.3,uv.y)*smoothstep(0.,0.05,uv.y);
+  bg=mix(bg,vec3(0.08,0.18,0.06)*1.4,mist*mistMask*0.6);
+
+  // Mid-ground foliage layers
+  for(int layer=0;layer<4;layer++){
+    float fl=float(layer);
+    float depth=0.2+fl*0.2;
+    float yOff=0.15+fl*0.18;
+    float foliageN=fbm(vec2(uva.x*2.+fl*3.+u_time*0.008*(1.+fl*0.3),0.));
+    float foliageH=yOff+foliageN*0.12;
+    float inFoliage=smoothstep(foliageH+0.03,foliageH,uv.y);
+    float leafDetail=noise(vec2(uva.x*15.+fl*7.,uv.y*15.+fl*3.+u_time*0.02));
+    inFoliage*=smoothstep(0.3,0.6,leafDetail);
+    float greenDark=0.05+fl*0.04;
+    vec3 leafCol=vec3(greenDark,greenDark*3.5+0.05,greenDark*0.5);
+    // light catching edges
+    float rim=noise(vec2(uva.x*20.+fl*11.,uv.y*20.+u_time*0.015))*0.3;
+    leafCol+=vec3(0.1,0.3,0.02)*rim*inFoliage;
+    bg=mix(bg,leafCol,inFoliage*depth*1.5);
+  }
+
+  // Rain drops
+  float rdrop=0.;
+  vec2 rp=vec2(uva.x*40.,uv.y*60.+u_time*20.);
+  rp.x+=uv.y*3.;
+  vec2 rcell=floor(rp);
+  vec2 rf=fract(rp);
+  for(int dx=-1;dx<=1;dx++){for(int dy=-1;dy<=1;dy++){
+    vec2 rc=rcell+vec2(dx,dy);
+    float rh=hash(rc),rh2=hash(rc+vec2(3.1,7.2));
+    vec2 ro=vec2(rh,rh2);
+    vec2 rd=rf-vec2(dx,dy)-ro;
+    rdrop+=max(0.,1.-abs(rd.x)*60.)*max(0.,1.-abs(rd.y)*3.)*smoothstep(0.5,0.8,rh)*0.5;
+  }}
+  bg+=vec3(0.5,0.7,0.4)*clamp(rdrop,0.,1.)*0.3;
+
+  // Foreground dark silhouettes
+  float fgN=fbm(vec2(uva.x*1.8+0.5,0.5));
+  float fgH=0.05+fgN*0.1;
+  float fg=smoothstep(fgH+0.02,fgH,uv.y);
+  fg*=noise(vec2(uva.x*25.,uv.y*20.+u_time*0.01));
+  bg=mix(bg,vec3(0.005,0.015,0.005),fg*2.);
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  bg*=1.-dot(vc*vec2(1.,0.8),vc*vec2(1.,0.8))*2.;
+
+  float grain=hash(uv+fract(u_time*91.))*0.035-0.017;
+  bg+=grain;
+
+  gl_FragColor=vec4(clamp(bg,0.,1.),1.);
+}
+</script>
+
+<!-- ════════════════════════════════════
+     FIREPLACE SHADER
+════════════════════════════════════ -->
+<script id="frag-fire" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float v=0.,a=0.5;for(int i=0;i<6;i++){v+=a*noise(p);p=p*2.+vec2(1.9,2.3);a*=0.48;}return v;}
+
+float fireShape(vec2 p){
+  // distorted upward column
+  p.x+=sin(p.y*3.+u_time*2.)*0.08+fbm(p*2.+u_time*0.5)*0.12;
+  float w=0.22-p.y*0.18;
+  return smoothstep(w,0.,abs(p.x))*smoothstep(-0.05,0.05,p.y)*smoothstep(0.95,0.7,p.y);
+}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+  vec2 uva=vec2((uv.x-0.5)*aspect,uv.y);
+
+  // Room — dark warm walls
+  vec3 roomCol=vec3(0.06,0.03,0.01);
+  float wallN=fbm(uva*2.+1.3)*0.04;
+  roomCol+=vec3(wallN,wallN*0.5,wallN*0.2);
+
+  // Stone fireplace surround
+  float stoneX=abs(uva.x);
+  float stoneBot=0.08;
+  float stoneTop=0.55;
+  float stoneW=0.35;
+  float isStone=smoothstep(stoneW+0.01,stoneW,stoneX)*smoothstep(stoneBot,stoneBot+0.01,uv.y)*smoothstep(stoneTop,stoneTop-0.01,uv.y);
+  float stoneN=fbm(uva*8.+2.)*0.07;
+  vec3 stoneCol=vec3(0.12+stoneN,0.1+stoneN,0.09+stoneN);
+  // mortar lines
+  float brickX=fract(uva.x*6.+floor(uv.y*8.)*0.5)*2.-1.;
+  float brickY=fract(uv.y*8.)*2.-1.;
+  float mortar=1.-smoothstep(0.06,0.1,abs(brickX))*smoothstep(0.06,0.1,abs(brickY));
+  stoneCol*=0.85+mortar*0.15;
+  roomCol=mix(roomCol,stoneCol,isStone);
+
+  // Firebox — black interior
+  float boxX=abs(uva.x);
+  float boxBot=0.1;
+  float boxTop=0.45;
+  float boxW=0.22;
+  float isBox=smoothstep(boxW+0.005,boxW,boxX)*smoothstep(boxBot,boxBot+0.005,uv.y)*smoothstep(boxTop,boxTop-0.005,uv.y);
+  roomCol=mix(roomCol,vec3(0.01,0.005,0.002),isBox);
+
+  // Logs at base
+  float logY=0.135;
+  float isLog=smoothstep(logY-0.02,logY,uv.y)*smoothstep(logY+0.04,logY+0.01,uv.y)*smoothstep(boxW,boxW-0.01,boxX);
+  float logN=noise(vec2(uva.x*15.,0.))*0.04;
+  vec3 logCol=vec3(0.08+logN,0.04+logN,0.02);
+  // glowing embers
+  float ember=noise(vec2(uva.x*20.+u_time,uv.y*10.))*noise(vec2(uva.x*8.-u_time*0.5,uv.y*5.));
+  logCol+=vec3(1.,0.3,0.0)*ember*2.*isLog;
+  roomCol=mix(roomCol,logCol,isLog);
+
+  // FIRE — multiple layers
+  vec2 fp=vec2(uva.x,(uv.y-0.12)*1.8);
+  float fire=0.;
+  float f1=fireShape(fp+vec2(noise(fp*3.+u_time*1.5)*0.05,0.));
+  float f2=fireShape(fp*vec2(0.7,0.8)+vec2(0.04,0.))*0.7;
+  float f3=fireShape(fp*vec2(0.7,0.8)+vec2(-0.04,0.))*0.7;
+  fire=max(f1,max(f2,f3));
+  fire*=isBox+(1.-isBox)*0.3;
+
+  // Fire noise
+  float fn=fbm(fp*3.-vec2(0.,u_time*2.))*fbm(fp*5.-vec2(0.,u_time*3.));
+  fire*=0.5+fn*1.2;
+  fire=clamp(fire,0.,1.);
+
+  // Fire color gradient — white hot core to orange to dark red tip
+  vec3 col1=vec3(1.,0.97,0.8);    // white hot
+  vec3 col2=vec3(1.,0.55,0.05);   // orange
+  vec3 col3=vec3(0.9,0.15,0.0);   // red
+  vec3 col4=vec3(0.3,0.0,0.0);    // dark red
+  vec3 fireCol=mix(col4,mix(col3,mix(col2,col1,fire*fire),fire),fire);
+
+  // Apply fire to scene
+  roomCol=mix(roomCol,fireCol,fire*isBox);
+  roomCol+=fireCol*fire*(1.-isBox)*0.3; // glow outside box
+
+  // Embers rising
+  for(int i=0;i<8;i++){
+    float fi=float(i);
+    float ex=sin(u_time*0.7+fi*2.1)*0.08+hash(vec2(fi,0.))*0.3-0.15;
+    ex/=aspect;
+    float ey=fract(u_time*0.4+fi*0.13+hash(vec2(fi,1.))*0.8);
+    ey=0.15+ey*0.7;
+    float ed=length(uva-vec2(ex,ey))*aspect;
+    float ember2=exp(-ed*ed*3000.)*0.8*(1.-ey+0.15);
+    roomCol+=vec3(1.,0.5,0.1)*ember2*isBox;
+  }
+
+  // Firelight on room — warm dynamic illumination
+  float dist=length(vec2(uva.x,(uv.y-0.25)*1.2));
+  float fireLight=exp(-dist*1.8)*(0.7+sin(u_time*3.)*0.1+sin(u_time*7.)*0.05);
+  roomCol+=vec3(0.8,0.3,0.05)*fireLight*(1.-isBox)*0.6;
+
+  // Smoke
+  vec2 sp=vec2(uva.x*0.8,(uv.y-0.5)*1.5+u_time*0.08);
+  float smoke=fbm(sp*2.)*smoothstep(0.5,0.7,uv.y)*smoothstep(1.,0.8,uv.y)*exp(-abs(uva.x)*6.)*0.3;
+  roomCol=mix(roomCol,vec3(0.15,0.12,0.1),smoke*isBox);
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  roomCol*=1.-dot(vc,vc)*1.6;
+
+  float grain=hash(uv+fract(u_time*83.))*0.03-0.015;
+  roomCol+=grain;
+
+  gl_FragColor=vec4(clamp(roomCol,0.,1.),1.);
+}
+</script>
+
+
+<!-- ════════════════════════════════════
+     NIGHT FIELD SHADER
+════════════════════════════════════ -->
+<script id="frag-night" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float hash1(float n){return fract(sin(n)*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float v=0.,a=0.5;for(int i=0;i<6;i++){v+=a*noise(p);p=p*2.+vec2(1.9,2.3);a*=0.5;}return v;}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+  vec2 uva=vec2(uv.x*aspect,uv.y);
+
+  float horizon=0.38;
+
+  // Deep night sky
+  vec3 skyBot=vec3(0.005,0.008,0.02);
+  vec3 skyTop=vec3(0.0,0.003,0.015);
+  vec3 sky=mix(skyBot,skyTop,pow(uv.y/1.,0.8));
+
+  // Milky way band
+  float mwAngle=0.3;
+  float mwCoord=uv.x*cos(mwAngle)+uv.y*sin(mwAngle);
+  float mw=exp(-pow((mwCoord-0.55)*6.,2.))*fbm(vec2(uv.x*3.,uv.y*3.))*0.12;
+  sky+=vec3(0.3,0.35,0.5)*mw*smoothstep(horizon,horizon+0.15,uv.y);
+
+  // Stars
+  vec3 starCol=vec3(0.);
+  for(float i=0.;i<3.;i++){
+    float scale=200.+i*150.;
+    vec2 sgrid=uv*scale;
+    vec2 scell=floor(sgrid);
+    vec2 sf=fract(sgrid)-0.5;
+    float sh=hash(scell+i*73.1);
+    float sh2=hash(scell+i*73.1+vec2(1.,0.));
+    float sz=smoothstep(0.9,1.,sh)*smoothstep(horizon+0.05,horizon+0.1,uv.y);
+    float twinkle=0.7+0.3*sin(u_time*(1.+sh2*3.)+sh*6.28);
+    float star=exp(-dot(sf,sf)*scale*0.15)*sz*twinkle;
+    float r=0.85+sh*0.15,gb=0.85+hash(scell+i*31.)*0.15;
+    starCol+=vec3(r,gb,1.)*star*(0.3+i*0.2);
+  }
+  sky+=starCol;
+
+  // Moon
+  vec2 moonPos=vec2(0.75,0.75);
+  float moonD=length(uv-moonPos);
+  float moon=smoothstep(0.045,0.038,moonD);
+  vec3 moonCol=vec3(0.92,0.9,0.82);
+  // moon craters
+  float crater=noise(uv*30.+0.5)*0.15;
+  moonCol-=crater*moon;
+  sky+=moonCol*moon;
+  // moon glow
+  float mglow=exp(-moonD*8.)*0.15;
+  sky+=vec3(0.4,0.45,0.5)*mglow*smoothstep(horizon+0.1,0.5,uv.y);
+
+  // Ground — dark field
+  vec3 groundCol=vec3(0.01,0.02,0.01);
+  float grassN=fbm(vec2(uva.x*3.,uv.y*8.));
+  groundCol+=vec3(0.01,0.02,0.01)*grassN;
+  // moonlight on ground
+  float mlight=exp(-abs(uv.x-moonPos.x)*3.)*smoothstep(horizon,horizon-0.05,uv.y)*0.15;
+  groundCol+=vec3(0.15,0.2,0.25)*mlight;
+
+  // Grass silhouette
+  float grassBase=horizon+fbm(vec2(uva.x*4.,0.))*0.04;
+  float grassTip=grassBase-noise(vec2(uva.x*30.,0.))*0.04-0.01;
+  float grassBlades=0.;
+  for(int g=0;g<60;g++){
+    float fg=float(g);
+    float gx=(fg/60.+hash(vec2(fg,0.))*0.02)*aspect;
+    float gh=0.02+hash(vec2(fg,1.))*0.06;
+    float gw=0.003+hash(vec2(fg,2.))*0.004;
+    // sway
+    float sway=sin(u_time*0.8+fg*0.7)*0.008;
+    float blade=smoothstep(gw,0.,abs(uva.x-gx+sway*(uv.y-grassBase)))*smoothstep(grassBase,grassBase-gh,uv.y)*smoothstep(grassBase-gh-0.005,grassBase-gh,uv.y);
+    grassBlades=max(grassBlades,blade);
+  }
+  float isGround=smoothstep(grassBase+0.01,grassBase,uv.y);
+  vec3 col=mix(sky,groundCol,isGround);
+  col=mix(col,vec3(0.005,0.01,0.005),grassBlades);
+
+  // Fireflies
+  for(int f=0;f<12;f++){
+    float ff=float(f);
+    float fx=hash(vec2(ff,0.))*aspect;
+    float fy=horizon-hash(vec2(ff,1.))*0.2-0.01;
+    fx+=sin(u_time*0.3+ff)*0.05;
+    fy+=sin(u_time*0.5+ff*1.3)*0.03;
+    float fblink=smoothstep(0.3,1.,sin(u_time*(0.8+ff*0.2)+ff*4.)*0.5+0.5);
+    float fd=length(vec2(uva.x-fx,(uv.y-fy)*1.5));
+    float ff2=exp(-fd*fd*8000.)*fblink;
+    col+=vec3(0.5,1.,0.3)*ff2;
+  }
+
+  // Fog / mist near horizon
+  float fog=exp(-abs(uv.y-horizon)*20.)*fbm(vec2(uva.x*1.5+u_time*0.02,0.))*0.4;
+  col=mix(col,vec3(0.08,0.12,0.15)*0.5,fog);
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  col*=1.-dot(vc,vc)*1.3;
+
+  float grain=hash(uv+fract(u_time*47.))*0.02-0.01;
+  col+=grain;
+
+  gl_FragColor=vec4(clamp(col,0.,1.),1.);
+}
+</script>
+
+<!-- ════════════════════════════════════
+     WIND SHADER
+════════════════════════════════════ -->
+<script id="frag-wind" type="x-shader/x-fragment">
+precision highp float;
+uniform vec2 u_res;
+uniform float u_time;
+
+float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);}
+float fbm(vec2 p){float v=0.,a=0.5;for(int i=0;i<7;i++){v+=a*noise(p);p=p*2.1+vec2(1.7,2.3);a*=0.5;}return v;}
+
+void main(){
+  vec2 uv=gl_FragCoord.xy/u_res;
+  
+  float aspect=u_res.x/u_res.y;
+  vec2 uva=vec2(uv.x*aspect,uv.y);
+
+  float horizon=0.45+fbm(vec2(uv.x*1.5,u_time*0.02))*0.06;
+
+  // Sky — overcast, moving
+  vec3 skyCol=vec3(0.55,0.6,0.68);
+  vec3 cloudDark=vec3(0.3,0.33,0.38);
+  vec3 cloudLight=vec3(0.78,0.8,0.84);
+
+  // Volumetric moving clouds
+  float cloudA=fbm(vec2(uv.x*2.+u_time*0.08,uv.y*3.));
+  float cloudB=fbm(vec2(uv.x*3.-u_time*0.05,uv.y*4.+1.));
+  float cloudC=fbm(vec2(uv.x*1.5+u_time*0.04,uv.y*2.+2.));
+  float clouds=cloudA*0.5+cloudB*0.3+cloudC*0.2;
+  clouds=smoothstep(0.35,0.65,clouds);
+  vec3 sky=mix(skyCol,mix(cloudDark,cloudLight,cloudA),clouds*0.8);
+  sky*=smoothstep(horizon-0.01,horizon+0.02,uv.y);
+
+  // Rolling hills
+  vec3 col=sky;
+  for(int layer=0;layer<4;layer++){
+    float fl=float(layer);
+    float speed=0.015*(1.+fl*0.5);
+    float hillH=horizon-fl*0.07+fbm(vec2(uv.x*1.5+fl*3.+u_time*speed,fl))*0.12;
+    float isHill=smoothstep(hillH+0.005,hillH,uv.y);
+    float greenDark=0.08+fl*0.04;
+    float greenLight=greenDark+0.08;
+    float grassN=fbm(vec2(uv.x*6.+u_time*speed*2.,uv.y*4.+fl));
+    vec3 hillCol=mix(vec3(greenDark,greenDark*1.8,greenDark*0.4),vec3(greenLight,greenLight*1.9,greenLight*0.5),grassN);
+    // wind ripples on grass
+    float ripple=sin(uv.x*20.+u_time*4.+fl)*0.5+0.5;
+    ripple*=noise(vec2(uv.x*8.+u_time*3.,uv.y*3.));
+    hillCol=mix(hillCol,hillCol*1.3,ripple*0.3*isHill);
+    col=mix(col,hillCol,isHill);
+  }
+
+  // Wind streaks
+  float wstreak=0.;
+  for(int w=0;w<8;w++){
+    float fw=float(w);
+    float wy=0.1+hash(vec2(fw,0.))*0.9;
+    float wlen=0.1+hash(vec2(fw,1.))*0.3;
+    float wspd=2.+hash(vec2(fw,2.))*4.;
+    float wx=fract(uv.x+u_time*wspd*0.1+hash(vec2(fw,3.)));
+    float streak=exp(-abs(uv.y-wy)*80.)*exp(-abs(fract(wx+0.5)-0.5)*30./wlen)*0.12;
+    wstreak+=streak*(0.5+hash(vec2(fw,4.))*0.5);
+  }
+  col+=vec3(0.85,0.88,0.9)*wstreak*(smoothstep(horizon-0.05,horizon+0.1,uv.y));
+
+  // Dust/seeds blowing
+  for(int d=0;d<20;d++){
+    float fd=float(d);
+    float dy=0.3+hash(vec2(fd,10.))*0.5;
+    float dspd=1.+hash(vec2(fd,11.))*3.;
+    float dx=fract(uv.x*aspect+u_time*dspd*0.05+hash(vec2(fd,12.)))/aspect;
+    float dsize=0.001+hash(vec2(fd,13.))*0.002;
+    float dd=length(vec2((uv.x-dx)*aspect,uv.y-dy));
+    float seed=exp(-dd/dsize)*0.5;
+    col+=vec3(0.9,0.88,0.75)*seed*smoothstep(horizon-0.02,horizon+0.1,uv.y);
+  }
+
+  // Sky light
+  col+=vec3(0.4,0.45,0.5)*exp(-pow(uv.y-horizon,2.)*30.)*0.2;
+
+  // Vignette
+  vec2 vc=uv-0.5;
+  col*=1.-dot(vc,vc)*1.4;
+
+  float grain=hash(uv+fract(u_time*53.))*0.025-0.012;
+  col+=grain;
+
+  gl_FragColor=vec4(clamp(col,0.,1.),1.);
+}
+</script>
+
+<script>
+// ════════════════════════════════════
+//  WebGL ENGINE
+// ════════════════════════════════════
+const canvas=document.getElementById('glcanvas');
+let gl=canvas.getContext('webgl',{antialias:false,alpha:false});
+if(!gl) alert('WebGL not supported');
+
+let W=0,H=0;
+function resize(){
+  W=canvas.width=window.innerWidth;
+  H=canvas.height=window.innerHeight;
+  if(gl) gl.viewport(0,0,W,H);
+}
+resize();
+window.addEventListener('resize',resize);
+
+function compileShader(src,type){
+  const s=gl.createShader(type);
+  gl.shaderSource(s,src);
+  gl.compileShader(s);
+  if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) console.error(gl.getShaderInfoLog(s));
+  return s;
+}
+
+function makeProgram(vertSrc,fragSrc){
+  const p=gl.createProgram();
+  gl.attachShader(p,compileShader(vertSrc,gl.VERTEX_SHADER));
+  gl.attachShader(p,compileShader(fragSrc,gl.FRAGMENT_SHADER));
+  gl.linkProgram(p);
+  return p;
+}
+
+const vertSrc=document.getElementById('vert').textContent;
+const programs={};
+['storm','ocean','rainforest','fire','night','wind'].forEach(id=>{
+  programs[id]=makeProgram(vertSrc,document.getElementById('frag-'+id).textContent);
+});
+
+// Quad
+const buf=gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
+
+let currentProg=null;
+let currentScene=null;
+let raf=null;
+let startTime=null;
+let lightningTimer=0,lightningVal=0;
+let lightningTimer2=0,lightningVal2=0;
+
+function render(){
+  if(!currentProg) return;
+  const t=(Date.now()-startTime)/1000;
+  gl.useProgram(currentProg);
+  const ap=gl.getAttribLocation(currentProg,'a_pos');
+  gl.bindBuffer(gl.ARRAY_BUFFER,buf);
+  gl.enableVertexAttribArray(ap);
+  gl.vertexAttribPointer(ap,2,gl.FLOAT,false,0,0);
+  const setU=(n,v)=>{const l=gl.getUniformLocation(currentProg,n);if(l){if(typeof v==='number')gl.uniform1f(l,v);else gl.uniform2fv(l,v);}};
+  setU('u_res',[W,H]);
+  setU('u_time',t);
+
+  // Lightning logic
+  if(currentScene==='storm'){
+    lightningTimer-=1/60;
+    if(lightningTimer<=0){
+      lightningTimer=3+Math.random()*8;
+      lightningVal=1.0;
+    }
+    lightningVal*=0.82;
+    setU('u_lightning',lightningVal);
+    lightningTimer2-=1/60;
+    if(lightningTimer2<=0){
+      lightningTimer2=5+Math.random()*12;
+      lightningVal2=0.85;
+    }
+    lightningVal2*=0.78;
+    setU('u_lightning2',lightningVal2);
+  }
+
+  gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+  raf=requestAnimationFrame(render);
+}
+
+// ════════════════════════════════════
+//  AUDIO ENGINE
+// ════════════════════════════════════
+let audioCtx=null,masterGain=null,audioNodes={};
+let vol=0.65;
+
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  masterGain=audioCtx.createGain();
+  masterGain.gain.value=vol;
+  masterGain.connect(audioCtx.destination);
+}
+
+function setVolume(el){
+  vol=el.value/100;
+  if(masterGain) masterGain.gain.setTargetAtTime(vol,audioCtx.currentTime,0.1);
+}
+
+function makeNoiseBuf(type,dur){
+  const sr=audioCtx.sampleRate,len=sr*dur;
+  const buf=audioCtx.createBuffer(1,len,sr);
+  const d=buf.getChannelData(0);
+  if(type==='brown'){let l=0;for(let i=0;i<len;i++){const w=Math.random()*2-1;d[i]=(l+0.02*w)/1.02;l=d[i];d[i]*=3.5;}}
+  else{for(let i=0;i<len;i++)d[i]=Math.random()*2-1;}
+  return buf;
+}
+
+function mkFilter(type,freq,q=1){const f=audioCtx.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;return f;}
+function mkGain(v){const g=audioCtx.createGain();g.gain.value=v;return g;}
+function mkLoop(buf,...chain){
+  const s=audioCtx.createBufferSource();s.buffer=buf;s.loop=true;
+  let n=s;for(const c of chain){n.connect(c);n=c;}n.connect(masterGain);s.start();return s;
+}
+function mkOsc(type,freq,gainV){
+  const o=audioCtx.createOscillator(),g=mkGain(gainV);
+  o.type=type;o.frequency.value=freq;o.connect(g);g.connect(masterGain);o.start();return{o,g};
+}
+
+function stopAudio(){
+  for(const k in audioNodes){const n=audioNodes[k];if(Array.isArray(n))n.forEach(x=>{try{if(x.stop)x.stop();if(x.o)x.o.stop();}catch(e){}});else{try{if(n.stop)n.stop();if(n.o)n.o.stop();}catch(e){}}}
+  audioNodes={};
+}
+
+function buildAudio(scene){
+  stopAudio();
+  const brown=makeNoiseBuf('brown',4),white=makeNoiseBuf('white',4);
+  if(scene==='storm'){
+    audioNodes.rain=mkLoop(white,mkFilter('highpass',400),mkGain(0.5));
+    audioNodes.rain2=mkLoop(brown,mkFilter('bandpass',1200,0.4),mkGain(0.3));
+    audioNodes.rumble=mkLoop(brown,mkFilter('lowpass',60),mkGain(0.2));
+    audioNodes.drip=mkLoop(white,mkFilter('highpass',3000),mkGain(0.08));
+  } else if(scene==='ocean'){
+    const lfo=audioCtx.createOscillator(),lg=mkGain(0.3);
+    lfo.frequency.value=0.1;lfo.connect(lg);
+    const g=mkGain(0.5);lg.connect(g.gain);
+    audioNodes.wave=mkLoop(brown,mkFilter('lowpass',600),g);
+    audioNodes.shimmer=mkLoop(white,mkFilter('bandpass',2500,0.8),mkGain(0.06));
+    lfo.start();audioNodes.lfo=lfo;
+  } else if(scene==='rainforest'){
+    audioNodes.humidity=mkLoop(white,mkFilter('bandpass',1000,0.5),mkGain(0.15));
+    audioNodes.drip=mkLoop(white,mkFilter('highpass',3500),mkGain(0.08));
+    const birds=[];
+    [[900,0.025],[1400,0.02],[650,0.018],[2100,0.012]].forEach(([f,v],i)=>{
+      const lfo=audioCtx.createOscillator(),lg=mkGain(v);
+      lfo.frequency.value=0.25+i*0.12;lfo.connect(lg);
+      const g=mkGain(0);lg.connect(g.gain);
+      const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=f;
+      o.connect(g);g.connect(masterGain);o.start();lfo.start();
+      birds.push(o,lfo);
+    });
+    audioNodes.birds=birds;
+  } else if(scene==='fire'){
+    audioNodes.crackle=mkLoop(brown,mkFilter('bandpass',280,0.9),mkGain(0.5));
+    audioNodes.hiss=mkLoop(white,mkFilter('highpass',5000),mkGain(0.12));
+    audioNodes.warmth=mkLoop(brown,mkFilter('lowpass',140),mkGain(0.18));
+    audioNodes.pop=mkLoop(white,mkFilter('bandpass',800,2.),mkGain(0.05));
+  } else if(scene==='night'){
+    const crickets=[];
+    [3200,3450,3600,3820].forEach((f,i)=>{
+      const lfo=audioCtx.createOscillator(),lg=mkGain(0.03);
+      lfo.frequency.value=14+i*1.5;lfo.connect(lg);
+      const g=mkGain(0);lg.connect(g.gain);
+      const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=f+Math.random()*60-30;
+      o.connect(g);g.connect(masterGain);o.start();lfo.start();
+      crickets.push(o,lfo);
+    });
+    audioNodes.crickets=crickets;
+    audioNodes.silence=mkLoop(brown,mkFilter('lowpass',180),mkGain(0.04));
+  } else if(scene==='wind'){
+    const lfo=audioCtx.createOscillator(),lg=mkGain(0.22);
+    lfo.frequency.value=0.06;lfo.connect(lg);
+    const g=mkGain(0.4);lg.connect(g.gain);
+    audioNodes.gust=mkLoop(brown,mkFilter('bandpass',380,0.45),g);
+    audioNodes.howl=mkLoop(white,mkFilter('bandpass',700,1.8),mkGain(0.09));
+    audioNodes.whistle=mkLoop(white,mkFilter('highpass',4500),mkGain(0.03));
+    lfo.start();audioNodes.lfo=lfo;
+  }
+}
+
+// ════════════════════════════════════
+//  SCENE META
+// ════════════════════════════════════
+const META={
+  storm:      {name:'Thunderstorm',      sub:'Dark skies · petrichor · shelter'},
+  ocean:      {name:'Pacific Ocean',     sub:'Open water · salt air · horizon'},
+  rainforest: {name:'Rainforest',        sub:'Canopy · humidity · living things'},
+  fire:       {name:'Fireplace',         sub:'Crackling oak · ember light · warmth'},
+  night:      {name:'Night Field',       sub:'Crickets · starlight · stillness'},
+  wind:       {name:'Open Hillside',     sub:'Rolling grass · clouds moving · free'},
+};
+
+function switchScene(scene){
+  if(currentScene===scene) return;
+  initAudio();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  currentScene=scene;
+  if(raf) cancelAnimationFrame(raf);
+  currentProg=programs[scene];
+  startTime=Date.now();
+  lightningTimer=1;lightningVal=0;lightningTimer2=3;lightningVal2=0;
+  buildAudio(scene);
+
+  const m=META[scene];
+  const nameEl=document.getElementById('scene-name');
+  const subEl=document.getElementById('scene-sub');
+  nameEl.classList.remove('visible');subEl.classList.remove('visible');
+  setTimeout(()=>{nameEl.textContent=m.name;subEl.textContent=m.sub;nameEl.classList.add('visible');subEl.classList.add('visible');},200);
+
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.toggle('active',b.dataset.scene===scene));
+  document.getElementById('vol-wrap').classList.add('visible');
+  document.getElementById('stop-btn').classList.add('visible');
+  document.getElementById('idle-msg').classList.add('hidden');
+
+  render();
+}
+
+function stopAll(){
+  if(raf) cancelAnimationFrame(raf);
+  raf=null;
+  stopAudio();
+  gl.clearColor(0,0,0,1);gl.clear(gl.COLOR_BUFFER_BIT);
+  currentScene=null;currentProg=null;
+  document.getElementById('scene-name').classList.remove('visible');
+  document.getElementById('scene-sub').classList.remove('visible');
+  document.getElementById('vol-wrap').classList.remove('visible');
+  document.getElementById('stop-btn').classList.remove('visible');
+  document.getElementById('idle-msg').classList.remove('hidden');
+  document.querySelectorAll('.sbtn').forEach(b=>b.classList.remove('active'));
+}
+</script>
+</body>
+</html>
