@@ -1032,9 +1032,244 @@ body.light-mode .mode-toggle { color: var(--wood-dark); }
   .hero-eyelet-row { gap: 16px; }
   .mode-toggle { bottom: 16px; right: 16px; }
 }
+/* ══════════════════════════════════════
+   TUBE WARMUP INTRO
+══════════════════════════════════════ */
+#tubeIntro {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: #050301;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#tubeIntro.ti-fade {
+  opacity: 0; visibility: hidden; pointer-events: none;
+}
+.ti-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 60%, rgba(212,130,26,0.08) 0%, transparent 65%);
+  animation: ti-pulse 2s ease-in-out infinite;
+}
+@keyframes ti-pulse {
+  0%,100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+.ti-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 20px;
+  text-align: center; padding: 40px;
+}
+.ti-tubes {
+  display: flex; gap: 20px; align-items: flex-end;
+  margin-bottom: 12px;
+}
+.ti-tube {
+  width: 28px; height: 80px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(212,130,26,0.4);
+  position: relative; overflow: hidden;
+  background: rgba(255,150,30,0);
+  animation: ti-tube-warmup 2.5s ease-in-out forwards;
+  animation-delay: var(--d, 0s);
+}
+.ti-tube:nth-child(3) { height: 96px; }
+.ti-tube:nth-child(1),
+.ti-tube:nth-child(5) { height: 70px; }
+@keyframes ti-tube-warmup {
+  0%   { background: rgba(255,150,30,0);   border-color: rgba(212,130,26,0.15); }
+  40%  { background: rgba(255,100,10,0.08); border-color: rgba(212,130,26,0.3); }
+  70%  { background: rgba(255,140,20,0.2);  border-color: rgba(212,130,26,0.6); }
+  100% { background: rgba(255,160,40,0.28); border-color: rgba(245,166,35,0.9); }
+}
+.ti-filament {
+  position: absolute; left: 50%; top: 20%; bottom: 15%;
+  width: 1px; transform: translateX(-50%);
+  background: linear-gradient(to bottom, transparent, rgba(255,200,80,0.15), rgba(255,220,100,0.6), rgba(255,200,80,0.15), transparent);
+  animation: ti-filament-glow 2.5s ease-in-out forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes ti-filament-glow {
+  0%   { opacity: 0; width: 1px; }
+  50%  { opacity: 0.4; width: 1px; }
+  100% { opacity: 1; width: 2px; box-shadow: 0 0 6px rgba(255,200,80,0.8); }
+}
+.ti-halo {
+  position: absolute; inset: -4px;
+  border-radius: 18px;
+  background: radial-gradient(ellipse, rgba(255,160,40,0.15) 0%, transparent 70%);
+  animation: ti-halo-appear 2.5s ease-in-out forwards;
+  animation-delay: var(--d, 0s);
+  opacity: 0;
+}
+@keyframes ti-halo-appear {
+  0%,60% { opacity: 0; }
+  100%   { opacity: 1; }
+}
+.ti-logo {
+  font-family: 'Rye', cursive;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  color: var(--amber-glow);
+  text-shadow: 0 0 40px rgba(245,166,35,0.5), 0 0 80px rgba(245,166,35,0.2);
+  opacity: 0;
+  animation: ti-logo-in 0.8s ease forwards 1.8s;
+}
+@keyframes ti-logo-in {
+  from { opacity: 0; letter-spacing: 0.3em; }
+  to   { opacity: 1; letter-spacing: 0.04em; }
+}
+.ti-status {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(212,130,26,0.6);
+  min-height: 1.2em;
+  opacity: 0;
+  animation: ti-fade-in 0.5s ease forwards 2s;
+}
+@keyframes ti-fade-in { from { opacity:0; } to { opacity:1; } }
+.ti-bar-wrap {
+  width: 220px; height: 2px;
+  background: rgba(212,130,26,0.15);
+  border-radius: 1px;
+  overflow: hidden;
+  opacity: 0;
+  animation: ti-fade-in 0.5s ease forwards 2s;
+}
+.ti-bar {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--amber), var(--amber-glow));
+  box-shadow: 0 0 8px var(--amber-glow);
+  border-radius: 1px;
+  transition: width 0.1s linear;
+}
+.ti-skip {
+  background: none; border: 1px solid rgba(212,130,26,0.25);
+  color: rgba(212,130,26,0.45); font-family: 'Special Elite', cursive;
+  font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 2px; cursor: pointer;
+  opacity: 0; animation: ti-fade-in 0.5s ease forwards 2.2s;
+  transition: color 0.2s, border-color 0.2s;
+}
+.ti-skip:hover { color: var(--amber-glow); border-color: rgba(212,130,26,0.6); }
+
+/* ══════════════════════════════════════
+   AI QUOTE FORM
+══════════════════════════════════════ */
+.quote-form {
+  display: flex; flex-direction: column; gap: 16px;
+  margin-top: 4px;
+}
+.quote-textarea {
+  width: 100%;
+  min-height: 140px;
+  background: rgba(0,0,0,0.35);
+  border: 1.5px solid rgba(212,130,26,0.25);
+  border-radius: 4px;
+  color: var(--cream);
+  font-family: 'Lato', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 300;
+  line-height: 1.7;
+  padding: 14px 16px;
+  resize: vertical;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.quote-textarea::placeholder { color: rgba(212,130,26,0.3); }
+.quote-textarea:focus { border-color: rgba(212,130,26,0.6); }
+body.light-mode .quote-textarea {
+  background: rgba(107,58,31,0.06);
+  border-color: rgba(107,58,31,0.25);
+  color: var(--wood-dark);
+}
+body.light-mode .quote-textarea::placeholder { color: rgba(107,58,31,0.35); }
+body.light-mode .quote-textarea:focus { border-color: rgba(107,58,31,0.55); }
+
+.quote-form-footer {
+  display: flex; align-items: center;
+  justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.quote-hint {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(212,130,26,0.4);
+}
+body.light-mode .quote-hint { color: rgba(107,58,31,0.45); }
+
+/* Loading tubes */
+.tubes-warming {
+  display: flex; gap: 14px; justify-content: center;
+  align-items: flex-end; margin-bottom: 20px;
+}
+.tw-tube {
+  width: 18px; height: 56px;
+  border-radius: 9px;
+  border: 1.5px solid rgba(212,130,26,0.5);
+  background: rgba(255,160,40,0.15);
+  box-shadow: 0 0 12px rgba(245,166,35,0.3), inset 0 0 8px rgba(255,180,40,0.1);
+  animation: tw-flicker 1.2s ease-in-out infinite;
+}
+.tw-tube:nth-child(2) { height:70px; animation-delay:0.15s; }
+.tw-tube:nth-child(3) { height:80px; animation-delay:0.3s; }
+.tw-tube:nth-child(4) { height:70px; animation-delay:0.45s; }
+@keyframes tw-flicker {
+  0%,100% { opacity:1; box-shadow:0 0 12px rgba(245,166,35,0.3); }
+  50% { opacity:0.7; box-shadow:0 0 20px rgba(245,166,35,0.5); }
+}
+.tw-glow { /* unused placeholder */ }
+.quote-loading-text {
+  font-family: 'Special Elite', cursive;
+  font-size: 0.78rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(212,130,26,0.6);
+  animation: ti-pulse 1.5s ease-in-out infinite;
+}
+
+/* Result */
+.quote-result-body {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(212,130,26,0.2);
+  border-radius: 4px;
+  padding: 24px 28px;
+  margin-top: 16px;
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: var(--cream);
+  text-align: left;
+  white-space: pre-wrap;
+}
+body.light-mode .quote-result-body {
+  background: rgba(107,58,31,0.06);
+  border-color: rgba(107,58,31,0.2);
+  color: var(--wood-dark);
+}
+.quote-result-body strong {
+  color: var(--amber-glow);
+  font-family: 'Special Elite', cursive;
+  font-weight: 400;
+}
+body.light-mode .quote-result-body strong { color: var(--wood-mid); }
+
 </style>
 </head>
 <body class="wood-bg">
+
+<!-- ── TUBE WARMUP INTRO ── -->
+<div id="tubeIntro">
+  <div class="ti-bg"></div>
+  <div class="ti-content">
+    <div class="ti-tubes">
+      <div class="ti-tube" style="--d:0s"><div class="ti-filament"></div><div class="ti-halo"></div></div>
+      <div class="ti-tube" style="--d:0.3s"><div class="ti-filament"></div><div class="ti-halo"></div></div>
+      <div class="ti-tube" style="--d:0.6s"><div class="ti-filament"></div><div class="ti-halo"></div></div>
+      <div class="ti-tube" style="--d:0.9s"><div class="ti-filament"></div><div class="ti-halo"></div></div>
+      <div class="ti-tube" style="--d:0.45s"><div class="ti-filament"></div><div class="ti-halo"></div></div>
+    </div>
+    <div class="ti-logo">Grampy's Amps</div>
+    <div class="ti-status" id="tiStatus">Warming up the tubes...</div>
+    <div class="ti-bar-wrap"><div class="ti-bar" id="tiBar"></div></div>
+    <button class="ti-skip" id="tiSkip">Skip →</button>
+  </div>
+</div>
 
 <div class="tube-glow"></div>
 
@@ -1816,51 +2051,90 @@ body.light-mode .mode-toggle { color: var(--wood-dark); }
   </a>
 </section>
 
-<!-- ── CONTACT ── -->
+<!-- ── CONTACT / AI QUOTE FORM ── -->
 <section class="contact" id="contact">
-  <div class="contact-panel fade-in">
+  <div class="contact-panel fade-in" id="quotePanel">
     <div class="panel-screw ps-tl" style="top:8px;left:8px;"></div>
     <div class="panel-screw ps-tr" style="top:8px;right:8px;"></div>
     <div class="panel-screw ps-bl" style="bottom:8px;left:8px;"></div>
     <div class="panel-screw ps-br" style="bottom:8px;right:8px;"></div>
-    <div class="section-label">Bring Your Amp Back to Life</div>
-    <h2 class="section-title">Get in Touch</h2>
-    <p class="section-body" style="margin:0 auto; text-align:center; max-width:420px;">
-      Have a vintage amp that needs some love? David takes on a limited number of restorations at a time — reach out via Instagram DM or the links below.
-    </p>
-    <div class="contact-knobs">
-      <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large">
-        <svg class="knob-svg" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
-          <g stroke="rgba(212,130,26,0.35)" stroke-width="1.2">
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-120 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-60 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(0 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(60 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(120 40 40)"/>
-          </g>
-          <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
-          <line x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
-            style="transform-origin:40px 40px; transform:rotate(60deg)"/>
-        </svg>
-        DM on Instagram
-      </a>
-      <a href="mailto:grampysamps@example.com" class="knob-btn large">
-        <svg class="knob-svg" viewBox="0 0 80 80">
-          <circle cx="40" cy="40" r="37" fill="#1A1A1E" stroke="#3A3A50" stroke-width="2"/>
-          <g stroke="rgba(180,180,220,0.3)" stroke-width="1.2">
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-30 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(90 40 40)"/>
-            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
-          </g>
-          <circle cx="40" cy="40" r="26" fill="#050508" stroke="rgba(120,120,200,0.2)" stroke-width="1"/>
-          <line x1="40" y1="18" x2="40" y2="27" stroke="#A0A0FF" stroke-width="2.5" stroke-linecap="round"
-            style="transform-origin:40px 40px; transform:rotate(-40deg)"/>
-        </svg>
-        Send an Email
-      </a>
+
+    <!-- Step 1: Describe your amp -->
+    <div id="quoteStep1">
+      <div class="section-label">AI Quote Estimator</div>
+      <h2 class="section-title">Describe Your Amp</h2>
+      <p class="section-body" style="margin:0 auto 28px; text-align:center; max-width:460px;">
+        Tell David what you've got and what it needs. The more detail the better — make, model, year, symptoms, what you're hoping for.
+      </p>
+      <div class="quote-form">
+        <textarea id="ampDescription" class="quote-textarea" placeholder="e.g. 1966 Fender Deluxe Reverb — has a bad hum, one of the output tubes glows red, reverb tank doesn't work, needs a full recap. Cabinet is in good shape but the grille cloth is torn..."></textarea>
+        <div class="quote-form-footer">
+          <span class="quote-hint">Powered by AI · Not a binding quote</span>
+          <button class="knob-btn large" id="getQuoteBtn" onclick="getAIQuote()">
+            <svg class="knob-svg" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+              <g stroke="rgba(212,130,26,0.4)" stroke-width="1.2">
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-150 40 40)"/>
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-30 40 40)"/>
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(90 40 40)"/>
+                <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
+              </g>
+              <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
+              <line id="quoteKnobLine" x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
+                style="transform-origin:40px 40px; transform:rotate(-140deg); transition: transform 0.4s ease;"/>
+            </svg>
+            Get Estimate
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Loading state -->
+    <div id="quoteLoading" style="display:none; text-align:center; padding: 40px 0;">
+      <div class="tubes-warming">
+        <div class="tw-tube"><div class="tw-glow"></div></div>
+        <div class="tw-tube"><div class="tw-glow"></div></div>
+        <div class="tw-tube"><div class="tw-glow"></div></div>
+        <div class="tw-tube"><div class="tw-glow"></div></div>
+      </div>
+      <p class="quote-loading-text">Consulting the schematics...</p>
+    </div>
+
+    <!-- Step 3: Result -->
+    <div id="quoteResult" style="display:none;">
+      <div class="section-label">Your Estimate</div>
+      <div id="quoteResultText" class="quote-result-body"></div>
+      <div class="contact-knobs" style="margin-top:32px;">
+        <button class="knob-btn large" onclick="resetQuote()">
+          <svg class="knob-svg" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="37" fill="#1A1A1E" stroke="#3A3A50" stroke-width="2"/>
+            <g stroke="rgba(180,180,220,0.3)" stroke-width="1.2">
+              <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
+              <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
+              <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
+            </g>
+            <circle cx="40" cy="40" r="26" fill="#050508" stroke="rgba(120,120,200,0.2)" stroke-width="1"/>
+            <line x1="40" y1="18" x2="40" y2="27" stroke="#A0A0FF" stroke-width="2.5" stroke-linecap="round"
+              style="transform-origin:40px 40px; transform:rotate(60deg)"/>
+          </svg>
+          Try Another
+        </button>
+        <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large">
+          <svg class="knob-svg" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+            <g stroke="rgba(212,130,26,0.35)" stroke-width="1.2">
+              <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-60 40 40)"/>
+              <line x1="40" y1="6" x2="40" y2="12" transform="rotate(60 40 40)"/>
+            </g>
+            <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
+            <line x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
+              style="transform-origin:40px 40px; transform:rotate(45deg)"/>
+          </svg>
+          Contact David
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -1894,7 +2168,7 @@ body.light-mode .mode-toggle { color: var(--wood-dark); }
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Scroll fade-in
 const obs = new IntersectionObserver(entries => {
   entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
@@ -1940,22 +2214,94 @@ modeToggle.addEventListener('click', () => {
 
 // Knob interactive rotation on click
 document.querySelectorAll('.knob-btn').forEach(btn => {
-  let angle = Math.random() * 200 - 100;
-  const indicator = btn.querySelector('.knob-indicator, line[stroke="#F5A623"], line[stroke="#A0A0FF"], line[stroke="#90E060"], line[stroke="#FF6060"], line[stroke="#A0A0E0"]');
+  const indicator = btn.querySelector('line[stroke="#F5A623"], line[stroke="#A0A0FF"], line[stroke="#90E060"], line[stroke="#FF6060"]');
   btn.addEventListener('click', function(e) {
-    if (btn.tagName === 'A' && btn.href && btn.href !== '#') return;
+    if (btn.tagName === 'A' && btn.href && !btn.href.endsWith('#')) return;
     e.preventDefault();
-    angle += 45 + Math.random() * 60;
     if (indicator) {
-      const current = indicator.style.transform || '';
-      const match = current.match(/rotate\(([-\d.]+)deg\)/);
-      const base = match ? parseFloat(match[1]) : 0;
-      // animate
+      const cur = indicator.style.transform || '';
+      const m = cur.match(/rotate\(([-\d.]+)deg\)/);
+      const base = m ? parseFloat(m[1]) : 0;
       indicator.style.transition = 'transform 0.3s cubic-bezier(.34,1.56,.64,1)';
-      indicator.style.transform = current.replace(/rotate\([^)]+\)/, `rotate(${base + 45}deg)`) || `rotate(${base + 45}deg)`;
+      indicator.style.transform = 'rotate(' + (base + 45 + Math.random()*30) + 'deg)';
     }
   });
 });
+
+// TUBE WARMUP INTRO
+(function() {
+  const intro = document.getElementById('tubeIntro');
+  const bar = document.getElementById('tiBar');
+  const status = document.getElementById('tiStatus');
+  const skipBtn = document.getElementById('tiSkip');
+  if (!intro) return;
+  const msgs = ['Warming up the tubes...','Checking the bias...','Recapping the filter caps...','Tuning the tone stack...','Almost ready to shred...'];
+  let progress = 0, msgIdx = 0;
+  const step = 100 / (4200 / 60);
+  const timer = setInterval(() => {
+    progress = Math.min(100, progress + step + (Math.random() * step * 0.4));
+    bar.style.width = progress + '%';
+    const ni = Math.min(msgs.length-1, Math.floor((progress/100)*msgs.length));
+    if (ni !== msgIdx) {
+      msgIdx = ni;
+      status.style.opacity = '0';
+      setTimeout(() => { status.textContent = msgs[msgIdx]; status.style.opacity = '1'; }, 200);
+    }
+    if (progress >= 100) { clearInterval(timer); status.textContent = 'Ready to rock.'; setTimeout(dismiss, 700); }
+  }, 60);
+  function dismiss() { intro.classList.add('ti-fade'); setTimeout(() => { if(intro.parentNode) intro.remove(); }, 900); }
+  skipBtn.addEventListener('click', () => { clearInterval(timer); dismiss(); });
+})();
+
+// AI QUOTE FORM
+async function getAIQuote() {
+  const descEl = document.getElementById('ampDescription');
+  const desc = descEl ? descEl.value.trim() : '';
+  if (!desc) { descEl.focus(); descEl.style.borderColor='rgba(255,80,80,0.6)'; setTimeout(()=>descEl.style.borderColor='',1400); return; }
+  const knobLine = document.getElementById('quoteKnobLine');
+  if (knobLine) knobLine.style.transform = 'rotate(160deg)';
+  document.getElementById('quoteStep1').style.display = 'none';
+  document.getElementById('quoteLoading').style.display = 'block';
+  document.getElementById('quoteResult').style.display = 'none';
+  const phrases = ['Consulting the schematics...','Checking tube availability...','Estimating cap kit costs...','Calculating labor hours...','Reviewing the prognosis...'];
+  let pi = 0;
+  const loadingEl = document.querySelector('.quote-loading-text');
+  const pt = setInterval(() => {
+    pi = (pi+1) % phrases.length;
+    loadingEl.style.opacity = '0';
+    setTimeout(() => { loadingEl.textContent = phrases[pi]; loadingEl.style.opacity = '1'; }, 250);
+  }, 1800);
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: "You are David Vomacka, Grampy, a veteran tube amp restoration tech with 30+ years experience. Give a warm, plain-spoken quote estimate covering: diagnosis, recommended work, rough USD price range (parts+labor), turnaround, and a friendly close pointing to @grampys_amps on Instagram. About 200 words, plain text only, no markdown. Realistic pricing — full Fender Deluxe Reverb recap is $350-600 for reference.",
+        messages: [{ role: 'user', content: 'Here is my amp: ' + desc }]
+      })
+    });
+    clearInterval(pt);
+    const data = await res.json();
+    const text = (data.content||[]).map(b=>b.text||'').join('') || "Sorry, something went wrong. Reach out directly via Instagram @grampys_amps.";
+    document.getElementById('quoteLoading').style.display = 'none';
+    document.getElementById('quoteResult').style.display = 'block';
+    document.getElementById('quoteResultText').textContent = text;
+  } catch(err) {
+    clearInterval(pt);
+    document.getElementById('quoteLoading').style.display = 'none';
+    document.getElementById('quoteResult').style.display = 'block';
+    document.getElementById('quoteResultText').textContent = "Couldn't connect right now. Reach out to David directly on Instagram @grampys_amps.";
+  }
+}
+
+function resetQuote() {
+  document.getElementById('quoteResult').style.display = 'none';
+  document.getElementById('quoteStep1').style.display = 'block';
+  document.getElementById('ampDescription').value = '';
+  const k = document.getElementById('quoteKnobLine');
+  if (k) k.style.transform = 'rotate(-140deg)';
+}
 </script>
 </body>
 </html>
