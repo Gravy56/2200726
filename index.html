@@ -212,9 +212,15 @@
     transition: filter 0.3s;
     
   }
-  .card-preview iframe {
-  display: none;
-}
+ .card-preview iframe {
+  width: 200%;
+  height: 200%;
+  transform: scale(0.5);
+  transform-origin: top left;
+  border: none;
+  pointer-events: none;
+  overflow: hidden;
+  }
   .preview-overlay {
     position: absolute;
     inset: 0;
