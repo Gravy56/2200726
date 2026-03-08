@@ -1,0 +1,1961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grampy's Amps — Vintage Amp Restoration by David Vomacka</title>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Special+Elite&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --wood-dark:    #3B2410;
+  --wood-mid:     #6B3A1F;
+  --wood-light:   #A0622A;
+  --wood-grain:   #8B5523;
+  --amber:        #D4821A;
+  --amber-glow:   #F5A623;
+  --cream:        #F2E8C9;
+  --cream-dark:   #D4C89A;
+  --tweed:        #C8A96E;
+  --chrome:       #C8C8C0;
+  --chrome-dark:  #888880;
+  --knob-base:    #1A1A18;
+  --knob-ring:    #444440;
+  --panel-bg:     #2A1A08;
+  --led-orange:   #FF6B00;
+  --led-red:      #FF2200;
+  --off-white:    #EDE0C4;
+  --script-gold:  #C8963C;
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+/* ── WOODGRAIN TEXTURE via SVG filter ── */
+body {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  color: var(--cream);
+  background: var(--wood-dark);
+  overflow-x: hidden;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='4' fill='none' stroke='%23D4821A' stroke-width='1.5'/%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%23D4821A'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+
+/* WOODGRAIN repeating background pattern */
+.wood-bg {
+  background-color: var(--wood-dark);
+  background-image:
+    repeating-linear-gradient(
+      88deg,
+      transparent 0px,
+      transparent 2px,
+      rgba(90,50,10,0.08) 2px,
+      rgba(90,50,10,0.08) 3px
+    ),
+    repeating-linear-gradient(
+      92deg,
+      transparent 0px,
+      transparent 4px,
+      rgba(180,100,30,0.06) 4px,
+      rgba(180,100,30,0.06) 5px
+    ),
+    repeating-linear-gradient(
+      89.5deg,
+      transparent 0,
+      transparent 8px,
+      rgba(60,30,5,0.12) 8px,
+      rgba(60,30,5,0.12) 9px
+    );
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:200;
+  display: flex; align-items:center; justify-content:space-between;
+  padding: 0 48px;
+  height: 68px;
+  background: var(--panel-bg);
+  border-bottom: 3px solid var(--wood-mid);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+}
+/* screws on nav panel */
+nav::before, nav::after {
+  content:'';
+  position:absolute;
+  width:10px; height:10px;
+  border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, var(--chrome), var(--chrome-dark));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.2);
+  top:50%; transform:translateY(-50%);
+}
+nav::before { left:16px; }
+nav::after  { right:16px; }
+
+.nav-logo {
+  font-family: 'Rye', cursive;
+  font-size: 1.5rem;
+  color: var(--amber-glow);
+  text-decoration:none;
+  text-shadow: 0 0 20px rgba(245,166,35,0.5), 2px 2px 4px rgba(0,0,0,0.8);
+  letter-spacing: 0.04em;
+}
+.nav-logo span { color: var(--cream); font-size:0.85em; }
+
+.nav-links { display:flex; align-items:center; gap:12px; list-style:none; }
+.nav-links a {
+  text-decoration:none; color:var(--cream-dark);
+  font-family:'Special Elite', cursive;
+  font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase;
+  opacity:0.7; transition: opacity 0.2s, color 0.2s;
+  padding: 6px 10px;
+}
+.nav-links a:hover { opacity:1; color:var(--amber-glow); }
+
+/* ── KNOB BUTTON ── */
+/* Used for ALL interactive buttons on the page */
+.knob-btn {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cream-dark);
+  transition: color 0.2s;
+  padding: 0;
+}
+.knob-btn:hover { color: var(--amber-glow); }
+.knob-btn:hover .knob-svg { filter: drop-shadow(0 0 8px rgba(245,166,35,0.6)); }
+.knob-btn:hover .knob-svg .knob-body { stroke: var(--amber-glow); }
+.knob-btn:active .knob-svg { transform: scale(0.96); }
+
+.knob-svg {
+  display:block;
+  transition: transform 0.15s, filter 0.2s;
+}
+
+/* Large hero knob buttons */
+.knob-btn.large .knob-svg { width:80px; height:80px; }
+.knob-btn.large { font-size:0.68rem; gap:10px; }
+
+/* Medium knobs */
+.knob-btn.medium .knob-svg { width:56px; height:56px; }
+.knob-btn.medium { font-size:0.62rem; gap:8px; }
+
+/* Small nav knobs */
+.knob-btn.small .knob-svg { width:36px; height:36px; }
+.knob-btn.small { font-size:0.55rem; gap:5px; }
+
+/* Knob hover rotate the indicator */
+.knob-btn:hover .knob-indicator {
+  animation: knob-wiggle 0.4s ease;
+}
+@keyframes knob-wiggle {
+  0%   { transform: rotate(0deg) translateY(-30%); }
+  30%  { transform: rotate(15deg) translateY(-30%); }
+  70%  { transform: rotate(-8deg) translateY(-30%); }
+  100% { transform: rotate(0deg) translateY(-30%); }
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 48px 60px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Tweed fabric texture overlay */
+.hero::before {
+  content:'';
+  position:absolute; inset:0; z-index:0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(200,169,110,0.04) 0, rgba(200,169,110,0.04) 1px,
+      transparent 1px, transparent 8px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(200,169,110,0.04) 0, rgba(200,169,110,0.04) 1px,
+      transparent 1px, transparent 8px
+    ),
+    repeating-linear-gradient(
+      88deg,
+      transparent 0px, transparent 2px,
+      rgba(90,50,10,0.1) 2px, rgba(90,50,10,0.1) 3px
+    ),
+    linear-gradient(180deg, var(--wood-dark) 0%, #2A1A08 60%, #1A0D04 100%);
+}
+
+/* Glowing amp panel in hero */
+.hero-panel {
+  position:relative; z-index:1;
+  background: var(--panel-bg);
+  border: 4px solid var(--wood-mid);
+  border-radius: 12px;
+  padding: 48px 64px 40px;
+  max-width: 780px;
+  width: 100%;
+  box-shadow:
+    0 0 0 1px rgba(212,130,26,0.2),
+    0 0 40px rgba(212,130,26,0.1),
+    0 24px 80px rgba(0,0,0,0.8),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+}
+/* Corner screws */
+.hero-panel::before {
+  content:'';
+  position:absolute;
+  top:12px; left:12px; right:12px; bottom:12px;
+  border:1px solid rgba(212,130,26,0.12);
+  border-radius:8px;
+  pointer-events:none;
+}
+.panel-screws {
+  position:absolute; inset:0; pointer-events:none;
+}
+.panel-screw {
+  position:absolute;
+  width:12px; height:12px;
+  border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #999, #444);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.9), inset 0 0 3px rgba(255,255,255,0.15);
+}
+.panel-screw::after {
+  content:'';
+  position:absolute; top:50%; left:50%;
+  width:6px; height:1px;
+  background: rgba(0,0,0,0.6);
+  transform: translate(-50%,-50%) rotate(45deg);
+}
+.ps-tl { top:8px; left:8px; }
+.ps-tr { top:8px; right:8px; }
+.ps-bl { bottom:8px; left:8px; }
+.ps-br { bottom:8px; right:8px; }
+
+.hero-eyelet-row {
+  display:flex; justify-content:center; gap:28px;
+  margin-bottom:28px;
+}
+.eyelet {
+  width:8px; height:8px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%, #aaa, #333);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.8), inset 0 0 2px rgba(255,255,255,0.2);
+}
+
+.hero-brand {
+  font-family:'Rye', cursive;
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  color: var(--amber-glow);
+  text-shadow:
+    0 0 30px rgba(245,166,35,0.6),
+    0 0 60px rgba(245,166,35,0.2),
+    3px 3px 0 rgba(0,0,0,0.5);
+  line-height:1;
+  margin-bottom:6px;
+}
+.hero-sub {
+  font-family:'Special Elite', cursive;
+  font-size: clamp(0.85rem, 2vw, 1.1rem);
+  color: var(--cream-dark);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity:0.7;
+  margin-bottom: 28px;
+}
+
+/* VU meter decorative element */
+.vu-meter {
+  display:flex; gap:3px; justify-content:center;
+  margin-bottom:28px;
+  align-items:flex-end;
+}
+.vu-bar {
+  width:6px; border-radius:1px 1px 0 0;
+  background: var(--amber);
+  animation: vu-pulse 1.4s ease-in-out infinite;
+  box-shadow: 0 0 6px var(--amber);
+}
+.vu-bar:nth-child(1)  { height:12px; animation-delay:0.0s; }
+.vu-bar:nth-child(2)  { height:20px; animation-delay:0.1s; }
+.vu-bar:nth-child(3)  { height:32px; animation-delay:0.2s; }
+.vu-bar:nth-child(4)  { height:44px; animation-delay:0.3s; }
+.vu-bar:nth-child(5)  { height:50px; animation-delay:0.4s; }
+.vu-bar:nth-child(6)  { height:44px; animation-delay:0.5s; background:var(--led-orange); box-shadow:0 0 6px var(--led-orange); }
+.vu-bar:nth-child(7)  { height:36px; animation-delay:0.6s; background:var(--led-orange); box-shadow:0 0 6px var(--led-orange); }
+.vu-bar:nth-child(8)  { height:28px; animation-delay:0.5s; background:var(--led-red); box-shadow:0 0 6px var(--led-red); }
+.vu-bar:nth-child(9)  { height:18px; animation-delay:0.4s; background:var(--led-red); box-shadow:0 0 6px var(--led-red); }
+.vu-bar:nth-child(10) { height:10px; animation-delay:0.3s; background:var(--led-red); box-shadow:0 0 6px var(--led-red); }
+@keyframes vu-pulse {
+  0%,100% { transform:scaleY(1); opacity:1; }
+  50%      { transform:scaleY(0.6); opacity:0.7; }
+}
+
+.hero-tagline {
+  font-size: clamp(0.9rem,1.8vw,1.1rem);
+  line-height:1.8;
+  color: var(--cream-dark);
+  opacity:0.8;
+  max-width:480px;
+  margin:0 auto 36px;
+}
+
+.hero-knobs {
+  display:flex; justify-content:center; gap:40px; flex-wrap:wrap;
+}
+
+/* ── SECTION SHARED ── */
+section { position:relative; }
+
+.section-label {
+  display:inline-block;
+  font-family:'Special Elite', cursive;
+  font-size:0.68rem;
+  letter-spacing:0.24em;
+  text-transform:uppercase;
+  color:var(--amber);
+  margin-bottom:12px;
+}
+.section-title {
+  font-family:'Rye', cursive;
+  font-size: clamp(1.8rem,4vw,3rem);
+  color: var(--cream);
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+  line-height:1.2;
+  margin-bottom:16px;
+}
+.section-body {
+  font-size:0.95rem;
+  line-height:1.85;
+  color:var(--cream-dark);
+  opacity:0.75;
+  max-width:560px;
+}
+
+/* ── ABOUT ── */
+.about {
+  padding:100px 80px;
+  display:grid;
+  grid-template-columns:45% 1fr;
+  gap:60px;
+  align-items:start;
+  background:
+    repeating-linear-gradient(
+      88deg, transparent 0, transparent 2px,
+      rgba(90,50,10,0.12) 2px, rgba(90,50,10,0.12) 3px
+    ),
+    linear-gradient(180deg, #1A0D04 0%, var(--wood-dark) 100%);
+}
+.about-photo-frame {
+  position:relative;
+  border: 6px solid var(--wood-mid);
+  border-radius:4px;
+  overflow:hidden;
+  box-shadow: 0 0 0 1px rgba(212,130,26,0.2), 0 20px 60px rgba(0,0,0,0.7);
+  background: var(--panel-bg);
+  aspect-ratio: 4/3;
+  display:flex; align-items:center; justify-content:center;
+}
+.about-photo-frame::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+  pointer-events:none;
+}
+/* placeholder amp illustration */
+.amp-illustration {
+  width:85%; height:85%;
+  position:relative;
+}
+
+/* vintage amp SVG illustration */
+.about-text { display:flex; flex-direction:column; gap:16px; }
+.about-text .section-body { max-width:100%; }
+.about-text .section-title { margin-bottom:4px; }
+
+.stat-row {
+  display:flex; gap:32px; margin-top:8px; flex-wrap:wrap;
+}
+.stat {
+  text-align:center;
+  background: rgba(0,0,0,0.3);
+  border:1px solid rgba(212,130,26,0.2);
+  border-radius:4px;
+  padding:16px 20px;
+}
+.stat-num {
+  font-family:'Rye', cursive;
+  font-size:2rem;
+  color:var(--amber-glow);
+  text-shadow:0 0 20px rgba(245,166,35,0.4);
+  line-height:1;
+  margin-bottom:4px;
+}
+.stat-label {
+  font-family:'Special Elite',cursive;
+  font-size:0.6rem;
+  letter-spacing:0.14em;
+  text-transform:uppercase;
+  color:var(--cream-dark);
+  opacity:0.6;
+}
+
+/* ── WORK / GALLERY ── */
+.work {
+  padding:100px 80px;
+  background: var(--panel-bg);
+  border-top:3px solid var(--wood-mid);
+  border-bottom:3px solid var(--wood-mid);
+}
+.work-header {
+  text-align:center;
+  margin-bottom:64px;
+}
+
+/* Amp control panel row above gallery */
+.amp-panel-row {
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  gap:32px;
+  margin-bottom:48px;
+  background: #111108;
+  border:2px solid #3A3A30;
+  border-radius:6px;
+  padding:20px 40px 24px;
+  position:relative;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+}
+.amp-panel-row::before, .amp-panel-row::after {
+  content:'';
+  position:absolute;
+  width:8px; height:8px; border-radius:50%;
+  background: radial-gradient(circle at 35% 35%,#aaa,#444);
+  box-shadow:0 1px 3px rgba(0,0,0,0.8);
+  top:8px;
+}
+.amp-panel-row::before { left:10px; }
+.amp-panel-row::after  { right:10px; }
+
+.amp-power-led {
+  width:12px; height:12px; border-radius:50%;
+  background: var(--led-orange);
+  box-shadow: 0 0 10px var(--led-orange), 0 0 20px rgba(255,107,0,0.4);
+  animation: led-flicker 3s ease-in-out infinite;
+  align-self:center;
+}
+@keyframes led-flicker {
+  0%,100% { opacity:1; }
+  92% { opacity:1; }
+  93% { opacity:0.5; }
+  94% { opacity:1; }
+  96% { opacity:0.7; }
+  97% { opacity:1; }
+}
+.panel-divider {
+  width:1px; height:48px;
+  background:rgba(255,255,255,0.08);
+  align-self:center;
+}
+
+/* Gallery */
+.gallery-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+.gallery-card {
+  background:#0A0804;
+  border:2px solid var(--wood-mid);
+  border-radius:4px;
+  overflow:hidden;
+  transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+  cursor:pointer;
+}
+.gallery-card:hover {
+  transform:translateY(-6px) scale(1.01);
+  box-shadow:0 20px 50px rgba(0,0,0,0.6), 0 0 20px rgba(212,130,26,0.15);
+  border-color:var(--amber);
+}
+.gallery-card:nth-child(1) { grid-column:span 2; }
+
+.card-img {
+  width:100%;
+  aspect-ratio:16/9;
+  position:relative;
+  overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.gallery-card:nth-child(1) .card-img { aspect-ratio:2/1; }
+
+/* Amp type color themes */
+.card-img.fender { background:linear-gradient(145deg,#2A1A08,#1A0D04); }
+.card-img.marshall { background:linear-gradient(145deg,#1A1A08,#0A0A04); }
+.card-img.vox { background:linear-gradient(145deg,#080A1A,#040614); }
+.card-img.ampeg { background:linear-gradient(145deg,#0A080A,#060407); }
+.card-img.supro { background:linear-gradient(145deg,#0A1208,#050904); }
+
+.card-img-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);
+}
+.card-amp-label {
+  position:absolute; top:12px; left:12px; right:12px;
+  background:rgba(0,0,0,0.7);
+  border:1px solid rgba(212,130,26,0.4);
+  border-radius:2px;
+  padding:4px 10px;
+  font-family:'Special Elite',cursive;
+  font-size:0.62rem;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--amber-glow);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:calc(100% - 24px);
+  right:auto;
+}
+
+/* The inline amp SVG drawings */
+.mini-amp { width:60%; max-width:200px; opacity:0.9; }
+.big-amp  { width:55%; max-width:300px; opacity:0.9; }
+
+.card-info { padding:16px 18px 22px; }
+.card-title {
+  font-family:'Special Elite',cursive;
+  font-size:0.95rem;
+  color:var(--cream);
+  margin-bottom:8px;
+  line-height:1.4;
+  word-wrap:break-word;
+}
+.card-desc {
+  font-size:0.8rem;
+  line-height:1.65;
+  color:var(--cream-dark);
+  opacity:0.65;
+  word-wrap:break-word;
+}
+
+/* ── SERVICES ── */
+.services {
+  padding:100px 80px;
+  background:
+    repeating-linear-gradient(
+      88deg, transparent 0, transparent 2px,
+      rgba(90,50,10,0.12) 2px, rgba(90,50,10,0.12) 3px
+    ),
+    var(--wood-dark);
+}
+.services-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:28px;
+  margin-top:64px;
+}
+.service-card {
+  background:var(--panel-bg);
+  border:2px solid var(--wood-mid);
+  border-radius:6px;
+  padding:36px 28px;
+  position:relative;
+  transition:border-color 0.3s, box-shadow 0.3s;
+}
+.service-card::before {
+  content:'';
+  position:absolute; top:8px; left:8px; right:8px; bottom:8px;
+  border:1px solid rgba(212,130,26,0.08);
+  border-radius:4px;
+  pointer-events:none;
+}
+.service-card:hover {
+  border-color:var(--amber);
+  box-shadow:0 0 30px rgba(212,130,26,0.15);
+}
+.service-icon {
+  width:44px; height:44px; margin-bottom:20px;
+}
+.service-title {
+  font-family:'Special Elite',cursive;
+  font-size:1rem;
+  color:var(--amber-glow);
+  margin-bottom:10px;
+  letter-spacing:0.04em;
+}
+.service-desc {
+  font-size:0.83rem;
+  line-height:1.75;
+  color:var(--cream-dark);
+  opacity:0.65;
+  margin-bottom:24px;
+}
+.service-card .knob-btn { display:flex; flex-direction:row; gap:12px; align-items:center; }
+.service-card .knob-btn .knob-svg { width:32px; height:32px; }
+.service-card .knob-btn { font-size:0.62rem; }
+
+/* ── INSTAGRAM FEED ── */
+.instagram {
+  padding:100px 80px;
+  background:var(--panel-bg);
+  border-top:3px solid var(--wood-mid);
+  text-align:center;
+}
+.insta-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:48px 0;
+}
+.insta-tile {
+  aspect-ratio:1;
+  background:var(--wood-dark);
+  border:2px solid var(--wood-mid);
+  border-radius:3px;
+  overflow:hidden;
+  position:relative;
+  display:flex; align-items:center; justify-content:center;
+  transition:border-color 0.3s, transform 0.3s;
+  cursor:pointer;
+}
+.insta-tile:hover {
+  border-color:var(--amber);
+  transform:scale(1.02);
+}
+.insta-tile-overlay {
+  position:absolute; inset:0;
+  background:rgba(0,0,0,0);
+  display:flex; align-items:center; justify-content:center;
+  transition:background 0.3s;
+}
+.insta-tile:hover .insta-tile-overlay { background:rgba(212,130,26,0.2); }
+.insta-icon {
+  opacity:0; transition:opacity 0.3s;
+  color:white; font-size:1.5rem;
+}
+.insta-tile:hover .insta-icon { opacity:1; }
+/* tile backgrounds — warm colored amp-themed placeholders */
+.insta-tile:nth-child(1) { background:linear-gradient(135deg,#3B1A05,#6B3010); }
+.insta-tile:nth-child(2) { background:linear-gradient(135deg,#1A1505,#3A2E0A); }
+.insta-tile:nth-child(3) { background:linear-gradient(135deg,#050A1A,#0A1530); }
+.insta-tile:nth-child(4) { background:linear-gradient(135deg,#1A0A0A,#3A1010); }
+.insta-tile:nth-child(5) { background:linear-gradient(135deg,#0A1A05,#152B08); }
+.insta-tile:nth-child(6) { background:linear-gradient(135deg,#1A1005,#3A2808); }
+.insta-tile:nth-child(7) { background:linear-gradient(135deg,#100A1A,#201530); }
+.insta-tile:nth-child(8) { background:linear-gradient(135deg,#1A1A10,#2E2E18); }
+
+/* SVG inside each tile */
+.insta-tile svg { width:55%; opacity:0.75; transition:opacity 0.3s; }
+.insta-tile:hover svg { opacity:0.4; }
+
+/* ── CONTACT ── */
+.contact {
+  padding:100px 80px;
+  background:
+    repeating-linear-gradient(
+      88deg, transparent 0, transparent 2px,
+      rgba(90,50,10,0.12) 2px, rgba(90,50,10,0.12) 3px
+    ),
+    linear-gradient(180deg,var(--wood-dark) 0%,#1A0D04 100%);
+  text-align:center;
+}
+.contact-panel {
+  max-width:660px;
+  margin:0 auto;
+  background:var(--panel-bg);
+  border:3px solid var(--wood-mid);
+  border-radius:8px;
+  padding:56px 64px;
+  box-shadow:0 0 0 1px rgba(212,130,26,0.15), 0 24px 80px rgba(0,0,0,0.7);
+  position:relative;
+}
+.contact-panel .panel-screw { position:absolute; }
+.contact-knobs {
+  display:flex; justify-content:center; gap:36px;
+  margin-top:40px; flex-wrap:wrap;
+}
+
+/* ── FOOTER ── */
+footer {
+  background:#0A0804;
+  border-top:3px solid var(--wood-mid);
+  padding:48px 80px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:24px;
+}
+.footer-logo {
+  font-family:'Rye',cursive;
+  font-size:1.3rem;
+  color:var(--amber-glow);
+  text-shadow:0 0 20px rgba(245,166,35,0.4);
+}
+.footer-copy {
+  font-family:'Special Elite',cursive;
+  font-size:0.68rem;
+  letter-spacing:0.1em;
+  color:var(--cream-dark);
+  opacity:0.4;
+  text-align:center;
+}
+.footer-knobs { display:flex; gap:20px; }
+
+/* ── SCROLL FADE ── */
+.fade-in { opacity:0; transform:translateY(28px); transition:opacity 0.7s ease, transform 0.7s ease; }
+.fade-in.visible { opacity:1; transform:translateY(0); }
+
+/* Tube glow ambient */
+.tube-glow {
+  position:fixed; bottom:0; left:50%;
+  transform:translateX(-50%);
+  width:400px; height:200px;
+  background:radial-gradient(ellipse, rgba(212,130,26,0.06) 0%, transparent 70%);
+  pointer-events:none; z-index:0;
+}
+
+/* ── MODE TOGGLE BUTTON ── */
+.mode-toggle {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: 'Special Elite', cursive;
+  font-size: 0.52rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+.mode-toggle:hover .mt-knob { filter: drop-shadow(0 0 10px rgba(212,130,26,0.8)); }
+
+/* ═══════════════════════════════════════════
+   LIGHT MODE
+   A warm, pale-birch wood with dark outlines
+   and wood-grain texture lines visible like
+   a raw plank. All colours go light/warm.
+═══════════════════════════════════════════ */
+body.light-mode {
+  color: var(--wood-dark);
+  background: #F0E6D0;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20'%3E%3Ccircle cx='10' cy='10' r='4' fill='none' stroke='%236B3A1F' stroke-width='1.5'/%3E%3Ccircle cx='10' cy='10' r='1.5' fill='%236B3A1F'/%3E%3C/svg%3E") 10 10, crosshair;
+}
+
+/* Light woodgrain background — pale birch planks with visible grain lines */
+body.light-mode.wood-bg {
+  background-color: #EDE0C4;
+  background-image:
+    /* Coarse grain lines — dark sap streaks */
+    repeating-linear-gradient(
+      88.5deg,
+      transparent 0px,
+      transparent 14px,
+      rgba(90,45,8,0.10) 14px,
+      rgba(90,45,8,0.10) 15px
+    ),
+    /* Medium grain */
+    repeating-linear-gradient(
+      89deg,
+      transparent 0px,
+      transparent 6px,
+      rgba(120,70,20,0.07) 6px,
+      rgba(120,70,20,0.07) 7px
+    ),
+    /* Fine grain shimmer */
+    repeating-linear-gradient(
+      91deg,
+      transparent 0px,
+      transparent 3px,
+      rgba(160,100,40,0.05) 3px,
+      rgba(160,100,40,0.05) 4px
+    ),
+    /* Plank seam lines every ~120px */
+    repeating-linear-gradient(
+      180deg,
+      transparent 0px,
+      transparent 118px,
+      rgba(100,55,15,0.12) 118px,
+      rgba(100,55,15,0.12) 120px
+    ),
+    /* Base warm blonde wood */
+    linear-gradient(180deg, #F0E4C8 0%, #E8D8B4 40%, #EAD9B8 100%);
+}
+
+/* Nav */
+body.light-mode nav {
+  background: #D4B88A;
+  border-bottom: 3px solid #8B5523;
+  box-shadow: 0 4px 16px rgba(80,40,0,0.2);
+}
+body.light-mode .nav-logo { color: var(--wood-dark); text-shadow: 1px 1px 0 rgba(255,255,255,0.4); }
+body.light-mode .nav-logo span { color: var(--wood-mid); }
+body.light-mode .nav-links a { color: var(--wood-dark); }
+body.light-mode .nav-links a:hover { color: var(--wood-mid); }
+
+/* Hero panel */
+body.light-mode .hero::before {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(100,60,10,0.04) 0, rgba(100,60,10,0.04) 1px,
+      transparent 1px, transparent 8px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(100,60,10,0.04) 0, rgba(100,60,10,0.04) 1px,
+      transparent 1px, transparent 8px
+    ),
+    repeating-linear-gradient(
+      88.5deg, transparent 0, transparent 10px,
+      rgba(90,45,8,0.08) 10px, rgba(90,45,8,0.08) 11px
+    ),
+    linear-gradient(180deg, #EAD9B8 0%, #DCC89A 60%, #D4BC8C 100%);
+}
+body.light-mode .hero-panel {
+  background: #F5EDD8;
+  border-color: #8B5523;
+  box-shadow:
+    0 0 0 1px rgba(107,58,31,0.25),
+    0 0 30px rgba(107,58,31,0.08),
+    0 24px 80px rgba(80,40,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+}
+body.light-mode .hero-panel::before { border-color: rgba(107,58,31,0.15); }
+body.light-mode .panel-screw {
+  background: radial-gradient(circle at 35% 35%, #bbb, #777);
+}
+body.light-mode .hero-brand {
+  color: var(--wood-dark);
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.5), 0 0 20px rgba(107,58,31,0.2);
+}
+body.light-mode .hero-sub { color: var(--wood-mid); }
+body.light-mode .hero-tagline { color: #5A3A1A; opacity: 0.85; }
+body.light-mode .eyelet {
+  background: radial-gradient(circle at 35% 35%, #888, #444);
+}
+body.light-mode .vu-bar { background: #8B5523; box-shadow: 0 0 4px rgba(107,58,31,0.5); }
+body.light-mode .vu-bar:nth-child(6),
+body.light-mode .vu-bar:nth-child(7) { background: #C87020; box-shadow: 0 0 4px rgba(200,112,32,0.5); }
+body.light-mode .vu-bar:nth-child(8),
+body.light-mode .vu-bar:nth-child(9),
+body.light-mode .vu-bar:nth-child(10) { background: #A03020; box-shadow: 0 0 4px rgba(160,48,32,0.5); }
+body.light-mode .scroll-indicator { color: #8B5523; }
+
+/* Section labels and titles */
+body.light-mode .section-label { color: var(--wood-mid); }
+body.light-mode .section-title { color: var(--wood-dark); text-shadow: 1px 1px 0 rgba(255,255,255,0.3); }
+body.light-mode .section-body { color: #4A2E10; opacity: 0.85; }
+
+/* About */
+body.light-mode .about {
+  background:
+    repeating-linear-gradient(
+      88.5deg, transparent 0, transparent 10px,
+      rgba(90,45,8,0.08) 10px, rgba(90,45,8,0.08) 11px
+    ),
+    linear-gradient(180deg, #D4BC8C 0%, #EAD9B8 100%);
+}
+body.light-mode .about-photo-frame {
+  background: #F5EDD8;
+  border-color: #8B5523;
+  box-shadow: 0 0 0 1px rgba(107,58,31,0.2), 0 20px 50px rgba(80,40,0,0.12);
+}
+body.light-mode .stat { background: rgba(107,58,31,0.06); border-color: rgba(107,58,31,0.2); }
+body.light-mode .stat-num { color: var(--wood-mid); text-shadow: none; }
+body.light-mode .stat-label { color: #5A3A1A; }
+
+/* Work section */
+body.light-mode .work {
+  background: #F5EDD8;
+  border-top-color: #8B5523;
+  border-bottom-color: #8B5523;
+}
+body.light-mode .amp-panel-row {
+  background: #E0CFA8;
+  border-color: #A07840;
+  box-shadow: inset 0 2px 6px rgba(80,40,0,0.1);
+}
+body.light-mode .panel-divider { background: rgba(107,58,31,0.2); }
+body.light-mode .amp-power-led { box-shadow: 0 0 8px var(--led-orange), 0 0 14px rgba(255,107,0,0.3); }
+body.light-mode .gallery-card {
+  background: #FAF3E4;
+  border-color: #A07840;
+}
+body.light-mode .gallery-card:hover {
+  border-color: var(--wood-mid);
+  box-shadow: 0 12px 40px rgba(80,40,0,0.15), 0 0 16px rgba(107,58,31,0.1);
+}
+body.light-mode .card-title { color: var(--wood-dark); }
+body.light-mode .card-desc { color: #5A3A1A; }
+body.light-mode .card-amp-label {
+  background: rgba(245,237,216,0.92);
+  border-color: rgba(107,58,31,0.4);
+  color: var(--wood-mid);
+}
+
+/* Services */
+body.light-mode .services {
+  background:
+    repeating-linear-gradient(
+      88.5deg, transparent 0, transparent 10px,
+      rgba(90,45,8,0.08) 10px, rgba(90,45,8,0.08) 11px
+    ),
+    #EAD9B8;
+}
+body.light-mode .service-card {
+  background: #F5EDD8;
+  border-color: #A07840;
+}
+body.light-mode .service-card::before { border-color: rgba(107,58,31,0.1); }
+body.light-mode .service-card:hover {
+  border-color: var(--wood-mid);
+  box-shadow: 0 0 20px rgba(107,58,31,0.1);
+}
+body.light-mode .service-title { color: var(--wood-mid); }
+body.light-mode .service-desc { color: #5A3A1A; }
+
+/* Instagram */
+body.light-mode .instagram {
+  background: #F5EDD8;
+  border-top-color: #8B5523;
+}
+body.light-mode .insta-tile { border-color: #A07840; }
+body.light-mode .insta-tile:hover { border-color: var(--wood-mid); }
+
+/* Contact */
+body.light-mode .contact {
+  background:
+    repeating-linear-gradient(
+      88.5deg, transparent 0, transparent 10px,
+      rgba(90,45,8,0.08) 10px, rgba(90,45,8,0.08) 11px
+    ),
+    linear-gradient(180deg, #EAD9B8 0%, #D4BC8C 100%);
+}
+body.light-mode .contact-panel {
+  background: #F5EDD8;
+  border-color: #8B5523;
+  box-shadow: 0 0 0 1px rgba(107,58,31,0.2), 0 24px 60px rgba(80,40,0,0.12);
+}
+
+/* Footer */
+body.light-mode footer {
+  background: #C8A870;
+  border-top-color: #8B5523;
+}
+body.light-mode .footer-logo { color: var(--wood-dark); text-shadow: none; }
+body.light-mode .footer-copy { color: var(--wood-dark); }
+
+/* Knob buttons in light mode */
+body.light-mode .knob-btn { color: var(--wood-dark); }
+body.light-mode .knob-btn:hover { color: var(--wood-mid); }
+
+/* Nav screws */
+body.light-mode nav::before,
+body.light-mode nav::after {
+  background: radial-gradient(circle at 35% 35%, #aaa, #666);
+}
+
+/* Tube glow - off in light mode */
+body.light-mode .tube-glow { display: none; }
+
+/* Mode toggle label color */
+body.light-mode .mode-toggle { color: var(--wood-dark); }
+
+/* ── RESPONSIVE BREAKPOINTS ── */
+@media (max-width: 1100px) {
+  .about { grid-template-columns: 1fr; gap: 40px; padding: 80px 48px; }
+  .about-photo-frame { max-width: 520px; margin: 0 auto; width:100%; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
+  .gallery-card:nth-child(1) { grid-column: span 2; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .why-grid { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .process-steps::before { display: none; }
+}
+
+@media (max-width: 860px) {
+  nav { padding: 0 20px; }
+  nav::before, nav::after { display: none; }
+  .nav-links { gap: 4px; }
+  .nav-links a { font-size: 0.68rem; padding: 4px 6px; letter-spacing: 0.06em; }
+  .hero { padding: 90px 24px 48px; }
+  .hero-panel { padding: 32px 28px 32px; }
+  .hero-knobs { gap: 24px; }
+  .hero-brand { font-size: 2.4rem; }
+  .about, .work, .services, .instagram, .contact, .process, .why {
+    padding: 64px 32px;
+  }
+  .gallery-grid { grid-template-columns: 1fr; gap: 20px; }
+  .gallery-card:nth-child(1) { grid-column: span 1; }
+  .services-grid { grid-template-columns: 1fr; }
+  .insta-grid { grid-template-columns: repeat(2, 1fr); }
+  .amp-panel-row { gap: 16px; padding: 16px 20px 20px; flex-wrap: wrap; }
+  .stat-row { gap: 16px; }
+  .contact-panel { padding: 36px 28px; }
+  .contact-knobs { gap: 20px; }
+  footer { padding: 36px 32px; flex-direction: column; text-align: center; gap: 16px; }
+  .quiz-banner { margin: 0 32px; padding: 48px 36px; grid-template-columns: 1fr; text-align: center; }
+  .quiz-banner p { margin: 0 auto; }
+}
+
+@media (max-width: 560px) {
+  .nav-links { display: none; }
+  .nav-logo { font-size: 1.2rem; }
+  .hero-panel { padding: 24px 18px 24px; }
+  .hero-brand { font-size: 1.9rem; }
+  .hero-sub { font-size: 0.7rem; letter-spacing: 0.16em; }
+  .hero-knobs { flex-direction: column; align-items: center; gap: 20px; }
+  .section-title { font-size: 1.6rem; }
+  .process-steps { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .insta-grid { grid-template-columns: repeat(2, 1fr); }
+  .knob-btn.large .knob-svg { width: 60px; height: 60px; }
+  .hero-eyelet-row { gap: 16px; }
+  .mode-toggle { bottom: 16px; right: 16px; }
+}
+</style>
+</head>
+<body class="wood-bg">
+
+<div class="tube-glow"></div>
+
+<!-- ── MODE TOGGLE ── -->
+<button class="mode-toggle" id="modeToggle" aria-label="Toggle light/dark mode">
+  <svg class="mt-knob" width="52" height="52" viewBox="0 0 52 52">
+    <!-- outer ring -->
+    <circle cx="26" cy="26" r="24" fill="#222220" stroke="#555550" stroke-width="1.5" id="mt-ring"/>
+    <!-- tick marks -->
+    <g id="mt-ticks" stroke="rgba(212,130,26,0.45)" stroke-width="1">
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(-150 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(-120 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(-90 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(-60 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(-30 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(0 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(30 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(60 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(90 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(120 26 26)"/>
+      <line x1="26" y1="4"  x2="26" y2="8"  transform="rotate(150 26 26)"/>
+    </g>
+    <!-- knob body -->
+    <circle cx="26" cy="26" r="17" fill="#1A1A14" stroke="rgba(212,130,26,0.25)" stroke-width="0.8" id="mt-body"/>
+    <!-- indicator -->
+    <line id="mt-indicator" x1="26" y1="12" x2="26" y2="19"
+      stroke="#F5A623" stroke-width="2.2" stroke-linecap="round"
+      style="transform-origin:26px 26px; transform:rotate(-140deg); transition:transform 0.5s cubic-bezier(.34,1.56,.64,1)"/>
+  </svg>
+  <span id="mt-label">Light Mode</span>
+</button>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="#" class="nav-logo">Grampy's <span>Amps</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">The Work</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#instagram">Gallery</a></li>
+  </ul>
+  <a href="#contact" class="knob-btn small">
+    <svg class="knob-svg" viewBox="0 0 36 36">
+      <defs>
+        <radialGradient id="kg-s" cx="38%" cy="32%">
+          <stop offset="0%" stop-color="#555550"/>
+          <stop offset="60%" stop-color="#222220"/>
+          <stop offset="100%" stop-color="#111110"/>
+        </radialGradient>
+        <radialGradient id="kg-h" cx="38%" cy="32%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.15)"/>
+          <stop offset="100%" stop-color="transparent"/>
+        </radialGradient>
+      </defs>
+      <!-- Outer ring -->
+      <circle cx="18" cy="18" r="16" fill="#333330" stroke="#555550" stroke-width="1.5"/>
+      <!-- Scale marks -->
+      <g stroke="rgba(212,130,26,0.5)" stroke-width="1">
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(-150 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(-120 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(-90 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(-60 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(-30 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(0 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(30 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(60 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(90 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(120 18 18)"/>
+        <line x1="18" y1="4" x2="18" y2="7" transform="rotate(150 18 18)"/>
+      </g>
+      <!-- Knob body -->
+      <circle cx="18" cy="18" r="11" fill="url(#kg-s)" class="knob-body" stroke="rgba(212,130,26,0.3)" stroke-width="0.8"/>
+      <circle cx="18" cy="18" r="11" fill="url(#kg-h)" opacity="0.6"/>
+      <!-- Indicator dot -->
+      <circle cx="18" cy="9" r="1.5" fill="var(--amber-glow)" class="knob-indicator"
+        style="transform-origin:18px 18px; transform:rotate(135deg) translateY(-30%)"/>
+      <circle cx="18" cy="9" r="1.5" fill="var(--amber-glow)"
+        style="transform-origin:18px 18px; transform:rotate(135deg) translateY(-30%); filter:blur(2px);opacity:0.6"/>
+    </svg>
+    Contact
+  </a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-panel fade-in">
+    <div class="panel-screws">
+      <div class="panel-screw ps-tl"></div>
+      <div class="panel-screw ps-tr"></div>
+      <div class="panel-screw ps-bl"></div>
+      <div class="panel-screw ps-br"></div>
+    </div>
+    <div class="hero-eyelet-row">
+      <div class="eyelet"></div><div class="eyelet"></div><div class="eyelet"></div>
+      <div class="eyelet"></div><div class="eyelet"></div><div class="eyelet"></div>
+      <div class="eyelet"></div><div class="eyelet"></div><div class="eyelet"></div>
+    </div>
+    <div class="vu-meter">
+      <div class="vu-bar"></div><div class="vu-bar"></div><div class="vu-bar"></div>
+      <div class="vu-bar"></div><div class="vu-bar"></div><div class="vu-bar"></div>
+      <div class="vu-bar"></div><div class="vu-bar"></div><div class="vu-bar"></div>
+      <div class="vu-bar"></div>
+    </div>
+    <div class="hero-brand">Grampy's Amps</div>
+    <div class="hero-sub">Vintage Amp Restoration &nbsp;·&nbsp; David Vomacka</div>
+    <p class="hero-tagline">
+      Breathing life back into the finest tube amplifiers ever made.<br>
+      From tweed Fenders to screaming Marshalls — restored to sing again.
+    </p>
+    <div class="hero-knobs">
+      <!-- KNOB BUTTON: View the Work -->
+      <a href="#work" class="knob-btn large">
+        <svg class="knob-svg" viewBox="0 0 80 80">
+          <defs>
+            <radialGradient id="k1-s" cx="38%" cy="32%">
+              <stop offset="0%" stop-color="#3A3A35"/>
+              <stop offset="60%" stop-color="#1C1C18"/>
+              <stop offset="100%" stop-color="#0A0A08"/>
+            </radialGradient>
+            <radialGradient id="k1-h" cx="38%" cy="32%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </radialGradient>
+          </defs>
+          <circle cx="40" cy="40" r="37" fill="#222220" stroke="#555550" stroke-width="2"/>
+          <g stroke="rgba(212,130,26,0.4)" stroke-width="1.2">
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-150 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-30 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="10" transform="rotate(0 40 40)" stroke-width="1.8"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(30 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(150 40 40)"/>
+          </g>
+          <text x="40" y="74" text-anchor="middle" fill="rgba(212,130,26,0.5)" font-size="5.5" font-family="Special Elite, cursive" letter-spacing="0.5">MIN         MAX</text>
+          <circle cx="40" cy="40" r="26" fill="url(#k1-s)" class="knob-body" stroke="rgba(212,130,26,0.25)" stroke-width="1"/>
+          <circle cx="40" cy="40" r="26" fill="url(#k1-h)" opacity="0.5"/>
+          <!-- Pointer line -->
+          <line x1="40" y1="19" x2="40" y2="27" stroke="var(--amber-glow)" stroke-width="2.5" stroke-linecap="round"
+            style="transform-origin:40px 40px; transform:rotate(135deg)"/>
+          <circle cx="40" cy="21" r="2.5" fill="var(--amber-glow)"
+            style="transform-origin:40px 40px; transform:rotate(135deg); filter:blur(1px); opacity:0.7"/>
+        </svg>
+        View the Work
+      </a>
+
+      <!-- KNOB BUTTON: Follow on Instagram -->
+      <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large">
+        <svg class="knob-svg" viewBox="0 0 80 80">
+          <defs>
+            <radialGradient id="k2-s" cx="38%" cy="32%">
+              <stop offset="0%" stop-color="#3A2A10"/>
+              <stop offset="60%" stop-color="#1C1408"/>
+              <stop offset="100%" stop-color="#0A0804"/>
+            </radialGradient>
+          </defs>
+          <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+          <g stroke="rgba(212,130,26,0.45)" stroke-width="1.2">
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-150 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-30 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="10" transform="rotate(30 40 40)" stroke-width="1.8"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(150 40 40)"/>
+          </g>
+          <text x="40" y="74" text-anchor="middle" fill="rgba(212,130,26,0.5)" font-size="5.5" font-family="Special Elite, cursive" letter-spacing="0.5">MIN         MAX</text>
+          <circle cx="40" cy="40" r="26" fill="url(#k2-s)" class="knob-body" stroke="rgba(180,100,30,0.35)" stroke-width="1"/>
+          <line x1="40" y1="19" x2="40" y2="27" stroke="var(--amber-glow)" stroke-width="2.5" stroke-linecap="round"
+            style="transform-origin:40px 40px; transform:rotate(45deg)"/>
+        </svg>
+        Follow on Instagram
+      </a>
+
+      <!-- KNOB BUTTON: Get in Touch -->
+      <a href="#contact" class="knob-btn large">
+        <svg class="knob-svg" viewBox="0 0 80 80">
+          <defs>
+            <radialGradient id="k3-s" cx="38%" cy="32%">
+              <stop offset="0%" stop-color="#303035"/>
+              <stop offset="60%" stop-color="#18181C"/>
+              <stop offset="100%" stop-color="#0A0A0C"/>
+            </radialGradient>
+          </defs>
+          <circle cx="40" cy="40" r="37" fill="#1A1A1E" stroke="#3A3A50" stroke-width="2"/>
+          <g stroke="rgba(180,180,220,0.3)" stroke-width="1.2">
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-150 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(-30 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="10" transform="rotate(-90 40 40)" stroke-width="1.8"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(30 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(60 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(90 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(120 40 40)"/>
+            <line x1="40" y1="6"  x2="40" y2="12" transform="rotate(150 40 40)"/>
+          </g>
+          <text x="40" y="74" text-anchor="middle" fill="rgba(180,180,220,0.35)" font-size="5.5" font-family="Special Elite, cursive" letter-spacing="0.5">MIN         MAX</text>
+          <circle cx="40" cy="40" r="26" fill="url(#k3-s)" class="knob-body" stroke="rgba(180,180,220,0.2)" stroke-width="1"/>
+          <line x1="40" y1="19" x2="40" y2="27" stroke="#A0A0E0" stroke-width="2.5" stroke-linecap="round"
+            style="transform-origin:40px 40px; transform:rotate(-30deg)"/>
+        </svg>
+        Get in Touch
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section class="about" id="about">
+  <div class="about-photo-frame fade-in">
+    <!-- SVG illustration of a vintage tube amp -->
+    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="width:90%">
+      <!-- Cabinet body -->
+      <rect x="20" y="100" width="360" height="180" rx="6" fill="#3B2410"/>
+      <!-- Woodgrain lines -->
+      <line x1="20" y1="115" x2="380" y2="115" stroke="rgba(255,200,100,0.08)" stroke-width="2"/>
+      <line x1="20" y1="128" x2="380" y2="128" stroke="rgba(255,200,100,0.05)" stroke-width="1"/>
+      <line x1="20" y1="148" x2="380" y2="148" stroke="rgba(255,200,100,0.07)" stroke-width="2"/>
+      <line x1="20" y1="168" x2="380" y2="168" stroke="rgba(255,200,100,0.04)" stroke-width="1"/>
+      <line x1="20" y1="192" x2="380" y2="192" stroke="rgba(255,200,100,0.06)" stroke-width="2"/>
+      <line x1="20" y1="215" x2="380" y2="215" stroke="rgba(255,200,100,0.05)" stroke-width="1"/>
+      <line x1="20" y1="245" x2="380" y2="245" stroke="rgba(255,200,100,0.07)" stroke-width="2"/>
+      <!-- Grille cloth -->
+      <rect x="40" y="120" width="320" height="140" rx="4" fill="#8B7355" opacity="0.7"/>
+      <rect x="42" y="122" width="316" height="136" rx="3" fill="none" stroke="rgba(255,200,100,0.2)" stroke-width="1"/>
+      <!-- Grille pattern -->
+      <defs>
+        <pattern id="grille" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse">
+          <circle cx="3" cy="3" r="1.2" fill="rgba(0,0,0,0.5)"/>
+        </pattern>
+      </defs>
+      <rect x="44" y="124" width="312" height="132" rx="2" fill="url(#grille)" opacity="0.8"/>
+      <!-- Speaker circle -->
+      <circle cx="200" cy="190" r="56" fill="none" stroke="rgba(180,140,60,0.3)" stroke-width="2"/>
+      <circle cx="200" cy="190" r="48" fill="rgba(0,0,0,0.4)"/>
+      <circle cx="200" cy="190" r="12" fill="#555" stroke="rgba(180,140,60,0.4)" stroke-width="1"/>
+      <!-- Top panel (controls) -->
+      <rect x="20" y="40" width="360" height="65" rx="6" fill="#1A0D04"/>
+      <rect x="24" y="44" width="352" height="57" rx="4" fill="none" stroke="rgba(212,130,26,0.25)" stroke-width="1"/>
+      <!-- Knobs on panel -->
+      <circle cx="75"  cy="72" r="16" fill="#222" stroke="rgba(212,130,26,0.4)" stroke-width="1"/>
+      <circle cx="75"  cy="72" r="10" fill="#111" stroke="rgba(212,130,26,0.15)" stroke-width="0.5"/>
+      <line x1="75" y1="64" x2="75" y2="68" stroke="var(--amber-glow,#F5A623)" stroke-width="2" transform="rotate(-30 75 72)"/>
+      <circle cx="130" cy="72" r="16" fill="#222" stroke="rgba(212,130,26,0.4)" stroke-width="1"/>
+      <circle cx="130" cy="72" r="10" fill="#111" stroke="rgba(212,130,26,0.15)" stroke-width="0.5"/>
+      <line x1="130" y1="64" x2="130" y2="68" stroke="#F5A623" stroke-width="2" transform="rotate(60 130 72)"/>
+      <circle cx="185" cy="72" r="16" fill="#222" stroke="rgba(212,130,26,0.4)" stroke-width="1"/>
+      <circle cx="185" cy="72" r="10" fill="#111" stroke="rgba(212,130,26,0.15)" stroke-width="0.5"/>
+      <line x1="185" y1="64" x2="185" y2="68" stroke="#F5A623" stroke-width="2" transform="rotate(-90 185 72)"/>
+      <circle cx="240" cy="72" r="16" fill="#222" stroke="rgba(212,130,26,0.4)" stroke-width="1"/>
+      <circle cx="240" cy="72" r="10" fill="#111" stroke="rgba(212,130,26,0.15)" stroke-width="0.5"/>
+      <line x1="240" y1="64" x2="240" y2="68" stroke="#F5A623" stroke-width="2" transform="rotate(45 240 72)"/>
+      <!-- Power switch + LED -->
+      <rect x="300" y="60" width="26" height="14" rx="7" fill="#333"/>
+      <circle cx="310" cy="67" r="5" fill="#FF6B00" opacity="0.9"/>
+      <circle cx="310" cy="67" r="5" fill="#FF6B00" opacity="0.4" style="filter:blur(4px)"/>
+      <!-- Brand name on panel -->
+      <text x="355" y="75" text-anchor="middle" fill="rgba(212,130,26,0.7)" font-size="8" font-family="Rye, cursive">GRAMPY</text>
+      <!-- Tubes glowing -->
+      <rect x="65" y="10" width="14" height="30" rx="7" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+      <rect x="67" y="12" width="10" height="26" rx="5" fill="rgba(255,180,60,0.15)"/>
+      <line x1="72" y1="12" x2="72" y2="38" stroke="rgba(255,200,80,0.3)" stroke-width="0.8"/>
+      <rect x="105" y="8"  width="14" height="32" rx="7" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+      <rect x="107" y="10" width="10" height="28" rx="5" fill="rgba(255,180,60,0.18)"/>
+      <rect x="155" y="10" width="14" height="30" rx="7" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+      <rect x="157" y="12" width="10" height="26" rx="5" fill="rgba(255,180,60,0.12)"/>
+      <rect x="200" y="8"  width="14" height="32" rx="7" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+      <rect x="202" y="10" width="10" height="28" rx="5" fill="rgba(255,180,60,0.2)"/>
+      <rect x="250" y="10" width="14" height="30" rx="7" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+      <rect x="252" y="12" width="10" height="26" rx="5" fill="rgba(255,180,60,0.15)"/>
+    </svg>
+  </div>
+  <div class="about-text fade-in">
+    <div>
+      <div class="section-label">The Man Behind the Mojo</div>
+      <h2 class="section-title">David Vomacka</h2>
+      <p class="section-body">
+        David has spent decades chasing tone — disassembling, diagnosing, and resurrecting the vintage tube amplifiers that defined rock and roll. What started as a passion for the gear his grampy played has become a life's work restoring classics for players and collectors across the country.
+      </p>
+    </div>
+    <p class="section-body">
+      Every amp that comes through the shop is treated with the reverence it deserves. Original components are preserved wherever possible. Transformers are rebuilt. Cabinets refinished. And when it's done, it sounds better than the day it left the factory.
+    </p>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-num">30+</div>
+        <div class="stat-label">Years Experience</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">500+</div>
+        <div class="stat-label">Amps Restored</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Passion Driven</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORK / GALLERY ── -->
+<section class="work" id="work">
+  <div class="work-header fade-in">
+    <div class="section-label">Recent Restorations</div>
+    <h2 class="section-title">The Work</h2>
+  </div>
+
+  <!-- Fake amp control panel above gallery -->
+  <div class="amp-panel-row fade-in">
+    <div class="amp-power-led"></div>
+    <div class="panel-divider"></div>
+    <div class="knob-btn medium" title="Filter: All">
+      <svg class="knob-svg" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="26" fill="#1A1A14" stroke="#444440" stroke-width="1.5"/>
+        <g stroke="rgba(212,130,26,0.35)" stroke-width="0.9">
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-150 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-120 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(120 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(150 28 28)"/>
+        </g>
+        <circle cx="28" cy="28" r="18" fill="#111110" stroke="rgba(212,130,26,0.2)" stroke-width="0.8"/>
+        <line x1="28" y1="13" x2="28" y2="20" stroke="var(--amber-glow,#F5A623)" stroke-width="2" stroke-linecap="round"
+          style="transform-origin:28px 28px; transform:rotate(-140deg)"/>
+      </svg>
+      Volume
+    </div>
+    <div class="knob-btn medium" title="Filter: Fender">
+      <svg class="knob-svg" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="26" fill="#1A1408" stroke="#6B3A1F" stroke-width="1.5"/>
+        <g stroke="rgba(212,130,26,0.35)" stroke-width="0.9">
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-150 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-120 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(90 28 28)"/>
+        </g>
+        <circle cx="28" cy="28" r="18" fill="#0F0A04" stroke="rgba(180,100,30,0.3)" stroke-width="0.8"/>
+        <line x1="28" y1="13" x2="28" y2="20" stroke="#F5A623" stroke-width="2" stroke-linecap="round"
+          style="transform-origin:28px 28px; transform:rotate(60deg)"/>
+      </svg>
+      Treble
+    </div>
+    <div class="knob-btn medium">
+      <svg class="knob-svg" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="26" fill="#0A1208" stroke="#2A4A1F" stroke-width="1.5"/>
+        <g stroke="rgba(100,180,100,0.3)" stroke-width="0.9">
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(0 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(120 28 28)"/>
+        </g>
+        <circle cx="28" cy="28" r="18" fill="#050A04" stroke="rgba(80,160,80,0.2)" stroke-width="0.8"/>
+        <line x1="28" y1="13" x2="28" y2="20" stroke="#90E060" stroke-width="2" stroke-linecap="round"
+          style="transform-origin:28px 28px; transform:rotate(-60deg)"/>
+      </svg>
+      Bass
+    </div>
+    <div class="knob-btn medium">
+      <svg class="knob-svg" viewBox="0 0 56 56">
+        <circle cx="28" cy="28" r="26" fill="#0A0A1A" stroke="#2A2A5A" stroke-width="1.5"/>
+        <g stroke="rgba(150,150,220,0.3)" stroke-width="0.9">
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-120 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-90 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-60 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(-30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(0 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(30 28 28)"/>
+          <line x1="28" y1="4"  x2="28" y2="9"  transform="rotate(60 28 28)"/>
+        </g>
+        <circle cx="28" cy="28" r="18" fill="#050508" stroke="rgba(120,120,200,0.2)" stroke-width="0.8"/>
+        <line x1="28" y1="13" x2="28" y2="20" stroke="#A0A0FF" stroke-width="2" stroke-linecap="round"
+          style="transform-origin:28px 28px; transform:rotate(120deg)"/>
+      </svg>
+      Reverb
+    </div>
+    <div class="panel-divider"></div>
+    <div class="amp-power-led" style="background:var(--led-red);box-shadow:0 0 10px var(--led-red),0 0 20px rgba(255,34,0,0.4);"></div>
+  </div>
+
+  <div class="gallery-grid">
+    <!-- Wide card -->
+    <div class="gallery-card fade-in">
+      <div class="card-img fender">
+        <span class="card-amp-label">1964 Fender Twin Reverb</span>
+        <svg class="big-amp" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="60" width="300" height="130" rx="5" fill="#2A1808"/>
+          <rect x="20" y="80" width="280" height="100" rx="3" fill="#7A5A30" opacity="0.5"/>
+          <defs><pattern id="gr2" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.5)"/></pattern></defs>
+          <rect x="22" y="82" width="276" height="96" fill="url(#gr2)"/>
+          <circle cx="110" cy="130" r="44" fill="none" stroke="rgba(200,160,60,0.3)" stroke-width="1.5"/>
+          <circle cx="110" cy="130" r="38" fill="rgba(0,0,0,0.45)"/>
+          <circle cx="110" cy="130" r="10" fill="#444"/>
+          <circle cx="210" cy="130" r="44" fill="none" stroke="rgba(200,160,60,0.3)" stroke-width="1.5"/>
+          <circle cx="210" cy="130" r="38" fill="rgba(0,0,0,0.45)"/>
+          <circle cx="210" cy="130" r="10" fill="#444"/>
+          <rect x="10" y="20" width="300" height="44" rx="5" fill="#111"/>
+          <circle cx="60"  cy="42" r="12" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="60" y1="33" x2="60" y2="38" stroke="#F5A623" stroke-width="1.5" transform="rotate(-45 60 42)"/>
+          <circle cx="100" cy="42" r="12" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="100" y1="33" x2="100" y2="38" stroke="#F5A623" stroke-width="1.5" transform="rotate(90 100 42)"/>
+          <circle cx="140" cy="42" r="12" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="140" y1="33" x2="140" y2="38" stroke="#F5A623" stroke-width="1.5" transform="rotate(-110 140 42)"/>
+          <circle cx="180" cy="42" r="12" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="180" y1="33" x2="180" y2="38" stroke="#F5A623" stroke-width="1.5" transform="rotate(30 180 42)"/>
+          <text x="265" y="48" text-anchor="middle" fill="rgba(212,130,26,0.6)" font-size="8" font-family="Rye,cursive">FENDER</text>
+        </svg>
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">1964 Fender Twin Reverb — Full Restoration</div>
+        <p class="card-desc">Complete recap, new filter caps, rebiased output tubes, speaker recone. Original blackface tone fully restored. This one sings like the day Jimi plugged in.</p>
+      </div>
+    </div>
+
+    <!-- Marshall card -->
+    <div class="gallery-card fade-in" style="transition-delay:0.15s">
+      <div class="card-img marshall">
+        <span class="card-amp-label">1969 Marshall Plexi</span>
+        <svg class="mini-amp" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="180" height="220" rx="4" fill="#1A1A08"/>
+          <rect x="18" y="60" width="164" height="162" rx="3" fill="#3A3010" opacity="0.7"/>
+          <defs><pattern id="gr3" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.1" fill="rgba(0,0,0,0.6)"/></pattern></defs>
+          <rect x="20" y="62" width="160" height="158" fill="url(#gr3)"/>
+          <circle cx="100" cy="142" r="66" fill="none" stroke="rgba(200,180,60,0.25)" stroke-width="1.5"/>
+          <circle cx="100" cy="142" r="58" fill="rgba(0,0,0,0.4)"/>
+          <circle cx="100" cy="142" r="14" fill="#333"/>
+          <rect x="10" y="10" width="180" height="50" rx="4" fill="#0D0D06"/>
+          <circle cx="45"  cy="35" r="12" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="45" y1="26" x2="45" y2="31" stroke="#F5A623" stroke-width="1.5" transform="rotate(120 45 35)"/>
+          <circle cx="80"  cy="35" r="12" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="80" y1="26" x2="80" y2="31" stroke="#F5A623" stroke-width="1.5" transform="rotate(-60 80 35)"/>
+          <circle cx="115" cy="35" r="12" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="115" y1="26" x2="115" y2="31" stroke="#F5A623" stroke-width="1.5" transform="rotate(40 115 35)"/>
+          <circle cx="155" cy="35" r="9"  fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+          <line x1="155" y1="28" x2="155" y2="32" stroke="#F5A623" stroke-width="1.5"/>
+          <text x="100" y="56" text-anchor="middle" fill="rgba(212,130,26,0.55)" font-size="7" font-family="Rye,cursive">MARSHALL</text>
+        </svg>
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">1969 Marshall Super Lead Plexi</div>
+        <p class="card-desc">Rewired input board, replaced all electrolytic caps, fitted with matched Mullard EL34s. Tone stack calibrated for maximum crunch.</p>
+      </div>
+    </div>
+
+    <!-- Vox card -->
+    <div class="gallery-card fade-in" style="transition-delay:0.1s">
+      <div class="card-img vox">
+        <span class="card-amp-label">1962 Vox AC30</span>
+        <svg class="mini-amp" viewBox="0 0 200 240" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="10" width="180" height="220" rx="8" fill="#0A0C1A"/>
+          <rect x="18" y="55" width="164" height="167" rx="3" fill="#1A1C30" opacity="0.8"/>
+          <defs><pattern id="gr4" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.1" fill="rgba(0,0,0,0.5)"/></pattern></defs>
+          <rect x="20" y="57" width="160" height="163" fill="url(#gr4)"/>
+          <circle cx="68"  cy="145" r="52" fill="none" stroke="rgba(180,180,255,0.2)" stroke-width="1.5"/>
+          <circle cx="68"  cy="145" r="46" fill="rgba(0,0,0,0.4)"/>
+          <circle cx="68"  cy="145" r="12" fill="#252530"/>
+          <circle cx="145" cy="145" r="52" fill="none" stroke="rgba(180,180,255,0.2)" stroke-width="1.5"/>
+          <circle cx="145" cy="145" r="46" fill="rgba(0,0,0,0.4)"/>
+          <circle cx="145" cy="145" r="12" fill="#252530"/>
+          <rect x="10" y="10" width="180" height="45" rx="8" fill="#060810"/>
+          <circle cx="40"  cy="32" r="10" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/>
+          <line x1="40" y1="24" x2="40" y2="28" stroke="#A0A0FF" stroke-width="1.5" transform="rotate(70 40 32)"/>
+          <circle cx="70"  cy="32" r="10" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/>
+          <line x1="70" y1="24" x2="70" y2="28" stroke="#A0A0FF" stroke-width="1.5" transform="rotate(-100 70 32)"/>
+          <circle cx="100" cy="32" r="10" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/>
+          <line x1="100" y1="24" x2="100" y2="28" stroke="#A0A0FF" stroke-width="1.5" transform="rotate(150 100 32)"/>
+          <text x="155" y="37" text-anchor="middle" fill="rgba(180,180,255,0.5)" font-size="8" font-family="Rye,cursive">VOX</text>
+        </svg>
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">1962 Vox AC30 Top Boost</div>
+        <p class="card-desc">Rare original top-boost circuit fully serviced. Replaced Brimars with NOS Mullard ECC83s. Cabinet re-covered in original black Tolex.</p>
+      </div>
+    </div>
+
+    <!-- Supro card -->
+    <div class="gallery-card fade-in" style="transition-delay:0.2s">
+      <div class="card-img supro">
+        <span class="card-amp-label">1957 Supro Dual-Tone</span>
+        <svg class="mini-amp" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="180" height="170" rx="4" fill="#0A1208"/>
+          <rect x="18" y="60" width="164" height="122" rx="3" fill="#1A2A14" opacity="0.7"/>
+          <defs><pattern id="gr5" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.1" fill="rgba(0,0,0,0.5)"/></pattern></defs>
+          <rect x="20" y="62" width="160" height="118" fill="url(#gr5)"/>
+          <circle cx="100" cy="122" r="50" fill="none" stroke="rgba(100,200,100,0.2)" stroke-width="1.5"/>
+          <circle cx="100" cy="122" r="43" fill="rgba(0,0,0,0.4)"/>
+          <circle cx="100" cy="122" r="11" fill="#182514"/>
+          <rect x="10" y="20" width="180" height="42" rx="4" fill="#060C04"/>
+          <circle cx="50"  cy="41" r="10" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/>
+          <line x1="50" y1="33" x2="50" y2="37" stroke="#90E060" stroke-width="1.5" transform="rotate(-80 50 41)"/>
+          <circle cx="90"  cy="41" r="10" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/>
+          <line x1="90" y1="33" x2="90" y2="37" stroke="#90E060" stroke-width="1.5" transform="rotate(30 90 41)"/>
+          <circle cx="130" cy="41" r="10" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/>
+          <line x1="130" y1="33" x2="130" y2="37" stroke="#90E060" stroke-width="1.5" transform="rotate(150 130 41)"/>
+          <text x="165" y="46" text-anchor="middle" fill="rgba(100,200,100,0.45)" font-size="6" font-family="Rye,cursive">SUPRO</text>
+        </svg>
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">1957 Supro Dual-Tone</div>
+        <p class="card-desc">The amp Jimmy Page used on the first four Zeppelin records. Full component restoration, original Jensen speaker serviced. Screams.</p>
+      </div>
+    </div>
+
+    <!-- Ampeg card -->
+    <div class="gallery-card fade-in" style="transition-delay:0.25s">
+      <div class="card-img ampeg">
+        <span class="card-amp-label">1968 Ampeg SVT</span>
+        <svg class="mini-amp" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="180" height="170" rx="4" fill="#0A0808"/>
+          <rect x="18" y="58" width="164" height="124" rx="3" fill="#1A1010" opacity="0.8"/>
+          <defs><pattern id="gr6" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.1" fill="rgba(0,0,0,0.55)"/></pattern></defs>
+          <rect x="20" y="60" width="160" height="120" fill="url(#gr6)"/>
+          <circle cx="100" cy="120" r="50" fill="none" stroke="rgba(220,80,80,0.2)" stroke-width="1.5"/>
+          <circle cx="100" cy="120" r="43" fill="rgba(0,0,0,0.4)"/>
+          <circle cx="100" cy="120" r="11" fill="#200A0A"/>
+          <rect x="10" y="20" width="180" height="40" rx="4" fill="#060404"/>
+          <circle cx="40"  cy="40" r="10" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/>
+          <line x1="40" y1="32" x2="40" y2="36" stroke="#FF6060" stroke-width="1.5" transform="rotate(100 40 40)"/>
+          <circle cx="75"  cy="40" r="10" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/>
+          <line x1="75" y1="32" x2="75" y2="36" stroke="#FF6060" stroke-width="1.5" transform="rotate(-140 75 40)"/>
+          <circle cx="110" cy="40" r="10" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/>
+          <line x1="110" y1="32" x2="110" y2="36" stroke="#FF6060" stroke-width="1.5" transform="rotate(60 110 40)"/>
+          <text x="163" y="45" text-anchor="middle" fill="rgba(220,80,80,0.45)" font-size="7" font-family="Rye,cursive">AMPEG</text>
+        </svg>
+        <div class="card-img-overlay"></div>
+      </div>
+      <div class="card-info">
+        <div class="card-title">1968 Ampeg SVT Bass Head</div>
+        <p class="card-desc">The SVT that shook Woodstock. Full recap, new 6146B power tubes, plate voltage adjusted. More thump than physics should allow.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center; margin-top:52px;">
+    <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large">
+      <svg class="knob-svg" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+        <g stroke="rgba(212,130,26,0.4)" stroke-width="1.2">
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-150 40 40)"/>
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-30 40 40)"/>
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(90 40 40)"/>
+          <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
+        </g>
+        <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
+        <line x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
+          style="transform-origin:40px 40px; transform:rotate(160deg)"/>
+      </svg>
+      See All Work on Instagram
+    </a>
+  </div>
+</section>
+
+<!-- ── SERVICES ── -->
+<section class="services" id="services">
+  <div style="text-align:center" class="fade-in">
+    <div class="section-label">What David Does</div>
+    <h2 class="section-title">Services</h2>
+    <p class="section-body" style="margin:0 auto;">Whether it's a sick amp that needs diagnosing or a museum piece that deserves full restoration — David treats every amp with the same obsessive care.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card fade-in">
+      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
+        <circle cx="22" cy="22" r="20" stroke="var(--amber)" stroke-width="1.5"/>
+        <path d="M 22 8 L 22 16 M 14 14 L 20 20 M 8 22 L 16 22" stroke="var(--amber-glow)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="22" cy="22" r="5" fill="var(--amber)" opacity="0.7"/>
+      </svg>
+      <div class="service-title">Full Restoration</div>
+      <p class="service-desc">Complete recapping, transformer inspection, tube replacement, bias adjustment, and cosmetic restoration. Your amp, reborn from the ground up.</p>
+      <a href="#contact" class="knob-btn medium">
+        <svg class="knob-svg" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="26" fill="#1A1408" stroke="#6B3A1F" stroke-width="1.5"/>
+          <g stroke="rgba(212,130,26,0.3)" stroke-width="0.8">
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-90 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-60 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(0 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(60 28 28)"/>
+          </g>
+          <circle cx="28" cy="28" r="18" fill="#0F0A04" stroke="rgba(180,100,30,0.25)" stroke-width="0.8"/>
+          <line x1="28" y1="13" x2="28" y2="20" stroke="#F5A623" stroke-width="2" stroke-linecap="round"
+            style="transform-origin:28px 28px; transform:rotate(-60deg)"/>
+        </svg>
+        Enquire
+      </a>
+    </div>
+    <div class="service-card fade-in" style="transition-delay:0.1s">
+      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
+        <rect x="4" y="12" width="36" height="22" rx="3" stroke="var(--amber)" stroke-width="1.5"/>
+        <line x1="12" y1="12" x2="12" y2="34" stroke="var(--amber-glow)" stroke-width="1" opacity="0.5"/>
+        <line x1="22" y1="12" x2="22" y2="34" stroke="var(--amber-glow)" stroke-width="1" opacity="0.5"/>
+        <line x1="32" y1="12" x2="32" y2="34" stroke="var(--amber-glow)" stroke-width="1" opacity="0.5"/>
+        <circle cx="12" cy="23" r="3" fill="var(--amber)" opacity="0.8"/>
+        <circle cx="22" cy="19" r="3" fill="var(--amber)" opacity="0.8"/>
+        <circle cx="32" cy="26" r="3" fill="var(--amber)" opacity="0.8"/>
+      </svg>
+      <div class="service-title">Repair & Diagnosis</div>
+      <p class="service-desc">From mysterious hum to dead silence, David will find what's wrong. Schematic tracing, component testing, and honest estimates before any work begins.</p>
+      <a href="#contact" class="knob-btn medium">
+        <svg class="knob-svg" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="26" fill="#0A0C1A" stroke="#2A2A5A" stroke-width="1.5"/>
+          <g stroke="rgba(150,150,220,0.3)" stroke-width="0.8">
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-60 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(0 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(60 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(90 28 28)"/>
+          </g>
+          <circle cx="28" cy="28" r="18" fill="#050508" stroke="rgba(120,120,200,0.2)" stroke-width="0.8"/>
+          <line x1="28" y1="13" x2="28" y2="20" stroke="#A0A0FF" stroke-width="2" stroke-linecap="round"
+            style="transform-origin:28px 28px; transform:rotate(80deg)"/>
+        </svg>
+        Enquire
+      </a>
+    </div>
+    <div class="service-card fade-in" style="transition-delay:0.2s">
+      <svg class="service-icon" viewBox="0 0 44 44" fill="none">
+        <rect x="6" y="18" width="32" height="20" rx="3" stroke="var(--amber)" stroke-width="1.5"/>
+        <path d="M 10 18 L 10 10 Q 10 6 14 6 L 30 6 Q 34 6 34 10 L 34 18" stroke="var(--amber)" stroke-width="1.5"/>
+        <circle cx="22" cy="28" r="5" fill="var(--amber)" opacity="0.6"/>
+        <line x1="22" y1="33" x2="22" y2="38" stroke="var(--amber-glow)" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <div class="service-title">Mods & Upgrades</div>
+      <p class="service-desc">Cathode follower tone stacks. Presence controls. Master volumes. Footswitch channels. If you've dreamed it, David can wire it — without destroying originality.</p>
+      <a href="#contact" class="knob-btn medium">
+        <svg class="knob-svg" viewBox="0 0 56 56">
+          <circle cx="28" cy="28" r="26" fill="#0A1208" stroke="#2A4A1F" stroke-width="1.5"/>
+          <g stroke="rgba(100,180,100,0.3)" stroke-width="0.8">
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(-30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(0 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(30 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(60 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(90 28 28)"/>
+            <line x1="28" y1="4" x2="28" y2="8" transform="rotate(120 28 28)"/>
+          </g>
+          <circle cx="28" cy="28" r="18" fill="#050A04" stroke="rgba(80,160,80,0.2)" stroke-width="0.8"/>
+          <line x1="28" y1="13" x2="28" y2="20" stroke="#90E060" stroke-width="2" stroke-linecap="round"
+            style="transform-origin:28px 28px; transform:rotate(40deg)"/>
+        </svg>
+        Enquire
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── INSTAGRAM ── -->
+<section class="instagram" id="instagram">
+  <div class="fade-in">
+    <div class="section-label">@grampys_amps</div>
+    <h2 class="section-title">Follow the Journey</h2>
+    <p class="section-body" style="margin:0 auto 0;">David documents every restoration on Instagram — before and after shots, wiring diagrams, glowing tubes at midnight, and the occasional masterpiece complete.</p>
+  </div>
+  <div class="insta-grid fade-in">
+    <!-- 8 tiles with inline SVG amp illustrations -->
+    <div class="insta-tile">
+      <svg viewBox="0 0 100 100"><rect x="10" y="25" width="80" height="55" rx="3" fill="#3B1A05"/><rect x="15" y="30" width="70" height="45" rx="2" fill="#7A5A30" opacity="0.5"/><defs><pattern id="gi1" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.5)"/></pattern></defs><rect x="17" y="32" width="66" height="41" fill="url(#gi1)"/><circle cx="50" cy="53" r="18" fill="rgba(0,0,0,0.4)" stroke="rgba(200,160,60,0.3)" stroke-width="1"/><rect x="10" y="8" width="80" height="20" rx="3" fill="#111"/><circle cx="28" cy="18" r="7" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/><circle cx="50" cy="18" r="7" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/><circle cx="72" cy="18" r="7" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/></svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <svg viewBox="0 0 100 100"><rect x="5" y="5" width="90" height="90" rx="4" fill="#1A1A08"/><rect x="12" y="35" width="76" height="55" rx="3" fill="#3A3010" opacity="0.8"/><defs><pattern id="gi2" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.55)"/></pattern></defs><rect x="14" y="37" width="72" height="51" fill="url(#gi2)"/><circle cx="37" cy="62" r="20" fill="rgba(0,0,0,0.4)" stroke="rgba(200,180,60,0.25)" stroke-width="1"/><circle cx="70" cy="62" r="20" fill="rgba(0,0,0,0.4)" stroke="rgba(200,180,60,0.25)" stroke-width="1"/><rect x="5" y="5"  width="90" height="32" rx="4" fill="#0D0D06"/><circle cx="25" cy="21" r="8" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/><circle cx="50" cy="21" r="8" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/><circle cx="75" cy="21" r="8" fill="#111" stroke="rgba(212,130,26,0.5)" stroke-width="1"/></svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <svg viewBox="0 0 100 100"><rect x="5" y="20" width="90" height="75" rx="4" fill="#080A1A"/><rect x="12" y="50" width="76" height="40" rx="2" fill="#1A1C30" opacity="0.8"/><defs><pattern id="gi3" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.5)"/></pattern></defs><rect x="14" y="52" width="72" height="36" fill="url(#gi3)"/><circle cx="50" cy="70" r="15" fill="rgba(0,0,0,0.4)" stroke="rgba(180,180,255,0.2)" stroke-width="1"/><rect x="5" y="5"  width="90" height="18" rx="4" fill="#060810"/><circle cx="22" cy="14" r="6" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/><circle cx="45" cy="14" r="6" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/><circle cx="68" cy="14" r="6" fill="#0A0A14" stroke="rgba(180,180,255,0.4)" stroke-width="1"/></svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <!-- Glowing tube illustration -->
+      <svg viewBox="0 0 100 100">
+        <rect x="5" y="5" width="90" height="90" rx="4" fill="#1A0808"/>
+        <rect x="30" y="15" width="40" height="70" rx="20" fill="none" stroke="rgba(212,130,26,0.5)" stroke-width="1.5"/>
+        <rect x="34" y="19" width="32" height="62" rx="16" fill="rgba(255,150,30,0.12)"/>
+        <line x1="50" y1="19" x2="50" y2="81" stroke="rgba(255,200,80,0.3)" stroke-width="1"/>
+        <line x1="40" y1="19" x2="40" y2="81" stroke="rgba(255,200,80,0.15)" stroke-width="0.8"/>
+        <line x1="60" y1="19" x2="60" y2="81" stroke="rgba(255,200,80,0.15)" stroke-width="0.8"/>
+        <ellipse cx="50" cy="50" rx="10" ry="16" fill="rgba(255,160,40,0.15)"/>
+        <circle cx="50" cy="50" r="4" fill="rgba(255,200,80,0.4)"/>
+        <line x1="36" y1="85" x2="36" y2="95" stroke="rgba(212,130,26,0.5)" stroke-width="1.5"/>
+        <line x1="50" y1="85" x2="50" y2="95" stroke="rgba(212,130,26,0.5)" stroke-width="1.5"/>
+        <line x1="64" y1="85" x2="64" y2="95" stroke="rgba(212,130,26,0.5)" stroke-width="1.5"/>
+      </svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <svg viewBox="0 0 100 100"><rect x="5" y="10" width="90" height="85" rx="4" fill="#0A1208"/><rect x="12" y="45" width="76" height="44" rx="2" fill="#1A2A14" opacity="0.7"/><defs><pattern id="gi5" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.5)"/></pattern></defs><rect x="14" y="47" width="72" height="40" fill="url(#gi5)"/><circle cx="50" cy="67" r="18" fill="rgba(0,0,0,0.4)" stroke="rgba(100,200,100,0.2)" stroke-width="1"/><rect x="5" y="10" width="90" height="37" rx="4" fill="#060C04"/><circle cx="22" cy="28" r="8" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/><circle cx="50" cy="28" r="8" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/><circle cx="78" cy="28" r="8" fill="#080C06" stroke="rgba(100,200,100,0.4)" stroke-width="1"/></svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <!-- Soldering iron / workbench illustration -->
+      <svg viewBox="0 0 100 100">
+        <rect x="5" y="5" width="90" height="90" rx="4" fill="#0A0A06"/>
+        <rect x="10" y="50" width="80" height="40" rx="2" fill="#1A1A10" opacity="0.8"/>
+        <line x1="20" y1="95" x2="80" y2="95" stroke="rgba(212,130,26,0.3)" stroke-width="2"/>
+        <!-- PCB board -->
+        <rect x="20" y="55" width="60" height="30" rx="2" fill="#0A1A0A" stroke="rgba(100,160,100,0.3)" stroke-width="0.8"/>
+        <line x1="20" y1="65" x2="80" y2="65" stroke="rgba(100,200,100,0.15)" stroke-width="0.5"/>
+        <line x1="20" y1="75" x2="80" y2="75" stroke="rgba(100,200,100,0.15)" stroke-width="0.5"/>
+        <circle cx="30" cy="60" r="2" fill="rgba(212,130,26,0.6)"/>
+        <circle cx="40" cy="60" r="2" fill="rgba(212,130,26,0.6)"/>
+        <circle cx="50" cy="60" r="2" fill="rgba(212,130,26,0.6)"/>
+        <circle cx="60" cy="70" r="2" fill="rgba(212,130,26,0.6)"/>
+        <circle cx="70" cy="70" r="2" fill="rgba(212,130,26,0.6)"/>
+        <!-- Soldering iron -->
+        <line x1="75" y1="20" x2="50" y2="58" stroke="rgba(180,180,180,0.5)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="50" cy="58" r="2.5" fill="rgba(255,200,80,0.7)"/>
+        <circle cx="50" cy="58" r="5" fill="rgba(255,150,30,0.2)" style="filter:blur(3px)"/>
+      </svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <svg viewBox="0 0 100 100"><rect x="5" y="5" width="90" height="90" rx="4" fill="#100A0A"/><rect x="12" y="40" width="76" height="50" rx="3" fill="#200A0A" opacity="0.8"/><defs><pattern id="gi7" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.1" fill="rgba(0,0,0,0.55)"/></pattern></defs><rect x="14" y="42" width="72" height="46" fill="url(#gi7)"/><circle cx="50" cy="65" r="20" fill="rgba(0,0,0,0.4)" stroke="rgba(220,80,80,0.2)" stroke-width="1.5"/><rect x="5" y="5" width="90" height="37" rx="4" fill="#060404"/><circle cx="22" cy="22" r="8" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/><circle cx="50" cy="22" r="8" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/><circle cx="78" cy="22" r="8" fill="#0A0606" stroke="rgba(220,80,80,0.4)" stroke-width="1"/></svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+    <div class="insta-tile">
+      <!-- Finished amp, glowing power light -->
+      <svg viewBox="0 0 100 100">
+        <rect x="5" y="5" width="90" height="90" rx="4" fill="#1A1A12"/>
+        <rect x="10" y="35" width="80" height="55" rx="3" fill="#3B2410"/>
+        <line x1="10" y1="46" x2="90" y2="46" stroke="rgba(255,200,100,0.08)" stroke-width="1.5"/>
+        <line x1="10" y1="56" x2="90" y2="56" stroke="rgba(255,200,100,0.06)" stroke-width="1"/>
+        <rect x="15" y="42" width="70" height="44" rx="2" fill="#7A5A30" opacity="0.4"/>
+        <defs><pattern id="gi8" x="0" y="0" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1" fill="rgba(0,0,0,0.5)"/></pattern></defs>
+        <rect x="17" y="44" width="66" height="40" fill="url(#gi8)"/>
+        <circle cx="50" cy="64" r="16" fill="rgba(0,0,0,0.4)" stroke="rgba(200,160,60,0.3)" stroke-width="1"/>
+        <rect x="10" y="10" width="80" height="27" rx="3" fill="#111"/>
+        <circle cx="28" cy="23" r="8" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+        <circle cx="50" cy="23" r="8" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+        <circle cx="72" cy="23" r="8" fill="#1A1A14" stroke="rgba(212,130,26,0.5)" stroke-width="1"/>
+        <circle cx="87" cy="23" r="5" fill="#FF6B00" opacity="0.9"/>
+        <circle cx="87" cy="23" r="7" fill="#FF6B00" opacity="0.3" style="filter:blur(3px)"/>
+      </svg>
+      <div class="insta-tile-overlay"><span class="insta-icon">♥</span></div>
+    </div>
+  </div>
+  <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large" style="margin-top:8px">
+    <svg class="knob-svg" viewBox="0 0 80 80">
+      <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+      <g stroke="rgba(212,130,26,0.4)" stroke-width="1.2">
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-150 40 40)"/>
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-30 40 40)"/>
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(90 40 40)"/>
+        <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
+      </g>
+      <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
+      <line x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
+        style="transform-origin:40px 40px; transform:rotate(-130deg)"/>
+    </svg>
+    @grampys_amps on Instagram
+  </a>
+</section>
+
+<!-- ── CONTACT ── -->
+<section class="contact" id="contact">
+  <div class="contact-panel fade-in">
+    <div class="panel-screw ps-tl" style="top:8px;left:8px;"></div>
+    <div class="panel-screw ps-tr" style="top:8px;right:8px;"></div>
+    <div class="panel-screw ps-bl" style="bottom:8px;left:8px;"></div>
+    <div class="panel-screw ps-br" style="bottom:8px;right:8px;"></div>
+    <div class="section-label">Bring Your Amp Back to Life</div>
+    <h2 class="section-title">Get in Touch</h2>
+    <p class="section-body" style="margin:0 auto; text-align:center; max-width:420px;">
+      Have a vintage amp that needs some love? David takes on a limited number of restorations at a time — reach out via Instagram DM or the links below.
+    </p>
+    <div class="contact-knobs">
+      <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn large">
+        <svg class="knob-svg" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="37" fill="#1A1208" stroke="#6B3A1F" stroke-width="2"/>
+          <g stroke="rgba(212,130,26,0.35)" stroke-width="1.2">
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-120 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-60 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(0 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(60 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(120 40 40)"/>
+          </g>
+          <circle cx="40" cy="40" r="26" fill="#100A04" stroke="rgba(180,100,30,0.3)" stroke-width="1"/>
+          <line x1="40" y1="18" x2="40" y2="27" stroke="#F5A623" stroke-width="2.5" stroke-linecap="round"
+            style="transform-origin:40px 40px; transform:rotate(60deg)"/>
+        </svg>
+        DM on Instagram
+      </a>
+      <a href="mailto:grampysamps@example.com" class="knob-btn large">
+        <svg class="knob-svg" viewBox="0 0 80 80">
+          <circle cx="40" cy="40" r="37" fill="#1A1A1E" stroke="#3A3A50" stroke-width="2"/>
+          <g stroke="rgba(180,180,220,0.3)" stroke-width="1.2">
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-90 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(-30 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(30 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(90 40 40)"/>
+            <line x1="40" y1="6" x2="40" y2="12" transform="rotate(150 40 40)"/>
+          </g>
+          <circle cx="40" cy="40" r="26" fill="#050508" stroke="rgba(120,120,200,0.2)" stroke-width="1"/>
+          <line x1="40" y1="18" x2="40" y2="27" stroke="#A0A0FF" stroke-width="2.5" stroke-linecap="round"
+            style="transform-origin:40px 40px; transform:rotate(-40deg)"/>
+        </svg>
+        Send an Email
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-logo">Grampy's Amps</div>
+  <div class="footer-copy">
+    © 2025 Grampy's Amps · David Vomacka · Vintage Amp Restoration<br>
+    <span style="opacity:0.5; font-size:0.6rem">Follow @grampys_amps on Instagram</span>
+  </div>
+  <div class="footer-knobs">
+    <a href="https://www.instagram.com/grampys_amps/" target="_blank" class="knob-btn small">
+      <svg class="knob-svg" viewBox="0 0 36 36">
+        <circle cx="18" cy="18" r="16" fill="#1A1208" stroke="#6B3A1F" stroke-width="1.2"/>
+        <circle cx="18" cy="18" r="11" fill="#0F0A04" stroke="rgba(180,100,30,0.3)" stroke-width="0.8"/>
+        <line x1="18" y1="9" x2="18" y2="14" stroke="#F5A623" stroke-width="1.8" stroke-linecap="round"
+          style="transform-origin:18px 18px; transform:rotate(45deg)"/>
+      </svg>
+      Instagram
+    </a>
+    <a href="#" class="knob-btn small" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+      <svg class="knob-svg" viewBox="0 0 36 36">
+        <circle cx="18" cy="18" r="16" fill="#1A1A14" stroke="#444440" stroke-width="1.2"/>
+        <circle cx="18" cy="18" r="11" fill="#111110" stroke="rgba(212,130,26,0.2)" stroke-width="0.8"/>
+        <line x1="18" y1="9" x2="18" y2="14" stroke="#F5A623" stroke-width="1.8" stroke-linecap="round"
+          style="transform-origin:18px 18px; transform:rotate(-180deg)"/>
+      </svg>
+      Top
+    </a>
+  </div>
+</footer>
+
+<script>
+// Scroll fade-in
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+// ── LIGHT / DARK MODE TOGGLE ──
+const modeToggle = document.getElementById('modeToggle');
+const mtIndicator = document.getElementById('mt-indicator');
+const mtLabel = document.getElementById('mt-label');
+const mtRing = document.getElementById('mt-ring');
+const mtBody = document.getElementById('mt-body');
+const mtTicks = document.getElementById('mt-ticks');
+let isLight = false;
+
+modeToggle.addEventListener('click', () => {
+  isLight = !isLight;
+  document.body.classList.toggle('light-mode', isLight);
+
+  if (isLight) {
+    // Rotate indicator to "day" position
+    mtIndicator.style.transform = 'rotate(30deg)';
+    mtIndicator.setAttribute('stroke', '#8B5523');
+    mtRing.setAttribute('fill', '#D4B88A');
+    mtRing.setAttribute('stroke', '#8B5523');
+    mtBody.setAttribute('fill', '#F0E4C8');
+    mtBody.setAttribute('stroke', 'rgba(107,58,31,0.3)');
+    mtTicks.setAttribute('stroke', 'rgba(107,58,31,0.4)');
+    modeToggle.style.color = '#3B2410';
+    mtLabel.textContent = 'Dark Mode';
+  } else {
+    mtIndicator.style.transform = 'rotate(-140deg)';
+    mtIndicator.setAttribute('stroke', '#F5A623');
+    mtRing.setAttribute('fill', '#222220');
+    mtRing.setAttribute('stroke', '#555550');
+    mtBody.setAttribute('fill', '#1A1A14');
+    mtBody.setAttribute('stroke', 'rgba(212,130,26,0.25)');
+    mtTicks.setAttribute('stroke', 'rgba(212,130,26,0.45)');
+    modeToggle.style.color = '';
+    mtLabel.textContent = 'Light Mode';
+  }
+});
+
+// Knob interactive rotation on click
+document.querySelectorAll('.knob-btn').forEach(btn => {
+  let angle = Math.random() * 200 - 100;
+  const indicator = btn.querySelector('.knob-indicator, line[stroke="#F5A623"], line[stroke="#A0A0FF"], line[stroke="#90E060"], line[stroke="#FF6060"], line[stroke="#A0A0E0"]');
+  btn.addEventListener('click', function(e) {
+    if (btn.tagName === 'A' && btn.href && btn.href !== '#') return;
+    e.preventDefault();
+    angle += 45 + Math.random() * 60;
+    if (indicator) {
+      const current = indicator.style.transform || '';
+      const match = current.match(/rotate\(([-\d.]+)deg\)/);
+      const base = match ? parseFloat(match[1]) : 0;
+      // animate
+      indicator.style.transition = 'transform 0.3s cubic-bezier(.34,1.56,.64,1)';
+      indicator.style.transform = current.replace(/rotate\([^)]+\)/, `rotate(${base + 45}deg)`) || `rotate(${base + 45}deg)`;
+    }
+  });
+});
+</script>
+</body>
+</html>
