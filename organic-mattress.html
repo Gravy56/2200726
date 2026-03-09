@@ -72,6 +72,28 @@
   }
   .nav-cta:hover { background: var(--moss) !important; }
 
+  .nav-actions { display: flex; align-items: center; gap: 12px; }
+  .cart-btn {
+    border: 1px solid rgba(44,44,42,0.25);
+    background: transparent;
+    color: var(--charcoal);
+    padding: 10px 14px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+  .cart-btn:hover { border-color: var(--charcoal); }
+  .cart-count {
+    background: var(--moss);
+    color: white;
+    border-radius: 999px;
+    padding: 2px 7px;
+    margin-left: 6px;
+    font-size: 0.64rem;
+  }
+
   /* ── HERO ── */
   .hero {
     min-height: 100vh;
@@ -379,6 +401,70 @@
     transition: background 0.2s;
   }
   .btn-card:hover { background: var(--sage-dark); }
+
+  .product-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .product-options label {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #7a7a73;
+    display: block;
+    margin-bottom: 5px;
+  }
+  .product-options select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--linen);
+    background: #fff;
+    font-size: 0.82rem;
+    color: var(--charcoal);
+  }
+
+  .cart-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s;
+    z-index: 150;
+  }
+  .cart-overlay.open { opacity: 1; pointer-events: auto; }
+  .cart-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: min(420px, 95vw);
+    height: 100vh;
+    background: #fff;
+    z-index: 160;
+    transform: translateX(100%);
+    transition: transform 0.3s;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    box-shadow: -12px 0 30px rgba(0,0,0,0.15);
+  }
+  .cart-drawer.open { transform: translateX(0); }
+  .cart-header, .cart-footer { padding: 22px; border-bottom: 1px solid var(--linen); }
+  .cart-footer { border-bottom: none; border-top: 1px solid var(--linen); }
+  .cart-header { display:flex; justify-content:space-between; align-items:center; }
+  .cart-close { border:none; background:transparent; font-size:1.4rem; cursor:pointer; }
+  .cart-items { overflow-y: auto; padding: 12px 22px; }
+  .cart-empty { color:#777; font-size:0.9rem; padding:22px 0; }
+  .cart-item { border-bottom: 1px solid var(--linen); padding: 16px 0; }
+  .cart-item h4 { font-family:'Cormorant Garamond', serif; font-size:1.25rem; font-weight:500; }
+  .cart-meta { font-size:0.74rem; color:#7a7a73; margin:4px 0 10px; text-transform:uppercase; letter-spacing:0.08em; }
+  .cart-row { display:flex; justify-content:space-between; align-items:center; }
+  .qty-controls { display:flex; gap:8px; align-items:center; }
+  .qty-controls button { width:24px; height:24px; border:1px solid var(--linen); background:#fff; cursor:pointer; }
+  .remove-item { border:none; background:none; color:var(--terracotta); cursor:pointer; font-size:0.75rem; letter-spacing:0.08em; text-transform:uppercase; }
+  .cart-subtotal { display:flex; justify-content:space-between; font-size:1rem; margin-bottom:12px; }
+  .cart-checkout { width:100%; }
 
   /* ── MATERIALS SECTION ── */
   .materials {
@@ -705,6 +791,16 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.3; }
   }
+
+  @media (max-width: 980px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display:none; }
+    .hero, .materials-layout { grid-template-columns: 1fr; }
+    .products, .materials, .why, .testimonials, .process, footer { padding: 70px 20px; }
+    .products-grid, .testimonials-grid { grid-template-columns: 1fr; }
+    .why-grid, .process-steps { grid-template-columns: repeat(2,1fr); }
+  }
+
 </style>
 </head>
 <body>
@@ -717,8 +813,11 @@
     <li><a href="#materials">Materials</a></li>
     <li><a href="#about">Our Story</a></li>
     <li><a href="#testimonials">Reviews</a></li>
-    <li><a href="#quiz" class="nav-cta">Find Your Match</a></li>
   </ul>
+  <div class="nav-actions">
+    <a href="#quiz" class="nav-cta">Find Your Match</a>
+    <button class="cart-btn" id="open-cart">Cart <span class="cart-count" id="cart-count">0</span></button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -803,93 +902,21 @@
     <p>Each mattress is handcrafted in small batches using only certified organic and natural materials, tailored for your ideal night's sleep.</p>
   </div>
 
-  <div class="products-grid">
-    <!-- Card 1 -->
-    <div class="product-card fade-in">
-      <div class="product-img">
-        <span class="badge-pill green">Bestseller</span>
-        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="120" width="260" height="50" rx="4" fill="rgba(255,255,255,0.3)"/>
-          <rect x="20" y="90" width="260" height="34" rx="4" fill="rgba(255,255,255,0.6)"/>
-          <rect x="30" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
-          <rect x="145" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-sub">Natural Latex Hybrid</div>
-        <div class="product-name">The Woodland</div>
-        <p class="product-desc">Our signature medium-firm mattress featuring 3" of GOLS-certified natural latex over 8" of individually wrapped organic coils. Exceptionally breathable and resilient.</p>
-        <div class="product-materials">
-          <span class="material-tag">Organic Cotton</span>
-          <span class="material-tag">Natural Latex</span>
-          <span class="material-tag">Joma Wool</span>
-          <span class="material-tag">Pocket Coils</span>
-        </div>
-        <div class="product-footer">
-          <div class="product-price"><span>Starting from</span>$2,490</div>
-          <button class="btn-card">Shop Now</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 2 -->
-    <div class="product-card fade-in" style="transition-delay: 0.15s">
-      <div class="product-img">
-        <span class="badge-pill">Luxury</span>
-        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="115" width="260" height="55" rx="4" fill="rgba(255,255,255,0.25)"/>
-          <rect x="20" y="82" width="260" height="36" rx="4" fill="rgba(255,255,255,0.55)"/>
-          <rect x="20" y="55" width="260" height="30" rx="4" fill="rgba(255,255,255,0.35)"/>
-          <rect x="30" y="30" width="90" height="28" rx="14" fill="rgba(255,255,255,0.65)"/>
-          <rect x="135" y="30" width="90" height="28" rx="14" fill="rgba(255,255,255,0.65)"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-sub">Pure Latex All-Natural</div>
-        <div class="product-name">The Canopy</div>
-        <p class="product-desc">A fully customizable latex mattress with interchangeable comfort layers. Choose your firmness on each side of the bed. GOTS organic cotton and Merino wool throughout.</p>
-        <div class="product-materials">
-          <span class="material-tag">Dunlop Latex</span>
-          <span class="material-tag">Merino Wool</span>
-          <span class="material-tag">Organic Cotton</span>
-          <span class="material-tag">Customizable</span>
-        </div>
-        <div class="product-footer">
-          <div class="product-price"><span>Starting from</span>$3,290</div>
-          <button class="btn-card">Shop Now</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Card 3 -->
-    <div class="product-card fade-in" style="transition-delay: 0.3s">
-      <div class="product-img">
-        <span class="badge-pill earth">New</span>
-        <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
-          <rect x="20" y="125" width="260" height="45" rx="4" fill="rgba(255,255,255,0.2)"/>
-          <rect x="20" y="95" width="260" height="33" rx="4" fill="rgba(255,255,255,0.5)"/>
-          <rect x="35" y="65" width="105" height="32" rx="14" fill="rgba(255,255,255,0.68)"/>
-          <rect x="155" y="65" width="105" height="32" rx="14" fill="rgba(255,255,255,0.68)"/>
-        </svg>
-      </div>
-      <div class="product-info">
-        <div class="product-sub">Wool & Coil Comfort</div>
-        <div class="product-name">The Meadow</div>
-        <p class="product-desc">Our entry-level organic option. A medium-firm hybrid with a lush organic wool pillowtop, pocket coil core, and a certified organic cotton cover. Perfect for all sleepers.</p>
-        <div class="product-materials">
-          <span class="material-tag">Organic Cotton</span>
-          <span class="material-tag">Joma Wool</span>
-          <span class="material-tag">Pocket Coils</span>
-          <span class="material-tag">Non-Toxic</span>
-        </div>
-        <div class="product-footer">
-          <div class="product-price"><span>Starting from</span>$1,690</div>
-          <button class="btn-card">Shop Now</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div class="products-grid" id="products-grid"></div>
 </section>
+
+<div class="cart-overlay" id="cart-overlay"></div>
+<aside class="cart-drawer" id="cart-drawer" aria-hidden="true">
+  <div class="cart-header">
+    <h3>Your Cart</h3>
+    <button class="cart-close" id="close-cart" aria-label="Close cart">×</button>
+  </div>
+  <div class="cart-items" id="cart-items"></div>
+  <div class="cart-footer">
+    <div class="cart-subtotal"><span>Subtotal</span><strong id="cart-subtotal">$0</strong></div>
+    <button class="btn-primary cart-checkout" id="checkout-btn">Checkout</button>
+  </div>
+</aside>
 
 <!-- MATERIALS -->
 <section class="materials" id="materials">
@@ -1129,6 +1156,205 @@
 </footer>
 
 <script>
+  const products = [
+    {
+      id: 'woodland',
+      name: 'The Woodland',
+      subtitle: 'Natural Latex Hybrid',
+      description: 'Our signature medium-firm mattress featuring 3" of GOLS-certified natural latex over 8" of individually wrapped organic coils. Exceptionally breathable and resilient.',
+      priceCents: 249000,
+      badge: { label: 'Bestseller', theme: 'green' },
+      materials: ['Organic Cotton', 'Natural Latex', 'Joma Wool', 'Pocket Coils'],
+      sizes: [
+        { name: 'Queen', deltaCents: 0 },
+        { name: 'King', deltaCents: 30000 },
+        { name: 'Cal King', deltaCents: 35000 }
+      ],
+      firmness: ['Medium', 'Plush', 'Firm']
+    },
+    {
+      id: 'canopy',
+      name: 'The Canopy',
+      subtitle: 'Pure Latex All-Natural',
+      description: 'A fully customizable latex mattress with interchangeable comfort layers. Choose your firmness on each side of the bed. GOTS organic cotton and Merino wool throughout.',
+      priceCents: 329000,
+      badge: { label: 'Luxury', theme: '' },
+      materials: ['Dunlop Latex', 'Merino Wool', 'Organic Cotton', 'Customizable'],
+      sizes: [
+        { name: 'Queen', deltaCents: 0 },
+        { name: 'King', deltaCents: 42000 },
+        { name: 'Cal King', deltaCents: 47000 }
+      ],
+      firmness: ['Medium', 'Plush', 'Firm']
+    },
+    {
+      id: 'meadow',
+      name: 'The Meadow',
+      subtitle: 'Wool & Coil Comfort',
+      description: 'Our entry-level organic option. A medium-firm hybrid with a lush organic wool pillowtop, pocket coil core, and a certified organic cotton cover. Perfect for all sleepers.',
+      priceCents: 169000,
+      badge: { label: 'New', theme: 'earth' },
+      materials: ['Organic Cotton', 'Joma Wool', 'Pocket Coils', 'Non-Toxic'],
+      sizes: [
+        { name: 'Queen', deltaCents: 0 },
+        { name: 'King', deltaCents: 22000 },
+        { name: 'Cal King', deltaCents: 26000 }
+      ],
+      firmness: ['Medium', 'Plush', 'Firm']
+    },
+    {
+      id: 'cove',
+      name: 'The Cove',
+      subtitle: 'Cooling Organic Hybrid',
+      description: 'Designed for warm sleepers with breathable cotton, airflow channels, and zoned coils for cooler, deeper recovery sleep.',
+      priceCents: 219000,
+      badge: { label: 'Cooling', theme: 'green' },
+      materials: ['Organic Cotton', 'Natural Latex', 'Airflow Coils', 'Wool'],
+      sizes: [
+        { name: 'Queen', deltaCents: 0 },
+        { name: 'King', deltaCents: 28000 },
+        { name: 'Cal King', deltaCents: 31000 }
+      ],
+      firmness: ['Medium', 'Firm']
+    }
+  ];
+
+  const cartStorageKey = 'terraSleepCart';
+  const productsGrid = document.getElementById('products-grid');
+  const cartCount = document.getElementById('cart-count');
+  const cartItemsEl = document.getElementById('cart-items');
+  const cartSubtotalEl = document.getElementById('cart-subtotal');
+  const cartDrawer = document.getElementById('cart-drawer');
+  const cartOverlay = document.getElementById('cart-overlay');
+  const cart = new Map();
+
+  const money = (cents) => `$${(cents / 100).toLocaleString('en-US')}`;
+
+  function getLineKey(productId, size, firmness) {
+    return `${productId}::${size}::${firmness}`;
+  }
+
+  function renderProducts() {
+    productsGrid.innerHTML = products.map((product, index) => `
+      <div class="product-card fade-in" style="transition-delay: ${index * 0.1}s" data-product-id="${product.id}">
+        <div class="product-img">
+          <span class="badge-pill ${product.badge.theme}">${product.badge.label}</span>
+          <svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="120" width="260" height="50" rx="4" fill="rgba(255,255,255,0.3)"/>
+            <rect x="20" y="90" width="260" height="34" rx="4" fill="rgba(255,255,255,0.6)"/>
+            <rect x="30" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
+            <rect x="145" y="60" width="100" height="34" rx="16" fill="rgba(255,255,255,0.7)"/>
+          </svg>
+        </div>
+        <div class="product-info">
+          <div class="product-sub">${product.subtitle}</div>
+          <div class="product-name">${product.name}</div>
+          <p class="product-desc">${product.description}</p>
+          <div class="product-materials">
+            ${product.materials.map((m) => `<span class="material-tag">${m}</span>`).join('')}
+          </div>
+          <div class="product-options">
+            <div>
+              <label for="size-${product.id}">Size</label>
+              <select id="size-${product.id}" class="product-size">
+                ${product.sizes.map((s) => `<option value="${s.name}">${s.name}${s.deltaCents ? ` (+${money(s.deltaCents)})` : ''}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label for="firm-${product.id}">Firmness</label>
+              <select id="firm-${product.id}" class="product-firmness">
+                ${product.firmness.map((f) => `<option value="${f}">${f}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <div class="product-footer">
+            <div class="product-price"><span>Starting from</span>${money(product.priceCents)}</div>
+            <button class="btn-card" data-product-id="${product.id}">Add to Cart</button>
+          </div>
+        </div>
+      </div>`).join('');
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  }
+
+  function getLinePrice(product, size) {
+    const selectedSize = product.sizes.find((entry) => entry.name === size);
+    return product.priceCents + (selectedSize ? selectedSize.deltaCents : 0);
+  }
+
+  function addToCart(productId, size, firmness) {
+    const product = products.find((item) => item.id === productId);
+    if (!product) return;
+    const key = getLineKey(productId, size, firmness);
+    const existing = cart.get(key);
+    if (existing) {
+      existing.qty += 1;
+    } else {
+      cart.set(key, { key, productId, size, firmness, qty: 1 });
+    }
+    saveCart();
+    renderCart();
+  }
+
+  function renderCart() {
+    const lines = [...cart.values()];
+    if (!lines.length) {
+      cartItemsEl.innerHTML = '<p class="cart-empty">Your cart is empty. Add a mattress to start building your sleep setup.</p>';
+    } else {
+      cartItemsEl.innerHTML = lines.map((line) => {
+        const product = products.find((p) => p.id === line.productId);
+        const unit = getLinePrice(product, line.size);
+        return `
+          <div class="cart-item" data-key="${line.key}">
+            <h4>${product.name}</h4>
+            <div class="cart-meta">${line.size} · ${line.firmness}</div>
+            <div class="cart-row">
+              <div class="qty-controls">
+                <button class="qty-dec" aria-label="Decrease quantity">−</button>
+                <span>${line.qty}</span>
+                <button class="qty-inc" aria-label="Increase quantity">+</button>
+              </div>
+              <strong>${money(unit * line.qty)}</strong>
+            </div>
+            <button class="remove-item">Remove</button>
+          </div>`;
+      }).join('');
+    }
+
+    const count = lines.reduce((sum, line) => sum + line.qty, 0);
+    const subtotal = lines.reduce((sum, line) => {
+      const product = products.find((p) => p.id === line.productId);
+      return sum + getLinePrice(product, line.size) * line.qty;
+    }, 0);
+
+    cartCount.textContent = count;
+    cartSubtotalEl.textContent = money(subtotal);
+  }
+
+  function saveCart() {
+    localStorage.setItem(cartStorageKey, JSON.stringify([...cart.values()]));
+  }
+
+  function loadCart() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem(cartStorageKey) || '[]');
+      if (Array.isArray(parsed)) {
+        parsed.forEach((line) => {
+          if (line && line.key && line.productId && line.size && line.firmness && Number.isFinite(line.qty)) {
+            cart.set(line.key, line);
+          }
+        });
+      }
+    } catch (error) {
+      localStorage.removeItem(cartStorageKey);
+    }
+  }
+
+  function toggleCart(open) {
+    cartDrawer.classList.toggle('open', open);
+    cartOverlay.classList.toggle('open', open);
+    cartDrawer.setAttribute('aria-hidden', String(!open));
+  }
+
   // Intersection Observer for fade-in animations
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -1138,17 +1364,55 @@
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
   // Nav shrink on scroll
   window.addEventListener('scroll', () => {
     const nav = document.querySelector('nav');
     if (window.scrollY > 60) {
-      nav.style.padding = '14px 60px';
+      nav.style.padding = window.innerWidth > 980 ? '14px 60px' : '10px 20px';
     } else {
-      nav.style.padding = '22px 60px';
+      nav.style.padding = window.innerWidth > 980 ? '22px 60px' : '16px 20px';
     }
   });
+
+  productsGrid.addEventListener('click', (event) => {
+    const button = event.target.closest('.btn-card');
+    if (!button) return;
+    const card = button.closest('.product-card');
+    const productId = button.dataset.productId;
+    const size = card.querySelector('.product-size').value;
+    const firmness = card.querySelector('.product-firmness').value;
+    addToCart(productId, size, firmness);
+    button.textContent = 'Added';
+    setTimeout(() => button.textContent = 'Add to Cart', 900);
+    toggleCart(true);
+  });
+
+  cartItemsEl.addEventListener('click', (event) => {
+    const item = event.target.closest('.cart-item');
+    if (!item) return;
+    const key = item.dataset.key;
+    const line = cart.get(key);
+    if (!line) return;
+
+    if (event.target.classList.contains('qty-inc')) line.qty += 1;
+    if (event.target.classList.contains('qty-dec')) line.qty -= 1;
+    if (event.target.classList.contains('remove-item') || line.qty <= 0) cart.delete(key);
+
+    saveCart();
+    renderCart();
+  });
+
+  document.getElementById('open-cart').addEventListener('click', () => toggleCart(true));
+  document.getElementById('close-cart').addEventListener('click', () => toggleCart(false));
+  cartOverlay.addEventListener('click', () => toggleCart(false));
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') toggleCart(false); });
+  document.getElementById('checkout-btn').addEventListener('click', () => {
+    alert('Demo checkout: connect this button to your checkout page or payment provider.');
+  });
+
+  loadCart();
+  renderProducts();
+  renderCart();
 </script>
 </body>
 </html>
