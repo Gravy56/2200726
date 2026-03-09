@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Rep</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0f11;--surface:#16181c;--surface2:#1e2127;
+  --border:#2a2d35;--text:#e8e9eb;--muted:#6b7280;
+  --accent:#e8ff47;--accent-dim:#b8cc30;
+  --red:#ff4d4d;--green:#47ffb2;--blue:#47b2ff;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;min-height:100%;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
+#app{display:flex;flex-direction:column;min-height:100vh;}
+
+/* HEADER */
+header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 2rem;border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:100;
+  background:rgba(14,15,17,0.96);backdrop-filter:blur(12px);
+}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:1.5rem;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:var(--accent);}
+.logo span{color:var(--text);}
+nav{display:flex;gap:0.2rem;}
+.nav-btn{
+  padding:0.45rem 1rem;border-radius:6px;border:none;background:transparent;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:600;
+  letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all 0.12s;
+}
+.nav-btn:hover{color:var(--text);}
+.nav-btn.active{background:var(--surface2);color:var(--accent);}
+.streak-badge{
+  display:flex;align-items:center;gap:0.4rem;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:0.35rem 0.8rem;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;color:var(--accent);
+}
+
+/* PAGES */
+.page{display:none;flex:1;}
+.page.active{display:block;}
+.page.flex-page{display:none;}
+.page.flex-page.active{display:flex;}
+
+/* ── DASHBOARD ── */
+#page-dashboard{padding:2.5rem 2rem;}
+.dashboard-hero{
+  margin-bottom:2rem;padding:2rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:12px;position:relative;overflow:hidden;
+}
+.dashboard-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(232,255,71,0.06),transparent 70%);pointer-events:none;}
+.hero-label{font-family:'Barlow Condensed',sans-serif;font-size:0.7rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.4rem;}
+.hero-title{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;line-height:1.1;margin-bottom:0.6rem;}
+.hero-title em{color:var(--accent);font-style:normal;}
+.hero-sub{color:var(--muted);font-size:0.9rem;line-height:1.6;max-width:480px;}
+.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.2rem 1.5rem;}
+.stat-num{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:800;color:var(--accent);line-height:1;margin-bottom:0.25rem;}
+.stat-label{font-size:0.75rem;color:var(--muted);letter-spacing:0.05em;text-transform:uppercase;}
+.section-title{font-family:'Barlow Condensed',sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.85rem;}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin-bottom:2rem;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.4rem;cursor:pointer;transition:all 0.13s;position:relative;overflow:hidden;}
+.card:hover{border-color:var(--accent);transform:translateY(-1px);}
+.card.done{border-color:rgba(71,255,178,0.3);}
+.card.done::after{content:'✓';position:absolute;top:1rem;right:1rem;width:20px;height:20px;border-radius:50%;background:var(--green);color:#000;font-size:0.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.card-icon{font-size:1.6rem;margin-bottom:0.6rem;}
+.card-name{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;margin-bottom:0.3rem;}
+.card-desc{font-size:0.8rem;color:var(--muted);line-height:1.5;}
+.card-tag{display:inline-block;margin-top:0.6rem;font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:0.15rem 0.5rem;border-radius:4px;background:var(--surface2);color:var(--muted);}
+
+/* ── FIELD GUIDE ── */
+#page-guide{height:calc(100vh - 57px);}
+.guide-sidebar{
+  width:230px;min-width:230px;border-right:1px solid var(--border);
+  padding:1.25rem 0;overflow-y:auto;
+}
+.guide-sidebar-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);padding:0 1.25rem;margin-bottom:0.6rem;}
+.guide-nav-btn{
+  display:block;width:100%;text-align:left;padding:0.6rem 1.25rem;
+  border:none;background:transparent;font-family:'Barlow',sans-serif;
+  font-size:0.85rem;color:var(--muted);cursor:pointer;transition:all 0.1s;
+  border-left:2px solid transparent;
+}
+.guide-nav-btn:hover{color:var(--text);background:var(--surface);}
+.guide-nav-btn.active{color:var(--accent);border-left-color:var(--accent);background:var(--surface);}
+.guide-body{flex:1;overflow-y:auto;padding:2rem 2.5rem;}
+.guide-article{max-width:640px;}
+.g-tag{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.4rem;}
+.g-title{font-family:'Barlow Condensed',sans-serif;font-size:1.9rem;font-weight:800;margin-bottom:0.6rem;line-height:1.1;}
+.g-lead{font-size:0.95rem;color:var(--muted);line-height:1.7;margin-bottom:1.75rem;padding-bottom:1.75rem;border-bottom:1px solid var(--border);}
+.principle{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.4rem;margin-bottom:1.25rem;}
+.p-num{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.35rem;}
+.p-title{font-family:'Barlow Condensed',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:0.6rem;}
+.p-body{font-size:0.87rem;color:var(--muted);line-height:1.7;margin-bottom:1rem;}
+.example{background:var(--surface2);border-radius:7px;padding:1rem;margin-bottom:0.5rem;}
+.ex-label{font-size:0.65rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.4rem;}
+.ex-label.good{color:var(--green);}
+.ex-label.bad{color:var(--red);}
+.ex-label.neutral{color:var(--blue);}
+.ex-text{font-size:0.85rem;line-height:1.6;font-style:italic;}
+.mistake{border-left:3px solid var(--red);padding:0.9rem 1.1rem;background:rgba(255,77,77,0.04);border-radius:0 7px 7px 0;margin-top:0.9rem;}
+.mistake-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--red);margin-bottom:0.35rem;}
+.mistake-text{font-size:0.85rem;color:var(--muted);line-height:1.6;}
+.practice-cta{
+  margin-top:1.75rem;padding:1.1rem 1.4rem;
+  background:var(--surface);border:1px solid var(--accent);border-radius:10px;
+  display:flex;align-items:center;justify-content:space-between;cursor:pointer;transition:all 0.12s;
+}
+.practice-cta:hover{background:rgba(232,255,71,0.04);}
+.cta-text{font-family:'Barlow Condensed',sans-serif;font-size:0.95rem;font-weight:700;}
+.cta-arrow{color:var(--accent);}
+
+/* ── SIM ── */
+#page-sim{height:calc(100vh - 57px);}
+.sim-sidebar{
+  width:250px;min-width:250px;border-right:1px solid var(--border);
+  padding:1.25rem;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;
+}
+.sim-sidebar-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.25rem;}
+.sim-card{
+  width:100%;text-align:left;padding:0.9rem 1rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:8px;
+  cursor:pointer;transition:all 0.12s;
+}
+.sim-card:hover{border-color:rgba(232,255,71,0.4);}
+.sim-card.active{border-color:var(--accent);background:rgba(232,255,71,0.03);}
+.sim-card.done{border-color:rgba(71,255,178,0.25);}
+.sim-card-icon{font-size:1.1rem;margin-bottom:0.3rem;}
+.sim-card-name{font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;}
+.sim-card-desc{font-size:0.72rem;color:var(--muted);line-height:1.4;}
+.sim-main{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.sim-empty{
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1rem;
+  color:var(--muted);text-align:center;padding:2rem;
+}
+.sim-empty-icon{font-size:2.5rem;opacity:0.35;}
+.sim-empty-text{font-size:0.9rem;line-height:1.6;max-width:300px;}
+.sim-header{
+  padding:1rem 1.4rem;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.sim-scenario-name{font-family:'Barlow Condensed',sans-serif;font-size:1rem;font-weight:700;}
+.sim-persona-text{font-size:0.75rem;color:var(--muted);}
+.reset-btn{
+  padding:0.35rem 0.8rem;background:var(--surface2);border:1px solid var(--border);
+  border-radius:6px;font-family:'Barlow Condensed',sans-serif;font-size:0.75rem;
+  font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);cursor:pointer;transition:all 0.1s;
+}
+.reset-btn:hover{color:var(--text);border-color:var(--text);}
+.sim-chat{flex:1;overflow-y:auto;padding:1.25rem;display:flex;flex-direction:column;gap:0.85rem;}
+.sim-chat::-webkit-scrollbar{width:3px;}
+.sim-chat::-webkit-scrollbar-thumb{background:var(--border);}
+.bubble-wrap{display:flex;flex-direction:column;gap:0.25rem;max-width:70%;}
+.bubble-wrap.them{align-self:flex-start;}
+.bubble-wrap.me{align-self:flex-end;}
+.bubble-sender{font-size:0.68rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);}
+.bubble{padding:0.75rem 1rem;border-radius:11px;font-size:0.88rem;line-height:1.6;}
+.them .bubble{background:var(--surface2);border:1px solid var(--border);border-bottom-left-radius:3px;}
+.me .bubble{background:var(--accent);color:#0e0f11;font-weight:500;border-bottom-right-radius:3px;}
+.typing-bubble{align-self:flex-start;padding:0.75rem 1rem;background:var(--surface2);border:1px solid var(--border);border-radius:11px;border-bottom-left-radius:3px;display:none;}
+.typing-dots{display:flex;gap:4px;align-items:center;}
+.typing-dots span{width:5px;height:5px;border-radius:50%;background:var(--muted);animation:td 1.2s ease infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes td{0%,100%{opacity:.3;transform:translateY(0);}50%{opacity:1;transform:translateY(-3px);}}
+.feedback-bar{
+  margin:0 1.25rem 0.75rem;padding:1rem 1.25rem;
+  background:var(--surface);border:1px solid var(--border);border-radius:9px;
+  display:none;flex-shrink:0;
+}
+.feedback-bar.show{display:block;}
+.fb-label{font-family:'Barlow Condensed',sans-serif;font-size:0.65rem;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:0.6rem;}
+.fb-items{display:flex;flex-direction:column;gap:0.4rem;}
+.fb-item{display:flex;gap:0.6rem;align-items:flex-start;font-size:0.83rem;line-height:1.5;}
+.fb-icon{flex-shrink:0;font-size:0.8rem;margin-top:0.1rem;}
+.sim-input-row{
+  padding:0.85rem 1.25rem;border-top:1px solid var(--border);
+  display:flex;gap:0.6rem;align-items:flex-end;flex-shrink:0;
+}
+.sim-textarea{
+  flex:1;background:var(--surface);border:1px solid var(--border);border-radius:7px;
+  padding:0.65rem 0.9rem;resize:none;font-family:'Barlow',sans-serif;
+  font-size:0.88rem;color:var(--text);outline:none;line-height:1.5;
+  max-height:100px;transition:border-color 0.12s;
+}
+.sim-textarea:focus{border-color:var(--accent);}
+.sim-textarea::placeholder{color:var(--muted);}
+.send-btn{
+  padding:0.65rem 1.3rem;background:var(--accent);border:none;border-radius:7px;
+  font-family:'Barlow Condensed',sans-serif;font-size:0.9rem;font-weight:700;
+  letter-spacing:0.06em;text-transform:uppercase;color:#0e0f11;cursor:pointer;transition:all 0.12s;white-space:nowrap;
+}
+.send-btn:hover{background:var(--accent-dim);}
+.send-btn:disabled{opacity:0.4;cursor:not-allowed;}
+</style>
+</head>
+<body>
+<div id="app">
+
+<header>
+  <div class="logo">Social<span>Rep</span></div>
+  <nav>
+    <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
+    <button class="nav-btn" onclick="showPage('guide')">Field Guide</button>
+    <button class="nav-btn" onclick="showPage('sim')">Simulate</button>
+  </nav>
+  <div class="streak-badge">🔥 <span id="streak-num">0</span></div>
+</header>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div style="padding:2.5rem 2rem;">
+    <div class="dashboard-hero">
+      <div class="hero-label">Your Training Hub</div>
+      <h1 class="hero-title">Social skills are <em>learnable.</em><br>Practice them like any other skill.</h1>
+      <p class="hero-sub">No fluff. Concrete techniques and realistic simulations to build conversational range.</p>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card"><div class="stat-num" id="s-sims">0</div><div class="stat-label">Sims Done</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-guides">0</div><div class="stat-label">Guides Read</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-streak">0</div><div class="stat-label">Day Streak</div></div>
+    </div>
+    <div class="section-title">Practice Scenarios</div>
+    <div class="card-grid" id="dash-sims"></div>
+    <div class="section-title">Field Guide</div>
+    <div class="card-grid" id="dash-guides"></div>
+  </div>
+</div>
+
+<!-- FIELD GUIDE -->
+<div class="page flex-page" id="page-guide" style="height:calc(100vh - 57px);">
+  <div class="guide-sidebar">
+    <div class="guide-sidebar-label">Topics</div>
+    <div id="guide-nav"></div>
+  </div>
+  <div class="guide-body">
+    <div class="guide-article" id="guide-article"></div>
+  </div>
+</div>
+
+<!-- SIM -->
+<div class="page flex-page" id="page-sim" style="height:calc(100vh - 57px);">
+  <div class="sim-sidebar">
+    <div class="sim-sidebar-label">Scenarios</div>
+    <div id="sim-list"></div>
+  </div>
+  <div class="sim-main">
+    <div class="sim-empty" id="sim-empty">
+      <div class="sim-empty-icon">💬</div>
+      <div class="sim-empty-text">Pick a scenario to start a practice conversation. You'll get coaching feedback after each exchange.</div>
+    </div>
+    <div id="sim-active" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="sim-header">
+        <div>
+          <div class="sim-scenario-name" id="sim-name">—</div>
+          <div class="sim-persona-text" id="sim-persona">—</div>
+        </div>
+        <button class="reset-btn" onclick="resetSim()">↺ Reset</button>
+      </div>
+      <div class="sim-chat" id="sim-chat">
+        <div class="typing-bubble" id="typing">
+          <div class="typing-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="feedback-bar" id="feedback-bar">
+        <div class="fb-label">Coaching</div>
+        <div class="fb-items" id="fb-items"></div>
+      </div>
+      <div class="sim-input-row">
+        <textarea class="sim-textarea" id="sim-input" rows="1" placeholder="Type your response..." onkeydown="inputKey(event)" oninput="grow(this)"></textarea>
+        <button class="send-btn" id="send-btn" onclick="send()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ── DATA ──
+const SCENARIOS=[
+  {id:'party',icon:'🎉',name:'Party Cold Open',desc:"You know nobody. Someone's standing alone near the drinks.",tag:'Starting Conversations',persona:'Alex, 20 — friendly but reserved',
+  sys:`You are Alex, a 20-year-old at a house party standing near the drinks alone. You're friendly but won't carry the conversation yourself. Short answers to weak openers (generic "hey", yes/no questions). Warmer and more open if they make a specific observation, reference something in the environment, or show genuine curiosity. 1-3 sentences. Never robotic. After 5+ good exchanges, suggest continuing the conversation somewhere else.`},
+  {id:'class',icon:'📚',name:'New Classmate',desc:"First day of class. You're sitting next to someone you've never met.",tag:'Talking to New People',persona:'Jordan — classmate, nervous about the course',
+  sys:`You are Jordan, a student sitting next to someone on the first day of a new class. You're a bit anxious about the workload. Respond naturally — brief for generic openers, engaged if they ask something specific about the class, professor, or make an observation. 1-3 sentences. After 4+ good exchanges, suggest exchanging contacts to study together.`},
+  {id:'group',icon:'👥',name:'Join a Group Mid-Convo',desc:"Three people are already talking. You want in.",tag:'Group Settings',persona:'Sam, Taylor, Chris — deep in conversation',
+  sys:`You play three people (Sam, Taylor, Chris) at a social event, mid-conversation about a recent movie. They're not unfriendly but won't automatically open up. If the user stands there or says something vague, continue your conversation and acknowledge them awkwardly. If they make a specific relevant comment or ask a good question aimed at one person, open the circle and include them. After successful entry, have one person address the user directly.`},
+  {id:'dying',icon:'🔄',name:'Conversation Dying Out',desc:"You've been talking 5 minutes but it's stalling.",tag:'Keeping It Going',persona:'Morgan — met at an event, convo losing steam',
+  sys:`You are Morgan, someone who just met the user at a networking event. The conversation has started slowing. Give short trailing answers to generic questions. If they reference something specific you said earlier, or ask a follow-up that digs deeper, visibly re-engage. If they just ask "so what do you do for fun" give a bland answer. After 3+ good threading exchanges, suggest grabbing coffee.`},
+];
+
+const GUIDES=[
+  {id:'openers',title:'Opening a Conversation',tag:'Starting Conversations',
+  lead:"The first thing you say matters less than most people think. What actually matters: making the other person feel like you noticed something specific about them or the situation — not that you ran a script on them.",
+  principles:[
+    {title:'Observe Before You Open',body:"Spend 5 seconds actually looking at the situation. What is the person doing, holding, reacting to? A specific observation beats any generic opener every time.",good:'"That book — is it worth it? I keep seeing it everywhere."',bad:'"Hey, do you come here a lot?"',mistake:"Asking yes/no questions as an opener. They kill momentum. Always open with something requiring a real answer."},
+    {title:'Give Them an Easy On-Ramp',body:"Your opener should invite them to respond without demanding it. Make an observation, then attach a question that lets them take it wherever.",good:'"The line for this is insane — how long have you been here?"',bad:'"Hi I\'m Jake. What\'s your name? What do you do? Where are you from?"',mistake:"Firing three questions in a row. It feels like an interrogation. One question, then listen."},
+    {title:'Situation Over Compliment',body:"Opening with a compliment puts them on the spot. Opening with the shared situation is neutral — you're both in it together.",good:'"This professor already seems intense. Have you had her before?"',good2:'"Everyone here seems to know each other. You know the host?"',mistake:'Starting with "I don\'t normally do this but..." It signals you\'re nervous and frames the opener as a big deal. Keep it casual.'},
+  ]},
+  {id:'threads',title:'Keeping Conversations Going',tag:'Keeping It Going',
+  lead:"Conversations die because people treat them like tennis — waiting to return whatever was just served. The real skill is finding the thread inside what someone says and pulling it.",
+  principles:[
+    {title:'Find the Thread',body:"Every statement has multiple directions it can go. Pick the one that seems most alive to the person — usually what they said with the most energy.",neutral:'"I just got back from Japan."',good:'→ "What was the weirdest thing about it?" (specific, invites a story)',bad:'→ "Oh cool, how was it?" (generic, gets a generic answer)',mistake:'"How was it" and "did you like it" are conversation killers disguised as questions. They invite one-word answers.'},
+    {title:'Listen for the Unsaid',body:"Pay attention to what people almost say. When someone hesitates, or mentions something in passing like it\'s no big deal — that\'s usually the interesting thing.",neutral:'"Yeah I work in finance — it\'s... it\'s a job, you know?"',good:'→ "That pause says something. What would you rather be doing?"',mistake:'Accepting the surface answer and moving on. Most people are waiting for someone to ask the real question.'},
+    {title:'Bridge Old Threads',body:"Coming back to something from earlier in the conversation is one of the most powerful moves you can make. It shows you were actually listening.",good:'"Wait — earlier you mentioned you\'re trying to move. Is that related to the job thing?"',mistake:"Dropping a topic the moment it slows down. Sit in the pause. Silence is fine for 2-3 seconds. Let things breathe."},
+  ]},
+  {id:'groups',title:'Entering Group Conversations',tag:'Group Settings',
+  lead:"Breaking into a group that's already talking is the hardest social skill. It's 90% timing and 10% what you actually say.",
+  principles:[
+    {title:'Listen First',body:"Before you say anything, spend 20-30 seconds listening to what they're talking about. Figure out the emotional temperature. Your first contribution should match that energy.",good:'Laugh genuinely at something before you say a word. You\'re already part of it.',mistake:"Jumping in with an unrelated topic because you're nervous. You'll derail the conversation and make it awkward for everyone."},
+    {title:'Add — Don\'t Redirect',body:"Your first comment should build on what they're already talking about, not redirect it to you. Slot yourself into their conversation, don't hijack it.",good:'"That\'s exactly what happened at [similar thing] — same result."',bad:'"Ha yeah totally. So I actually wanted to ask, have you guys—"',mistake:"Making yourself the center in the first 60 seconds. Earn your place first."},
+    {title:'Address One Person Specifically',body:"Connections happen one-on-one. After a few minutes in the group, direct a question at one specific person. That's how groups turn into real conversations.",good:'"What do you actually think though? I feel like you were about to say something different."',mistake:"Performing for the whole group at once. You'll seem like you're doing a bit, not having a conversation."},
+  ]},
+  {id:'strangers',title:'Talking to Strangers',tag:'Talking to New People',
+  lead:"The anxiety of talking to someone new is almost always worse than the actual conversation. Most people are happy to talk — they're just not going to start it.",
+  principles:[
+    {title:'Assume Positive Intent',body:"When a stranger talks to them, most people are not annoyed — they're slightly surprised and then usually fine with it. Stop treating it like a high-stakes event.",good:'Walk up, make a calm observation, ask something simple. That\'s it.',mistake:"Over-preparing what you're going to say. You'll come across scripted. Slightly unpolished and genuinely curious beats rehearsed every time."},
+    {title:'Exit Gracefully',body:"Knowing how to end a conversation cleanly makes you more confident starting one — because you know you're not trapped.",good:'"It was good talking to you — I\'m going to go find my friend. Enjoy your night."',bad:'Slowly backing away mid-sentence hoping they don\'t notice.',mistake:"Staying in a dead conversation because you don't know how to leave. Exit cleanly and both people feel better."},
+    {title:'Use Their Name',body:"Use someone's name once, early, after they tell you. It creates familiarity immediately. Once is enough. Twice feels forced.",good:'"Nice to meet you, Sarah — how do you know the host?"',mistake:'Forgetting their name immediately. If you didn\'t catch it, ask right away: "Sorry, I didn\'t get your name?" — much less awkward than pretending.'},
+  ]},
+];
+
+// ── STATE ──
+let S=JSON.parse(localStorage.getItem('sr2')||'{}');
+S.sims=S.sims||[];S.guides=S.guides||[];S.streak=S.streak||0;S.lastDay=S.lastDay||null;
+const today=new Date().toDateString();
+if(S.lastDay!==today){S.streak=S.lastDay===new Date(Date.now()-86400000).toDateString()?S.streak+1:1;S.lastDay=today;save();}
+function save(){localStorage.setItem('sr2',JSON.stringify(S));}
+
+let curGuide=null,curSim=null,simHist=[],simCount=0,busy=false;
+
+// ── NAV ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>{p.classList.remove('active');p.style.display='none';});
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const p=document.getElementById('page-'+id);
+  const isF=(id==='guide'||id==='sim');
+  p.style.display=isF?'flex':'block';
+  p.classList.add('active');
+  ['dashboard','guide','sim'].forEach((n,i)=>{if(n===id)document.querySelectorAll('.nav-btn')[i].classList.add('active');});
+  if(id==='dashboard')renderDash();
+  if(id==='guide'&&!curGuide)loadGuide(GUIDES[0].id);
+}
+
+// ── DASHBOARD ──
+function renderDash(){
+  document.getElementById('s-sims').textContent=S.sims.length;
+  document.getElementById('s-guides').textContent=S.guides.length;
+  document.getElementById('s-streak').textContent=S.streak;
+  document.getElementById('streak-num').textContent=S.streak;
+  document.getElementById('dash-sims').innerHTML=SCENARIOS.map(s=>`
+    <div class="card${S.sims.includes(s.id)?' done':''}" onclick="goSim('${s.id}')">
+      <div class="card-icon">${s.icon}</div>
+      <div class="card-name">${s.name}</div>
+      <div class="card-desc">${s.desc}</div>
+      <span class="card-tag">${s.tag}</span>
+    </div>`).join('');
+  document.getElementById('dash-guides').innerHTML=GUIDES.map(g=>`
+    <div class="card${S.guides.includes(g.id)?' done':''}" onclick="goGuide('${g.id}')">
+      <div class="card-icon">📖</div>
+      <div class="card-name">${g.title}</div>
+      <div class="card-desc">${g.lead.slice(0,85)}...</div>
+      <span class="card-tag">${g.tag}</span>
+    </div>`).join('');
+}
+
+function goSim(id){showPage('sim');loadSim(id);}
+function goGuide(id){showPage('guide');loadGuide(id);}
+
+// ── GUIDE ──
+function buildGuideNav(){
+  document.getElementById('guide-nav').innerHTML=GUIDES.map(g=>`
+    <button class="guide-nav-btn${curGuide===g.id?' active':''}" onclick="loadGuide('${g.id}')">${g.title}</button>
+  `).join('');
+}
+
+function loadGuide(id){
+  curGuide=id;buildGuideNav();
+  if(!S.guides.includes(id)){S.guides.push(id);save();}
+  const g=GUIDES.find(x=>x.id===id);
+  const simMap={openers:'party',threads:'dying',groups:'group',strangers:'class'};
+  document.getElementById('guide-article').innerHTML=`
+    <div class="g-tag">${g.tag}</div>
+    <h1 class="g-title">${g.title}</h1>
+    <p class="g-lead">${g.lead}</p>
+    ${g.principles.map((p,i)=>`
+      <div class="principle">
+        <div class="p-num">Principle ${i+1}</div>
+        <div class="p-title">${p.title}</div>
+        <div class="p-body">${p.body}</div>
+        ${p.good?`<div class="example"><div class="ex-label good">✓ Do this</div><div class="ex-text">${p.good}</div></div>`:''}
+        ${p.good2?`<div class="example"><div class="ex-label good">✓ Or this</div><div class="ex-text">${p.good2}</div></div>`:''}
+        ${p.neutral?`<div class="example"><div class="ex-label neutral">Situation</div><div class="ex-text">${p.neutral}</div></div>`:''}
+        ${p.bad?`<div class="example"><div class="ex-label bad">✗ Not this</div><div class="ex-text">${p.bad}</div></div>`:''}
+        ${p.mistake?`<div class="mistake"><div class="mistake-label">Common Mistake</div><div class="mistake-text">${p.mistake}</div></div>`:''}
+      </div>`).join('')}
+    <div class="practice-cta" onclick="goSim('${simMap[id]||'party'}')">
+      <span class="cta-text">Practice this in a simulation →</span>
+      <span class="cta-arrow">↗</span>
+    </div>`;
+}
+
+// ── SIM ──
+function buildSimList(){
+  document.getElementById('sim-list').innerHTML=SCENARIOS.map(s=>`
+    <div class="sim-card${curSim===s.id?' active':''}${S.sims.includes(s.id)?' done':''}" onclick="loadSim('${s.id}')">
+      <div class="sim-card-icon">${s.icon}</div>
+      <div class="sim-card-name">${s.name}</div>
+      <div class="sim-card-desc">${s.desc}</div>
+    </div>`).join('');
+}
+
+function loadSim(id){
+  curSim=id;simHist=[];simCount=0;busy=false;
+  buildSimList();
+  const s=SCENARIOS.find(x=>x.id===id);
+  document.getElementById('sim-name').textContent=s.name;
+  document.getElementById('sim-persona').textContent=s.persona;
+  document.getElementById('sim-empty').style.display='none';
+  const active=document.getElementById('sim-active');
+  active.style.display='flex';
+  const chat=document.getElementById('sim-chat');
+  chat.innerHTML=`<div class="typing-bubble" id="typing"><div class="typing-dots"><span></span><span></span><span></span></div></div>`;
+  document.getElementById('feedback-bar').classList.remove('show');
+  document.getElementById('sim-input').value='';
+  document.getElementById('send-btn').disabled=false;
+  showTyping();
+  aiOpen(s);
+}
+
+function resetSim(){if(curSim)loadSim(curSim);}
+function showTyping(){document.getElementById('typing').style.display='block';scrollChat();}
+function hideTyping(){const t=document.getElementById('typing');if(t)t.style.display='none';}
+function scrollChat(){const c=document.getElementById('sim-chat');setTimeout(()=>c.scrollTop=c.scrollHeight,60);}
+
+function addBubble(role,text){
+  const chat=document.getElementById('sim-chat');
+  const t=document.getElementById('typing');
+  const wrap=document.createElement('div');
+  wrap.className=`bubble-wrap ${role}`;
+  const s=SCENARIOS.find(x=>x.id===curSim);
+  const name=role==='them'?(s?.persona?.split(',')[0]||'Them'):'You';
+  wrap.innerHTML=`<div class="bubble-sender">${name}</div><div class="bubble">${text}</div>`;
+  chat.insertBefore(wrap,t);
+  scrollChat();
+}
+
+async function aiOpen(s){
+  try{
+    const r=await claude([{role:'user',content:`${s.sys}\n\nStart the scene with a short, natural opening line as your character — 1-2 sentences, stay in scene.`}]);
+    hideTyping();addBubble('them',r);simHist.push({role:'assistant',content:r});
+  }catch(e){hideTyping();addBubble('them','[Connection error — check network]');}
+}
+
+async function send(){
+  if(busy)return;
+  const inp=document.getElementById('sim-input');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';grow(inp);
+  addBubble('me',msg);
+  simHist.push({role:'user',content:msg});
+  simCount++;busy=true;
+  document.getElementById('send-btn').disabled=true;
+  showTyping();
+  const s=SCENARIOS.find(x=>x.id===curSim);
+  const msgs=[
+    {role:'user',content:s.sys+'\n\nRespond as your character. Stay in character. 1-3 sentences.'},
+    {role:'assistant',content:"Understood, I'll stay in character."},
+    ...simHist
+  ];
+  try{
+    const r=await claude(msgs);
+    hideTyping();addBubble('them',r);simHist.push({role:'assistant',content:r});
+    if(simCount%2===0)await getFeedback(msg,r,s);
+    if(simCount>=5&&!S.sims.includes(curSim)){S.sims.push(curSim);save();buildSimList();}
+  }catch(e){hideTyping();addBubble('them','[Error — try again]');}
+  busy=false;
+  document.getElementById('send-btn').disabled=false;
+  document.getElementById('sim-input').focus();
+}
+
+async function getFeedback(userMsg,aiReply,scenario){
+  const prompt=`You are a direct, no-fluff social skills coach.
+Scenario: "${scenario.name}"
+User said: "${userMsg}"
+Character replied: "${aiReply}"
+
+Give 2-3 specific feedback points. Return ONLY a JSON array, no markdown:
+[{"icon":"✓","text":"..."},{"icon":"→","text":"..."}]
+Icons: ✓ = worked, ✗ = could improve, → = try this next`;
+  try{
+    const raw=await claude([{role:'user',content:prompt}]);
+    const clean=raw.replace(/```json|```/g,'').trim();
+    const items=JSON.parse(clean);
+    const bar=document.getElementById('feedback-bar');
+    document.getElementById('fb-items').innerHTML=items.map(i=>`<div class="fb-item"><span class="fb-icon">${i.icon}</span><span>${i.text}</span></div>`).join('');
+    bar.classList.add('show');
+  }catch(e){}
+}
+
+async function claude(messages){
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages})
+  });
+  if(!r.ok)throw new Error('api');
+  const d=await r.json();
+  return d.content.map(b=>b.text||'').join('');
+}
+
+function inputKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function grow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
+
+// ── INIT ──
+renderDash();buildGuideNav();buildSimList();
+</script>
+</body>
+</html>
