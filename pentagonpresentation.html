@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Who Killed Citizenship in Society?</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #e8001d;
+    --gold: #f5c400;
+    --ink: #1a1008;
+    --paper: #f2ead8;
+    --darkpaper: #e0d4b8;
+    --grey: #4a4035;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    font-family: 'Source Serif 4', serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    min-height: 100vh;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 40px 20px;
+  }
+
+  #hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 28px, rgba(0,0,0,0.04) 28px, rgba(0,0,0,0.04) 29px
+    );
+    pointer-events: none;
+  }
+
+  .stamp {
+    position: absolute;
+    top: 30px; right: 40px;
+    border: 6px solid var(--red);
+    color: var(--red);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 4px;
+    padding: 8px 16px;
+    transform: rotate(12deg);
+    opacity: 0;
+    animation: stampIn 0.4s 1.8s cubic-bezier(0.2,2,0.4,1) forwards;
+  }
+
+  @keyframes stampIn {
+    from { opacity: 0; transform: rotate(12deg) scale(3); }
+    to { opacity: 1; transform: rotate(12deg) scale(1); }
+  }
+
+  .issue-line {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 6px;
+    color: var(--grey);
+    text-transform: uppercase;
+    border-top: 2px solid var(--ink);
+    border-bottom: 2px solid var(--ink);
+    padding: 6px 20px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.6s 0.3s ease forwards;
+  }
+
+  .headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 11vw, 120px);
+    line-height: 0.92;
+    color: var(--ink);
+    text-align: center;
+    letter-spacing: -1px;
+    opacity: 0;
+    animation: fadeUp 0.7s 0.6s ease forwards;
+  }
+
+  .headline span {
+    color: var(--red);
+    display: block;
+  }
+
+  .subhead {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(16px, 3vw, 26px);
+    font-weight: 400;
+    color: var(--grey);
+    text-align: center;
+    max-width: 700px;
+    margin-top: 18px;
+    line-height: 1.4;
+    opacity: 0;
+    animation: fadeUp 0.7s 1.0s ease forwards;
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 4px;
+    color: var(--grey);
+    text-transform: uppercase;
+    animation: bounce 2s 2.5s infinite;
+    opacity: 0;
+    animation: fadeUp 0.5s 2.2s ease forwards, bounce 1.5s 2.8s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ===== DIVIDER ===== */
+  .divider {
+    height: 8px;
+    background: var(--red);
+    width: 100%;
+  }
+
+  .divider-gold {
+    height: 4px;
+    background: var(--gold);
+  }
+
+  /* ===== CARDS ===== */
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .card {
+    background: var(--paper);
+    border-top: 5px solid var(--red);
+    padding: 28px 24px;
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-6px) rotate(-0.5deg);
+    box-shadow: 8px 8px 0 var(--gold);
+  }
+
+  .card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 64px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .card-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    font-size: 15px;
+    color: var(--grey);
+    line-height: 1.6;
+  }
+
+  /* ===== SECTION LABELS ===== */
+  .section-tag {
+    display: inline-block;
+    background: var(--red);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 3px;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 7vw, 72px);
+    color: var(--paper);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .section-title.dark {
+    color: var(--ink);
+  }
+
+  .body-text {
+    font-size: clamp(16px, 2vw, 19px);
+    color: var(--darkpaper);
+    line-height: 1.75;
+    max-width: 720px;
+  }
+
+  .body-text.dark {
+    color: var(--grey);
+  }
+
+  /* ===== QUOTE BLOCK ===== */
+  .quote-block {
+    border-left: 8px solid var(--gold);
+    padding: 20px 30px;
+    margin: 40px 0;
+    background: rgba(245, 196, 0, 0.08);
+  }
+
+  .quote-text {
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.5vw, 24px);
+    color: var(--paper);
+    line-height: 1.5;
+  }
+
+  .quote-attr {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-top: 12px;
+    text-transform: uppercase;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    position: relative;
+    margin-top: 40px;
+    padding-left: 40px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 12px;
+    top: 0; bottom: 0;
+    width: 4px;
+    background: var(--red);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 36px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .timeline-item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -35px;
+    top: 6px;
+    width: 16px; height: 16px;
+    background: var(--gold);
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+  }
+
+  .timeline-date {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: var(--gold);
+    letter-spacing: 2px;
+  }
+
+  .timeline-text {
+    font-size: 16px;
+    color: var(--darkpaper);
+    line-height: 1.6;
+    margin-top: 4px;
+  }
+
+  /* ===== VILLAIN CARD ===== */
+  .villain-box {
+    background: var(--paper);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 30px;
+    align-items: start;
+    padding: 36px;
+    border: 4px solid var(--ink);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .villain-box::after {
+    content: '⚠ WANTED ⚠';
+    position: absolute;
+    top: 16px; right: -30px;
+    background: var(--red);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 3px;
+    padding: 4px 50px;
+    transform: rotate(35deg);
+  }
+
+  .villain-avatar {
+    width: 110px; height: 110px;
+    background: var(--ink);
+    border: 4px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    flex-shrink: 0;
+  }
+
+  .villain-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .villain-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .villain-body {
+    font-size: 15px;
+    color: var(--grey);
+    line-height: 1.65;
+  }
+
+  /* ===== WHAT WAS THE BADGE ===== */
+  .badge-explainer {
+    background: var(--paper);
+    padding: 36px;
+    margin-top: 40px;
+    border: 3px double var(--ink);
+    position: relative;
+  }
+
+  .badge-explainer::before {
+    content: '🏅 THE BADGE';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 4px;
+    background: var(--ink);
+    color: var(--gold);
+    padding: 4px 16px;
+    position: absolute;
+    top: -16px; left: 30px;
+  }
+
+  .badge-explainer p {
+    font-size: 16px;
+    color: var(--grey);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .badge-explainer p:last-child { margin-bottom: 0; }
+
+  /* ===== CALLOUT ===== */
+  .big-callout {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--red);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .big-callout::before {
+    content: '!!';
+    position: absolute;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 400px;
+    color: rgba(255,255,255,0.05);
+    line-height: 1;
+    top: -60px; right: -30px;
+  }
+
+  .big-callout-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 8vw, 90px);
+    color: white;
+    line-height: 1;
+    position: relative;
+  }
+
+  .big-callout-sub {
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(16px, 2vw, 22px);
+    color: rgba(255,255,255,0.8);
+    margin-top: 16px;
+    position: relative;
+  }
+
+  /* ===== BG SECTIONS ===== */
+  .bg-dark { background: var(--ink); }
+  .bg-paper { background: var(--paper); }
+  .bg-mid { background: #231a10; }
+
+  /* ===== REACTION QUOTES ===== */
+  .reaction-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 32px;
+  }
+
+  .reaction-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(245,196,0,0.3);
+    padding: 20px;
+    transition: background 0.2s;
+  }
+
+  .reaction-card:hover { background: rgba(245,196,0,0.08); }
+
+  .reaction-who {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  .reaction-text {
+    font-size: 15px;
+    color: var(--darkpaper);
+    font-style: italic;
+    line-height: 1.6;
+  }
+
+  /* ===== FOOTER CTA ===== */
+  .cta-section {
+    background: var(--gold);
+    padding: 80px 20px;
+    text-align: center;
+  }
+
+  .cta-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(40px, 8vw, 80px);
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .cta-body {
+    font-size: clamp(16px, 2vw, 20px);
+    color: var(--ink);
+    max-width: 650px;
+    margin: 0 auto 30px;
+    line-height: 1.7;
+  }
+
+  .scout-values {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .value-pill {
+    background: var(--ink);
+    color: var(--gold);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 2px;
+    padding: 8px 20px;
+    transition: transform 0.15s;
+  }
+
+  .value-pill:hover { transform: scale(1.08) rotate(-1deg); }
+
+  /* ===== FLICKER ANIMATION ===== */
+  @keyframes flicker {
+    0%, 100% { opacity: 1; }
+    92% { opacity: 1; }
+    93% { opacity: 0.4; }
+    94% { opacity: 1; }
+    96% { opacity: 0.7; }
+    97% { opacity: 1; }
+  }
+
+  .flicker { animation: flicker 4s infinite; }
+
+  /* ===== PROGRESS BAR ===== */
+  #progress {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: var(--red);
+    z-index: 9999;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  #nav {
+    position: fixed;
+    top: 8px; right: 20px;
+    z-index: 1000;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    color: white;
+    background: var(--ink);
+    border: 2px solid var(--red);
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  #nav:hover { background: var(--red); }
+
+  /* glitch on headline hover */
+  .headline:hover {
+    animation: glitch 0.3s steps(2) forwards;
+  }
+  @keyframes glitch {
+    0% { text-shadow: 4px 0 var(--red), -4px 0 var(--gold); }
+    33% { text-shadow: -4px 0 var(--red), 4px 0 var(--gold); }
+    66% { text-shadow: 4px 0 var(--gold), -4px 0 var(--red); }
+    100% { text-shadow: none; }
+  }
+
+  strong { color: var(--red); font-style: normal; }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<button id="nav" onclick="document.getElementById('cta').scrollIntoView({behavior:'smooth'})">↓ JUMP TO END</button>
+
+<!-- ===== HERO ===== -->
+<section id="hero">
+  <div class="stamp">OUTRAGEOUS</div>
+  <div class="issue-line">Scout Meeting Presentation — March 2026 — The Truth About What Changed</div>
+  <h1 class="headline flicker">
+    WHO KILLED
+    <span>CITIZENSHIP</span>
+    IN SOCIETY?
+  </h1>
+  <p class="subhead">How the Pentagon strong-armed Scouting America into dropping a badge that taught you to be a better citizen — and what that means for YOU.</p>
+  <div class="scroll-hint">↓ SCROLL TO FIND OUT ↓</div>
+</section>
+
+<div class="divider"></div>
+<div class="divider-gold"></div>
+
+<!-- ===== WHAT WAS THE BADGE ===== -->
+<div class="bg-paper">
+<div class="section" style="padding-top:60px; padding-bottom: 60px;">
+  <div class="section-tag">The Badge</div>
+  <h2 class="section-title dark">What Was "Citizenship in Society"?</h2>
+
+  <div class="badge-explainer">
+    <p>Introduced after 2020, the <strong>Citizenship in Society</strong> merit badge was <em>required</em> for Eagle Scout rank. It was one of 13 mandatory badges you needed to earn the highest honor in Scouting.</p>
+    <p>The badge asked Scouts to think critically about the world around them — to understand how discrimination works, how to be a leader who includes everyone, and how to stand up for people who are treated unfairly. It explored concepts like bias, inequality, and what it really means to be a citizen in a diverse country.</p>
+    <p>In short: it was about turning Scouts into thoughtful, aware, <strong>courageous leaders</strong> — not just in the wilderness, but in society. Isn't that kind of the whole point?</p>
+  </div>
+
+  <div class="card-row" style="margin-top:30px;">
+    <div class="card">
+      <div class="card-num">13</div>
+      <div class="card-title">Required Badges for Eagle</div>
+      <p>Citizenship in Society was one of them — until February 27, 2026, when it was discontinued under Pentagon pressure.</p>
+    </div>
+    <div class="card">
+      <div class="card-num">2020</div>
+      <div class="card-title">When It Was Created</div>
+      <p>The badge was introduced following a national reckoning on race and equality, meant to prepare future leaders for the real world.</p>
+    </div>
+    <div class="card">
+      <div class="card-num">200K+</div>
+      <div class="card-title">Girls in Scouting</div>
+      <p>Their future in Scouting also got dragged into these negotiations — Hegseth made clear he'd prefer the org go back to boys only.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== TIMELINE ===== -->
+<div class="bg-mid">
+<div class="section">
+  <div class="section-tag">The Timeline</div>
+  <h2 class="section-title">How It Went Down</h2>
+
+  <div class="timeline" id="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">2024 — Scouting America Rebrands</div>
+      <div class="timeline-text">The Boy Scouts of America officially renamed itself Scouting America, reflecting its growing membership of girls and its inclusive mission. Hegseth was furious.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Early 2025 — Pentagon Threatens to Pull Support</div>
+      <div class="timeline-text">Under Hegseth, the Pentagon began reviewing its century-old partnership with Scouting, threatening to kick Scout troops off military bases and cut Jamboree logistics support — worth millions — unless the org complied.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">January 2026 — Scouting Sends a Concession Letter</div>
+      <div class="timeline-text">Scared of losing Pentagon support, Scouting America's leadership sent Hegseth a letter proposing to drop the Citizenship in Society badge, add a Military Service badge, and dissolve their DEI committee.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">February 27, 2026 — The Badge is Killed</div>
+      <div class="timeline-text">Citizenship in Society officially discontinued. Scouts can no longer start its requirements. A new Military Service merit badge is introduced as its replacement path to Eagle.</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">NOW — 6-Month Clock is Ticking</div>
+      <div class="timeline-text">Hegseth placed Scouting "on notice." The Pentagon will review compliance in six months and threatens to sever all support if they're unsatisfied. The pressure is ongoing.</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== VILLAIN SECTION ===== -->
+<div class="divider-gold"></div>
+<div class="bg-dark">
+<div class="section">
+  <div class="section-tag">The Man Behind It</div>
+  <h2 class="section-title">Pete Hegseth &amp; the Pentagon</h2>
+  <p class="body-text">Defense Secretary Pete Hegseth didn't just suggest changes — he issued ultimatums. He used the military's financial leverage over Scouting to force ideological changes on a 116-year-old institution. Here's who he is and what he said:</p>
+
+  <div class="villain-box">
+    <div class="villain-avatar">🪖</div>
+    <div>
+      <div class="villain-name">Pete Hegseth</div>
+      <div class="villain-title">Secretary of Defense ("Secretary of War")</div>
+      <p class="villain-body">A Fox News host turned Defense Secretary, Hegseth has been openly hostile to any diversity or inclusion efforts in the military and organizations connected to it. He has called Scouting America's changes "woke culture" and told the organization it had "lost its way." He even rebranded the Pentagon's official title to "Department of War" on social media — which tells you something about his philosophy. Rep. Don Bacon, a <em>Republican</em> congressman, said of Hegseth's plans to cut Scouts: <strong>"I've heard a lot of dumb stuff, but this is up there."</strong></p>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <p class="quote-text">"Ideally, I believe the Boy Scouts should go back to being the Boy Scouts as originally founded — a group that develops boys into men. Maybe someday."</p>
+    <div class="quote-attr">— Pete Hegseth, Feb. 27, 2026 (ignoring the 200,000+ girls currently in Scouting)</div>
+  </div>
+
+  <p class="body-text" style="margin-top:24px;">The Pentagon has no business telling a youth organization what values to teach. The military provides logistical support for Scouting — things like equipment and base access — but that support has always been in exchange for nothing except Scouting being Scouting. Using that support as a <strong>political weapon</strong> against an independent youth organization is a misuse of government power, full stop.</p>
+</div>
+</div>
+
+<!-- ===== BIG CALLOUT ===== -->
+<div class="big-callout">
+  <div class="big-callout-text">THE SCOUT LAW SAYS<br>"BRAVE."</div>
+  <div class="big-callout-sub">Brave enough to stand up to pressure — even from the government.</div>
+</div>
+
+<!-- ===== WHY IT MATTERS ===== -->
+<div class="bg-paper">
+<div class="section">
+  <div class="section-tag">Why This Matters To YOU</div>
+  <h2 class="section-title dark">This Is About Your Eagle Badge</h2>
+  <p class="body-text dark">If you were working toward Eagle Scout, the badge you needed to earn has been ripped out from under the requirements — not because Scouts decided to, but because a government official threatened your troop's access to military bases. Think about that. A politician in Washington DC just changed what <em>your</em> Eagle Scout rank means. Here's what's really at stake:</p>
+
+  <div class="card-row">
+    <div class="card">
+      <div class="card-num">🧭</div>
+      <div class="card-title">Your Independence</div>
+      <p>Scouting has always been independent. When the government can dictate what you learn, that independence is gone. Today it's a merit badge. What's next?</p>
+    </div>
+    <div class="card">
+      <div class="card-num">🤝</div>
+      <div class="card-title">Your Fellow Scouts</div>
+      <p>Over 200,000 girls are in Scouting. Hegseth publicly wishes they weren't. These are your troop-mates. Their right to be here is being questioned.</p>
+    </div>
+    <div class="card">
+      <div class="card-num">📚</div>
+      <div class="card-title">What You're Taught</div>
+      <p>The whole point of Citizenship in Society was preparing you for the real world — a world with people different from you. That lesson just got removed from your path to Eagle.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ===== REACTIONS ===== -->
+<div class="bg-mid">
+<div class="section">
+  <div class="section-tag">What People Are Saying</div>
+  <h2 class="section-title">The Backlash Was Real</h2>
+  <p class="body-text">This wasn't controversial only among progressives. People across the political spectrum pushed back hard when news broke of Hegseth's ultimatum to Scouting.</p>
+
+  <div class="reaction-grid">
+    <div class="reaction-card">
+      <div class="reaction-who">Rep. Don Bacon (R-Nebraska)</div>
+      <div class="reaction-text">"I've heard a lot of dumb stuff, but this is up there." — A Republican congressman on Hegseth's threats to cut Scout support.</div>
+    </div>
+    <div class="reaction-card">
+      <div class="reaction-who">Eagle Scout Alumni Nationwide</div>
+      <div class="reaction-text">After NPR reported on the rift, Eagle Scout alumni and members flooded their representatives' offices lobbying to preserve the century-old military-Scout partnership.</div>
+    </div>
+    <div class="reaction-card">
+      <div class="reaction-who">Scouting America Leadership</div>
+      <div class="reaction-text">Even while complying, Scouting held firm on keeping girls in the program and keeping its name — drawing a line in the sand despite enormous pressure.</div>
+    </div>
+    <div class="reaction-card">
+      <div class="reaction-who">The Scout Law Itself</div>
+      <div class="reaction-text">Trustworthy. Loyal. Helpful. Friendly. Courteous. Kind. Obedient. Cheerful. Thrifty. Brave. Clean. Reverent. None of those say "exclude."</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ===== CTA ===== -->
+<div class="cta-section" id="cta">
+  <h2 class="cta-title">So What Do We Do?</h2>
+  <p class="cta-body">You don't need a merit badge to know right from wrong. As Scouts — especially those of us working toward Eagle — our job is to be prepared, to be brave, and to be good citizens. <strong>That doesn't stop because a politician said so.</strong></p>
+  <p class="cta-body">Talk about this with your troop. Read the Scout Law again. Ask your Scoutmaster what they think. And if you want your voice heard, Scouting America is still listening — and so are your elected representatives.</p>
+
+  <div class="scout-values">
+    <div class="value-pill">Trustworthy</div>
+    <div class="value-pill">Brave</div>
+    <div class="value-pill">Kind</div>
+    <div class="value-pill">Helpful</div>
+    <div class="value-pill">Courteous</div>
+    <div class="value-pill">Loyal</div>
+    <div class="value-pill">Friendly</div>
+    <div class="value-pill">Reverent</div>
+  </div>
+
+  <p style="margin-top:40px; font-family:'Oswald',sans-serif; font-size:14px; letter-spacing:3px; color:var(--ink); text-transform:uppercase;">Presented at Scout Meeting — March 2026</p>
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const s = document.documentElement;
+    const pct = (s.scrollTop / (s.scrollHeight - s.clientHeight)) * 100;
+    document.getElementById('progress').style.width = pct + '%';
+  });
+
+  // Intersection Observer for fade-in
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.section').forEach(el => observer.observe(el));
+
+  // Staggered timeline items
+  const tlObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), e.target.dataset.delay || 0);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.timeline-item').forEach((el, i) => {
+    el.dataset.delay = i * 150;
+    tlObserver.observe(el);
+  });
+
+  // Value pill randomize rotation on hover
+  document.querySelectorAll('.value-pill').forEach(pill => {
+    pill.addEventListener('mouseenter', () => {
+      const r = (Math.random() - 0.5) * 8;
+      pill.style.transform = `scale(1.1) rotate(${r}deg)`;
+    });
+    pill.addEventListener('mouseleave', () => {
+      pill.style.transform = '';
+    });
+  });
+</script>
+</body>
+</html>
