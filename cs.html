@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AITE CS Club — Terminal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=VT323&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --yellow: #FFD700;
+      --yellow-dim: #B8A000;
+      --yellow-bright: #FFF176;
+      --yellow-glow: rgba(255, 215, 0, 0.18);
+      --black: #000000;
+      --bg: #050505;
+      --bg-card: #0a0a0a;
+      --border: #2a2400;
+      --green: #39FF14;
+      --cursor: #FFD700;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--yellow);
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.08) 3px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* vignette */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.75) 100%);
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    /* ── NAVBAR ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      background: rgba(0,0,0,0.92);
+      border-bottom: 1px solid var(--yellow-dim);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 54px;
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-logo {
+      font-family: 'Orbitron', monospace;
+      font-weight: 900;
+      font-size: 1rem;
+      color: var(--yellow);
+      letter-spacing: 0.12em;
+      text-shadow: 0 0 12px var(--yellow);
+    }
+
+    .nav-logo span { color: var(--yellow-bright); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--yellow-dim);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: color 0.2s, text-shadow 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--yellow-bright);
+      text-shadow: 0 0 10px var(--yellow);
+    }
+
+    .nav-links a::before { content: '> '; color: var(--yellow); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 6rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.6; }
+      50% { opacity: 1; }
+    }
+
+    .hero-prompt {
+      font-size: 0.85rem;
+      color: var(--yellow-dim);
+      margin-bottom: 0.6rem;
+      letter-spacing: 0.08em;
+      opacity: 0;
+      animation: fadeUp 0.6s 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'VT323', monospace;
+      font-size: clamp(3rem, 9vw, 7.5rem);
+      line-height: 1;
+      color: var(--yellow);
+      text-shadow:
+        0 0 20px rgba(255,215,0,0.6),
+        0 0 60px rgba(255,215,0,0.2),
+        0 0 120px rgba(255,215,0,0.1);
+      letter-spacing: 0.04em;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.5s forwards;
+    }
+
+    .hero-sub {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(0.7rem, 1.8vw, 1rem);
+      font-weight: 400;
+      color: var(--yellow-dim);
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .hero-desc {
+      max-width: 560px;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      color: rgba(255,215,0,0.65);
+      margin-top: 1.8rem;
+      border-left: 2px solid var(--yellow-dim);
+      padding-left: 1.2rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1s forwards;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 1.2s forwards;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 0.75rem 2rem;
+      border: 1px solid var(--yellow);
+      color: var(--black);
+      background: var(--yellow);
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--yellow-bright);
+      transform: translateX(-100%);
+      transition: transform 0.3s;
+    }
+
+    .btn:hover::before { transform: translateX(0); }
+    .btn span { position: relative; z-index: 1; }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--yellow);
+    }
+
+    .btn-outline::before { background: rgba(255,215,0,0.12); }
+    .btn-outline:hover { color: var(--yellow-bright); }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 0.6em;
+      height: 1em;
+      background: var(--yellow);
+      margin-left: 4px;
+      vertical-align: middle;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* boot text */
+    .boot-lines {
+      position: absolute;
+      bottom: 3rem;
+      left: 4rem;
+      font-size: 0.7rem;
+      color: rgba(255,215,0,0.3);
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 1s 1.6s forwards;
+    }
+
+    /* ── SECTION WRAPPER ── */
+    section {
+      padding: 5rem 4rem;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 3rem;
+    }
+
+    .section-tag {
+      font-size: 0.72rem;
+      color: var(--yellow-dim);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-tag::before { content: '// '; }
+
+    .section-title {
+      font-family: 'VT323', monospace;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      color: var(--yellow);
+      text-shadow: 0 0 20px rgba(255,215,0,0.4);
+      letter-spacing: 0.05em;
+    }
+
+    .section-line {
+      width: 60px;
+      height: 1px;
+      background: var(--yellow);
+      margin-top: 1rem;
+      box-shadow: 0 0 8px var(--yellow);
+    }
+
+    /* ── TERMINAL WINDOW ── */
+    .terminal-window {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(255,215,0,0.06), inset 0 0 30px rgba(0,0,0,0.3);
+    }
+
+    .terminal-topbar {
+      background: #111;
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .terminal-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #ff5f56; }
+    .dot-yellow { background: #ffbd2e; }
+    .dot-green { background: #27c93f; }
+
+    .terminal-title-bar {
+      font-size: 0.7rem;
+      color: rgba(255,215,0,0.35);
+      margin-left: auto;
+      letter-spacing: 0.1em;
+    }
+
+    .terminal-body {
+      padding: 1.5rem 2rem;
+      font-size: 0.82rem;
+      line-height: 2;
+    }
+
+    .t-line { display: block; }
+    .t-prompt { color: var(--yellow); }
+    .t-cmd { color: var(--yellow-bright); }
+    .t-comment { color: rgba(255,215,0,0.4); }
+    .t-output { color: rgba(255,215,0,0.75); padding-left: 1.5rem; }
+    .t-green { color: var(--green); }
+    .t-dim { color: rgba(255,215,0,0.3); }
+
+    /* ── ABOUT ── */
+    #about {
+      background: linear-gradient(180deg, transparent, rgba(255,215,0,0.02) 50%, transparent);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 0.88rem;
+      line-height: 2;
+      color: rgba(255,215,0,0.7);
+      margin-bottom: 1.2rem;
+    }
+
+    .about-text p strong {
+      color: var(--yellow);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .stat-box {
+      background: var(--bg-card);
+      padding: 1.5rem;
+      text-align: center;
+      transition: background 0.2s;
+    }
+
+    .stat-box:hover { background: rgba(255,215,0,0.04); }
+
+    .stat-num {
+      font-family: 'VT323', monospace;
+      font-size: 2.8rem;
+      color: var(--yellow);
+      text-shadow: 0 0 15px rgba(255,215,0,0.5);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      color: var(--yellow-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 0.3rem;
+    }
+
+    /* ── EVENTS ── */
+    #events { background: var(--black); }
+
+    .events-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+
+    .event-item {
+      background: var(--bg-card);
+      padding: 1.4rem 2rem;
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      gap: 2rem;
+      align-items: center;
+      transition: background 0.2s;
+      cursor: default;
+    }
+
+    .event-item:hover { background: rgba(255,215,0,0.04); }
+
+    .event-date {
+      text-align: center;
+    }
+
+    .event-month {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--yellow-dim);
+    }
+
+    .event-day {
+      font-family: 'VT323', monospace;
+      font-size: 2.5rem;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    .event-name {
+      font-size: 0.9rem;
+      color: var(--yellow);
+      margin-bottom: 0.3rem;
+    }
+
+    .event-detail {
+      font-size: 0.75rem;
+      color: rgba(255,215,0,0.45);
+      letter-spacing: 0.05em;
+    }
+
+    .event-tag {
+      font-size: 0.65rem;
+      padding: 0.3rem 0.7rem;
+      border: 1px solid var(--yellow-dim);
+      color: var(--yellow-dim);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .event-tag.active {
+      border-color: var(--green);
+      color: var(--green);
+    }
+
+    /* ── PROJECTS ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      padding: 2rem;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .project-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--yellow), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .project-card:hover { background: rgba(255,215,0,0.03); }
+    .project-card:hover::before { opacity: 1; }
+
+    .project-lang {
+      font-size: 0.65rem;
+      color: var(--yellow-dim);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .project-lang::before { content: '[ '; }
+    .project-lang::after { content: ' ]'; }
+
+    .project-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--yellow);
+      margin-bottom: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    .project-desc {
+      font-size: 0.78rem;
+      line-height: 1.8;
+      color: rgba(255,215,0,0.55);
+    }
+
+    .project-footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .project-stars {
+      font-size: 0.7rem;
+      color: var(--yellow-dim);
+    }
+
+    .project-link {
+      font-size: 0.7rem;
+      color: var(--yellow);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: text-shadow 0.2s;
+    }
+
+    .project-link:hover { text-shadow: 0 0 8px var(--yellow); }
+
+    /* ── OFFICERS ── */
+    #officers { background: var(--black); }
+
+    .officers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .officer-card {
+      background: var(--bg-card);
+      padding: 2rem;
+      text-align: center;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .officer-card:hover { background: rgba(255,215,0,0.04); }
+
+    .officer-avatar {
+      width: 70px; height: 70px;
+      border: 1px solid var(--yellow-dim);
+      border-radius: 50%;
+      margin: 0 auto 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'VT323', monospace;
+      font-size: 2rem;
+      color: var(--yellow);
+      background: rgba(255,215,0,0.05);
+      box-shadow: 0 0 16px rgba(255,215,0,0.1);
+    }
+
+    .officer-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--yellow);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.4rem;
+    }
+
+    .officer-role {
+      font-size: 0.68rem;
+      color: var(--yellow-dim);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .officer-role::before { content: '// '; }
+
+    /* ── JOIN ── */
+    #join {
+      background: linear-gradient(180deg, transparent, rgba(255,215,0,0.025));
+      text-align: center;
+    }
+
+    .join-inner {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .join-terminal {
+      text-align: left;
+      margin: 2.5rem auto;
+    }
+
+    .join-desc {
+      font-size: 0.88rem;
+      line-height: 2;
+      color: rgba(255,215,0,0.6);
+      margin-bottom: 2rem;
+    }
+
+    .join-btns {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-logo {
+      font-family: 'Orbitron', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--yellow-dim);
+      letter-spacing: 0.1em;
+    }
+
+    .footer-copy {
+      font-size: 0.68rem;
+      color: rgba(255,215,0,0.25);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      font-size: 0.68rem;
+      color: rgba(255,215,0,0.35);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--yellow); }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--yellow-dim), transparent);
+      margin: 0 4rem;
+      opacity: 0.4;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--yellow-dim); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      section { padding: 4rem 1.5rem; }
+      #hero { padding: 5rem 1.5rem 3rem; }
+      .about-grid { grid-template-columns: 1fr; }
+      .boot-lines { display: none; }
+      nav { padding: 0 1rem; }
+      .nav-links { gap: 1rem; }
+      footer { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+      .divider { margin: 0 1.5rem; }
+      .event-item { grid-template-columns: 60px 1fr; }
+      .event-tag { display: none; }
+    }
+
+    /* glitch effect on hover for title */
+    .hero-title:hover {
+      animation: glitch 0.4s steps(2) 1;
+    }
+
+    @keyframes glitch {
+      0%   { text-shadow: 3px 0 0 rgba(255,0,0,0.5), -3px 0 0 rgba(0,255,255,0.5), 0 0 20px rgba(255,215,0,0.6); }
+      25%  { text-shadow: -3px 0 0 rgba(255,0,0,0.5), 3px 0 0 rgba(0,255,255,0.5), 0 0 20px rgba(255,215,0,0.6); }
+      50%  { text-shadow: 3px 0 0 rgba(0,255,255,0.5), -3px 0 0 rgba(255,0,0,0.5), 0 0 20px rgba(255,215,0,0.6); }
+      75%  { text-shadow: -3px 0 0 rgba(0,255,255,0.5), 3px 0 0 rgba(255,0,0,0.5), 0 0 20px rgba(255,215,0,0.6); }
+      100% { text-shadow: 0 0 20px rgba(255,215,0,0.6), 0 0 60px rgba(255,215,0,0.2); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AITE<span>::</span>CS_CLUB</div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#events">Events</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#officers">Officers</a></li>
+    <li><a href="#join">Join</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <p class="hero-prompt">root@aite-cs-club:~$</p>
+  <h1 class="hero-title">AITE CS<br>CLUB<span class="cursor-blink"></span></h1>
+  <p class="hero-sub">Academy of Information, Technology &amp; Engineering — Stamford, CT</p>
+  <p class="hero-desc">
+    We are AITE's hub for computer science, software development, and technical problem solving.
+    Whether you're writing your first <code>Hello World</code> or deploying full-stack apps —
+    you belong here.
+  </p>
+  <div class="hero-cta">
+    <a href="#join" class="btn"><span>$ ./join_club.sh</span></a>
+    <a href="#projects" class="btn btn-outline"><span>$ ls ./projects</span></a>
+  </div>
+  <div class="boot-lines">
+    <span>[  OK  ] Loaded AITE CS Club kernel modules.</span><br>
+    <span>[  OK  ] Started student sessions.</span><br>
+    <span>[  OK  ] Network interface initialized.</span><br>
+    <span>[ INFO ] Meeting every other Thursday — Cyber Cafe.</span>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-header">
+    <p class="section-tag">about</p>
+    <h2 class="section-title">WHO WE ARE</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text">
+      <p>The <strong>AITE Computer Science Club</strong> is a student-run organization at the Academy of Information, Technology &amp; Engineering — a STEAM-focused magnet high school serving students from across Fairfield County, Connecticut.</p>
+      <p>We bring together students at <strong>every skill level</strong> to build projects, compete in competitions, and explore the cutting edge of technology — from web dev to machine learning to low-level systems programming.</p>
+      <p>AITE gives us an incredible foundation: AP Computer Science, Cybersecurity, Project Lead the Way pathways, and a 1:1 laptop program. We take that further, on our own terms, after the bell rings.</p>
+
+      <div class="terminal-window" style="margin-top:2rem;">
+        <div class="terminal-topbar">
+          <div class="terminal-dot dot-red"></div>
+          <div class="terminal-dot dot-yellow"></div>
+          <div class="terminal-dot dot-green"></div>
+          <span class="terminal-title-bar">club_info.sh</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cat meeting_info.txt</span></span>
+          <span class="t-line t-output">📅 Every other Thursday</span>
+          <span class="t-line t-output">📍 Cyber Cafe, AITE — Stamford, CT</span>
+          <span class="t-line t-output">🍕 Free pizza. Always.</span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">cat requirements.txt</span></span>
+          <span class="t-line t-green">✓ Be an AITE student</span>
+          <span class="t-line t-green">✓ Be curious</span>
+          <span class="t-line t-green">✓ No prior experience required</span>
+          <span class="t-line">&nbsp;</span>
+          <span class="t-line t-dim"># that's literally it.</span>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-num">650+</div>
+          <div class="stat-label">AITE Students</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">120+</div>
+          <div class="stat-label">Courses Offered</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">9–12</div>
+          <div class="stat-label">All Grade Levels</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Lines of Code</div>
+        </div>
+      </div>
+
+      <div class="terminal-window" style="margin-top:1px;">
+        <div class="terminal-topbar">
+          <div class="terminal-dot dot-red"></div>
+          <div class="terminal-dot dot-yellow"></div>
+          <div class="terminal-dot dot-green"></div>
+          <span class="terminal-title-bar">skills.json</span>
+        </div>
+        <div class="terminal-body">
+          <span class="t-line t-comment">// topics we explore</span>
+          <span class="t-line t-output">→ Web Development</span>
+          <span class="t-line t-output">→ Competitive Programming</span>
+          <span class="t-line t-output">→ Machine Learning / AI</span>
+          <span class="t-line t-output">→ Cybersecurity / CTF</span>
+          <span class="t-line t-output">→ Game Development</span>
+          <span class="t-line t-output">→ App Development</span>
+          <span class="t-line t-output">→ Open Source Contribution</span>
+          <span class="t-line t-output">→ Hackathons</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="section-header">
+    <p class="section-tag">schedule</p>
+    <h2 class="section-title">UPCOMING EVENTS</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="events-list">
+    <div class="event-item">
+      <div class="event-date">
+        <div class="event-month">Mar</div>
+        <div class="event-day">20</div>
+      </div>
+      <div>
+        <div class="event-name">Intro to Competitive Programming</div>
+        <div class="event-detail">Cyber Cafe · 3:00 PM  ·  Bring your laptop</div>
+      </div>
+      <div class="event-tag active">Upcoming</div>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <div class="event-month">Apr</div>
+        <div class="event-day">03</div>
+      </div>
+      <div>
+        <div class="event-name">Web Dev Workshop — React Fundamentals</div>
+        <div class="event-detail">Cyber Cafe · 3:00 PM  ·  No experience needed</div>
+      </div>
+      <div class="event-tag">Planned</div>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <div class="event-month">Apr</div>
+        <div class="event-day">17</div>
+      </div>
+      <div>
+        <div class="event-name">Spring Hackathon — 3hr Challenge</div>
+        <div class="event-detail">AITE Lab B · 3:00 PM – 6:00 PM  ·  Teams of 2–4</div>
+      </div>
+      <div class="event-tag">Planned</div>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <div class="event-month">May</div>
+        <div class="event-day">01</div>
+      </div>
+      <div>
+        <div class="event-name">Machine Learning Demo Day</div>
+        <div class="event-detail">Cyber Cafe · 3:00 PM  ·  Present your projects</div>
+      </div>
+      <div class="event-tag">Planned</div>
+    </div>
+    <div class="event-item">
+      <div class="event-date">
+        <div class="event-month">May</div>
+        <div class="event-day">15</div>
+      </div>
+      <div>
+        <div class="event-name">End-of-Year Showcase &amp; Elections</div>
+        <div class="event-detail">Cyber Cafe · 3:00 PM  ·  Vote for next year's officers</div>
+      </div>
+      <div class="event-tag">Planned</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-header">
+    <p class="section-tag">work</p>
+    <h2 class="section-title">MEMBER PROJECTS</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="projects-grid">
+    <div class="project-card">
+      <div class="project-lang">Python · ML</div>
+      <div class="project-name">AITE Facial Attendance</div>
+      <p class="project-desc">An OpenCV + facial recognition system that automates club attendance tracking using a Raspberry Pi camera module.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★★☆</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-lang">JavaScript · Web</div>
+      <div class="project-name">Schedule Optimizer</div>
+      <p class="project-desc">A web app that parses AITE's block schedule and generates personalized daily views with homework deadline tracking.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★★★</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-lang">C++ · Algorithms</div>
+      <div class="project-name">Sorting Visualizer</div>
+      <p class="project-desc">Real-time visualization of 8 sorting algorithms with adjustable data size, speed, and an audio waveform synced to comparisons.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★★☆</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-lang">React · Firebase</div>
+      <div class="project-name">CTF Scoreboard</div>
+      <p class="project-desc">A live Capture The Flag competition scoreboard with dynamic leaderboard updates, challenge tracking, and team chat.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★☆☆</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-lang">Python · Discord</div>
+      <div class="project-name">CS Club Bot</div>
+      <p class="project-desc">Our official Discord bot: meeting reminders, problem-of-the-day, resource sharing, and member role management.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★★★</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-lang">Unity · C#</div>
+      <div class="project-name">Pathfinding Playground</div>
+      <p class="project-desc">Interactive Unity demo comparing A*, Dijkstra's, and BFS algorithms on procedurally generated maze environments.</p>
+      <div class="project-footer">
+        <span class="project-stars">★★★★☆</span>
+        <a href="#" class="project-link">view →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- OFFICERS -->
+<section id="officers">
+  <div class="section-header">
+    <p class="section-tag">team</p>
+    <h2 class="section-title">CLUB OFFICERS</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="officers-grid">
+    <div class="officer-card">
+      <div class="officer-avatar">P</div>
+      <div class="officer-name">President</div>
+      <div class="officer-role">Your Name Here</div>
+    </div>
+    <div class="officer-card">
+      <div class="officer-avatar">VP</div>
+      <div class="officer-name">Vice President</div>
+      <div class="officer-role">Your Name Here</div>
+    </div>
+    <div class="officer-card">
+      <div class="officer-avatar">S</div>
+      <div class="officer-name">Secretary</div>
+      <div class="officer-role">Your Name Here</div>
+    </div>
+    <div class="officer-card">
+      <div class="officer-avatar">T</div>
+      <div class="officer-name">Treasurer</div>
+      <div class="officer-role">Your Name Here</div>
+    </div>
+    <div class="officer-card">
+      <div class="officer-avatar">TD</div>
+      <div class="officer-name">Tech Director</div>
+      <div class="officer-role">Your Name Here</div>
+    </div>
+    <div class="officer-card">
+      <div class="officer-avatar">?</div>
+      <div class="officer-name">Join Us</div>
+      <div class="officer-role">Run for office</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- JOIN -->
+<section id="join">
+  <div class="join-inner">
+    <div class="section-header" style="text-align:left;">
+      <p class="section-tag">membership</p>
+      <h2 class="section-title">READY TO JOIN?</h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="terminal-window join-terminal">
+      <div class="terminal-topbar">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+        <span class="terminal-title-bar">join_club.sh</span>
+      </div>
+      <div class="terminal-body">
+        <span class="t-line"><span class="t-prompt">$</span> <span class="t-cmd">./join_club.sh --new-member</span></span>
+        <span class="t-line t-output">Checking eligibility... <span class="t-green">✓ AITE student detected</span></span>
+        <span class="t-line t-output">Scanning skill level... <span class="t-green">✓ Any level accepted</span></span>
+        <span class="t-line t-output">Verifying interest... <span class="t-green">✓ Curiosity confirmed</span></span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line t-green">SUCCESS: You are eligible to join AITE CS Club.</span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line t-dim"># Show up to any Thursday meeting in the Cyber Cafe.</span>
+        <span class="t-line t-dim"># No sign-up. No experience. Just come.</span>
+        <span class="t-line">&nbsp;</span>
+        <span class="t-line"><span class="t-prompt">$</span> <span class="cursor-blink"></span></span>
+      </div>
+    </div>
+
+    <p class="join-desc">
+      We meet every other Thursday in the <strong>Cyber Cafe</strong> at AITE. Pizza is always provided.
+      All grades, all skill levels — beginners who just learned Python and seniors with GitHub portfolios alike.
+    </p>
+
+    <div class="join-btns">
+      <a href="mailto:csclub@aitestamford.org" class="btn"><span>$ ./email_us.sh</span></a>
+      <a href="https://www.aitestamford.org/student-life/student-activities" target="_blank" class="btn btn-outline"><span>$ open aitestamford.org</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AITE CS CLUB — EST. STAMFORD, CT</div>
+  <div class="footer-links">
+    <a href="https://www.aitestamford.org" target="_blank">aitestamford.org</a>
+    <a href="#about">About</a>
+    <a href="#events">Events</a>
+    <a href="#join">Join</a>
+  </div>
+  <div class="footer-copy">© 2026 AITE Computer Science Club. All rights reserved.</div>
+</footer>
+
+</body>
+</html>
