@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>First Aid & Emergency Response</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Barlow:ital,wght@0,300;0,400;1,300&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black:  #09090b;
+  --dark:   #0f0f12;
+  --panel:  #141418;
+  --border: #252530;
+  --red:    #e8312a;
+  --redlo:  rgba(232,49,42,0.12);
+  --white:  #f0f0f2;
+  --grey:   #72727e;
+  --muted:  #9898a8;
+  --amber:  #e8a42a;
+  --green:  #28d464;
+  --blue:   #3a8fe8;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--black);font-family:'Barlow',sans-serif;color:var(--white);overflow-x:hidden;}
+
+#bar{position:fixed;top:0;left:0;height:3px;background:var(--red);width:0%;z-index:9999;box-shadow:0 0 10px var(--red);transition:width .08s linear;}
+
+/* ───── HERO ───── */
+#hero{
+  height:100vh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  position:relative;overflow:hidden;background:var(--black);
+}
+.pulse-ring{
+  position:absolute;border-radius:50%;
+  border:1px solid var(--red);opacity:0;
+  animation:pulseOut var(--pd) var(--pp) ease-out infinite;
+}
+@keyframes pulseOut{0%{transform:scale(0.3);opacity:.6;}100%{transform:scale(3);opacity:0;}}
+
+#ecg-svg{position:absolute;bottom:60px;left:0;width:100%;height:70px;opacity:.2;}
+#ecg-path{stroke:var(--red);stroke-width:2;fill:none;stroke-dasharray:1400;stroke-dashoffset:1400;animation:ecgDraw 2.5s 1s linear forwards,ecgLoop 2.5s 3.6s linear infinite;}
+@keyframes ecgDraw{to{stroke-dashoffset:0;}}
+@keyframes ecgLoop{0%{stroke-dashoffset:0;opacity:1;}88%{stroke-dashoffset:-1400;opacity:1;}89%{stroke-dashoffset:1400;opacity:0;}90%{opacity:0;}100%{stroke-dashoffset:0;opacity:1;}}
+
+.hero-cross{margin-bottom:36px;opacity:0;animation:up .6s .3s forwards;}
+.hero-cross svg{width:72px;height:72px;}
+.hero-tag{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:18px;opacity:0;animation:up .7s .5s forwards;}
+.hero-h1{font-family:'Barlow Condensed',sans-serif;font-size:clamp(68px,13vw,150px);font-weight:900;line-height:.88;text-align:center;letter-spacing:-1px;opacity:0;animation:up 1s .8s cubic-bezier(.16,1,.3,1) forwards;}
+.hero-h1 .red{color:var(--red);}
+.hero-sub{font-size:clamp(15px,1.6vw,18px);font-weight:300;color:var(--grey);text-align:center;max-width:500px;line-height:1.65;margin-top:18px;opacity:0;animation:up .7s 1.2s forwards;}
+.hero-scroll{position:absolute;bottom:28px;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--border);text-transform:uppercase;opacity:0;animation:up .5s 2s forwards;}
+
+@keyframes up{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+
+/* ───── REVEAL ───── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.on{opacity:1;transform:translateY(0);}
+
+/* ───── SECTION HEADERS ───── */
+.sec-header{
+  padding:56px 40px 40px;
+  border-top:1px solid var(--border);
+}
+.sec-tag{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--red);text-transform:uppercase;margin-bottom:12px;}
+.sec-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,6vw,64px);font-weight:900;letter-spacing:-.5px;line-height:.95;}
+.sec-title span{color:var(--red);}
+.sec-sub{font-size:clamp(14px,1.5vw,17px);font-weight:300;color:var(--grey);max-width:640px;line-height:1.7;margin-top:14px;}
+
+/* ───── STEP FLOW (horizontal visual steps) ───── */
+.flow{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:2px;background:var(--border);
+  margin:0;
+}
+.flow-step{
+  background:var(--panel);
+  padding:40px 28px 36px;
+  position:relative;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+.flow-step.on{opacity:1;transform:translateY(0);}
+.flow-step::after{
+  content:attr(data-n);
+  position:absolute;top:14px;left:18px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:48px;font-weight:900;
+  color:rgba(232,49,42,0.08);
+  line-height:1;
+}
+.flow-icon{
+  width:100px;height:100px;
+  margin-bottom:16px;flex-shrink:0;
+}
+.flow-label{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:22px;font-weight:700;
+  color:var(--white);letter-spacing:.5px;
+  margin-bottom:8px;
+}
+.flow-note{
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:1px;
+  color:var(--muted);line-height:1.6;
+}
+
+/* ───── BIG VISUAL CARDS ───── */
+.vis-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:2px;background:var(--border);
+}
+.vis-card{
+  background:var(--dark);
+  min-height:400px;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 24px;
+  position:relative;overflow:hidden;
+}
+.vis-card::before{
+  content:'';position:absolute;inset:0;
+  background-image:linear-gradient(rgba(232,49,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(232,49,42,.025) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.vis-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(24px,3vw,32px);font-weight:800;
+  letter-spacing:.5px;margin-top:20px;
+  position:relative;z-index:1;text-align:center;
+}
+.vis-rule{
+  width:30px;height:2px;background:var(--red);
+  margin:12px auto;
+}
+.vis-note{
+  font-family:'DM Mono',monospace;
+  font-size:11px;letter-spacing:2px;
+  color:var(--muted);text-align:center;
+  position:relative;z-index:1;line-height:1.7;
+  max-width:220px;
+}
+.vis-note strong{color:var(--red);font-style:normal;}
+
+/* ───── DO / DON'T GRID ───── */
+.do-dont{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:2px;background:var(--border);
+}
+@media(max-width:600px){.do-dont{grid-template-columns:1fr;}}
+
+.do-col,.dont-col{
+  background:var(--panel);
+  padding:40px 36px;
+}
+.do-col{border-top:4px solid var(--green);}
+.dont-col{border-top:4px solid var(--red);}
+
+.dd-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:32px;font-weight:900;letter-spacing:1px;
+  margin-bottom:24px;
+}
+.do-col .dd-title{color:var(--green);}
+.dont-col .dd-title{color:var(--red);}
+
+.dd-list{display:flex;flex-direction:column;gap:14px;}
+.dd-item{
+  display:flex;align-items:flex-start;gap:14px;
+  font-size:16px;font-weight:300;color:var(--muted);
+  line-height:1.5;
+}
+.dd-item .icon-wrap{
+  flex-shrink:0;width:28px;height:28px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:14px;
+}
+.do-col .icon-wrap{background:rgba(40,212,100,.12);}
+.dont-col .icon-wrap{background:rgba(232,49,42,.12);}
+.do-col .dd-item strong{color:var(--white);}
+.dont-col .dd-item strong{color:var(--white);}
+
+/* ───── STAT STRIP ───── */
+.stat-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:2px;background:var(--border);
+}
+@media(max-width:700px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
+
+.stat-box{
+  background:var(--panel);
+  padding:40px 28px;text-align:center;
+}
+.stat-n{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(52px,7vw,80px);font-weight:900;
+  line-height:1;color:var(--red);
+}
+.stat-u{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--grey);text-transform:uppercase;margin-top:4px;}
+.stat-d{font-size:13px;font-weight:300;color:var(--grey);margin-top:10px;line-height:1.5;}
+
+/* ───── CLOSING ───── */
+.closing{background:var(--black);padding:100px 40px 80px;text-align:center;border-top:1px solid var(--border);}
+.closing-h{font-family:'Barlow Condensed',sans-serif;font-size:clamp(44px,9vw,100px);font-weight:900;line-height:.9;letter-spacing:-1px;margin-bottom:24px;}
+.closing-h .red{color:var(--red);}
+.closing-p{font-size:clamp(16px,1.8vw,19px);font-weight:300;color:var(--grey);max-width:620px;margin:0 auto 48px;line-height:1.8;}
+.closing-p strong{color:var(--white);font-weight:600;}
+.tags{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:760px;margin:0 auto 50px;}
+.tag{border:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2px;padding:8px 20px;text-transform:uppercase;transition:all .2s;cursor:default;}
+.tag:hover{border-color:var(--red);color:var(--white);background:var(--redlo);}
+.closing-foot{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:5px;color:var(--border);text-transform:uppercase;}
+</style>
+</head>
+<body>
+<div id="bar"></div>
+
+<!-- ═══════ HERO ═══════ -->
+<section id="hero">
+  <div class="pulse-ring" style="width:280px;height:280px;margin-left:-140px;margin-top:-140px;--pd:2.4s;--pp:0s;"></div>
+  <div class="pulse-ring" style="width:280px;height:280px;margin-left:-140px;margin-top:-140px;--pd:2.4s;--pp:.8s;"></div>
+  <div class="pulse-ring" style="width:280px;height:280px;margin-left:-140px;margin-top:-140px;--pd:2.4s;--pp:1.6s;"></div>
+
+  <svg id="ecg-svg" viewBox="0 0 1440 70" preserveAspectRatio="none">
+    <polyline id="ecg-path" points="0,35 60,35 80,35 92,5 100,65 108,35 130,35 190,35 210,35 222,5 230,65 238,35 260,35 320,35 340,35 352,5 360,65 368,35 390,35 450,35 470,35 482,5 490,65 498,35 520,35 580,35 600,35 612,5 620,65 628,35 650,35 710,35 730,35 742,5 750,65 758,35 780,35 840,35 860,35 872,5 880,65 888,35 910,35 970,35 990,35 1002,5 1010,65 1018,35 1040,35 1100,35 1120,35 1132,5 1140,65 1148,35 1170,35 1230,35 1250,35 1262,5 1270,65 1278,35 1300,35 1360,35 1380,35 1392,5 1400,65 1408,35 1440,35"/>
+  </svg>
+
+  <div class="hero-cross">
+    <svg viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+      <rect x="25" y="4" width="22" height="64" rx="3" fill="var(--red)"/>
+      <rect x="4" y="25" width="64" height="22" rx="3" fill="var(--red)"/>
+    </svg>
+  </div>
+  <div class="hero-tag">Scout Meeting · Emergency Skills</div>
+  <h1 class="hero-h1">First Aid &<br><span class="red">Emergency</span><br>Response</h1>
+  <p class="hero-sub">What to do in the minutes before help arrives — when you're the only one there.</p>
+  <div class="hero-scroll">Scroll to begin</div>
+</section>
+
+<!-- ═══════ SCENE SIZE-UP ═══════ -->
+<div class="sec-header reveal">
+  <div class="sec-tag">Step One · Always</div>
+  <div class="sec-title">You arrive on scene.<br><span>Now what?</span></div>
+  <p class="sec-sub">Before you touch anyone — stop. Run through this in your head every single time, in order. Skipping it gets rescuers hurt.</p>
+</div>
+
+<div class="flow" id="sizeup">
+  <div class="flow-step" data-n="1">
+    <svg class="flow-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Eye / scan icon -->
+      <ellipse cx="50" cy="50" rx="42" ry="28" fill="none" stroke="var(--red)" stroke-width="2.5"/>
+      <circle cx="50" cy="50" r="14" fill="none" stroke="var(--red)" stroke-width="2.5"/>
+      <circle cx="50" cy="50" r="5" fill="var(--red)"/>
+      <!-- Scan lines -->
+      <line x1="8" y1="50" x2="20" y2="50" stroke="var(--red)" stroke-width="1.5" opacity=".5"/>
+      <line x1="80" y1="50" x2="92" y2="50" stroke="var(--red)" stroke-width="1.5" opacity=".5"/>
+      <!-- Animated sweep -->
+      <line x1="50" y1="50" x2="72" y2="36" stroke="var(--red)" stroke-width="1.5" opacity=".6" style="animation:scanSweep 2s ease-in-out infinite alternate;transform-origin:50px 50px;"/>
+    </svg>
+    <div class="flow-label">Is It Safe?</div>
+    <div class="flow-note">Look before you move.<br>Fire, traffic, downed wires,<br>unstable ground — don't<br>create a second victim.</div>
+  </div>
+
+  <div class="flow-step" data-n="2">
+    <svg class="flow-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Person with question -->
+      <circle cx="50" cy="28" r="16" fill="none" stroke="var(--amber)" stroke-width="2.5"/>
+      <line x1="50" y1="44" x2="50" y2="72" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="56" x2="36" y2="68" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="50" y1="56" x2="64" y2="68" stroke="var(--amber)" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- Speech bubble -->
+      <path d="M62,14 L80,14 L80,30 L70,30 L65,36 L65,30 L62,30 Z" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round"/>
+      <text x="71" y="26" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="14" font-weight="700" fill="var(--amber)">?</text>
+    </svg>
+    <div class="flow-label">Tap & Shout</div>
+    <div class="flow-note">Tap shoulders firmly.<br>"Are you okay?"<br>No response = unconscious.<br>Now you need help.</div>
+  </div>
+
+  <div class="flow-step" data-n="3">
+    <svg class="flow-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Phone -->
+      <rect x="32" y="14" width="36" height="62" rx="6" fill="none" stroke="var(--green)" stroke-width="2.5"/>
+      <circle cx="50" cy="68" r="4" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+      <line x1="42" y1="20" x2="58" y2="20" stroke="var(--green)" stroke-width="2" stroke-linecap="round"/>
+      <!-- 911 -->
+      <text x="50" y="50" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="18" font-weight="900" fill="var(--green)">911</text>
+      <!-- Signal waves -->
+      <path d="M72,24 Q80,32 72,40" fill="none" stroke="var(--green)" stroke-width="1.5" opacity=".5" style="animation:signal 1.5s .0s infinite;"/>
+      <path d="M78,20 Q90,32 78,44" fill="none" stroke="var(--green)" stroke-width="1.5" opacity=".3" style="animation:signal 1.5s .3s infinite;"/>
+    </svg>
+    <div class="flow-label">Call 911</div>
+    <div class="flow-note">Do it immediately or<br>point at someone specific:<br>"You — call 911 now."<br>Vague asks get ignored.</div>
+  </div>
+
+  <div class="flow-step" data-n="4">
+    <svg class="flow-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Magnifying glass over body -->
+      <circle cx="44" cy="44" r="26" fill="none" stroke="var(--blue)" stroke-width="2.5"/>
+      <line x1="63" y1="63" x2="82" y2="82" stroke="var(--blue)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Mini body inside glass -->
+      <circle cx="44" cy="32" r="7" fill="none" stroke="var(--blue)" stroke-width="1.5"/>
+      <line x1="44" y1="39" x2="44" y2="56" stroke="var(--blue)" stroke-width="1.5"/>
+      <line x1="36" y1="46" x2="52" y2="46" stroke="var(--blue)" stroke-width="1.5"/>
+    </svg>
+    <div class="flow-label">Find the Problem</div>
+    <div class="flow-note">Head to toe — fast.<br>Bleeding? Not breathing?<br>Responsive? Find the<br>biggest threat first.</div>
+  </div>
+
+  <div class="flow-step" data-n="5">
+    <svg class="flow-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <!-- Hands on chest -->
+      <ellipse cx="50" cy="60" rx="30" ry="22" fill="none" stroke="var(--red)" stroke-width="2"/>
+      <!-- Two hands stacked -->
+      <rect x="34" y="48" width="32" height="12" rx="6" fill="none" stroke="var(--white)" stroke-width="2" style="animation:cprHands .6s ease-in-out infinite alternate;transform-origin:50px 54px;"/>
+      <rect x="36" y="40" width="28" height="10" rx="5" fill="none" stroke="var(--white)" stroke-width="1.5" style="animation:cprHands .6s ease-in-out infinite alternate;transform-origin:50px 45px;"/>
+      <!-- Down arrows -->
+      <line x1="50" y1="20" x2="50" y2="36" stroke="var(--red)" stroke-width="2" marker-end="url(#ar)" style="animation:arrowPulse .6s infinite alternate;"/>
+    </svg>
+    <div class="flow-label">Act</div>
+    <div class="flow-note">CPR, pressure, position —<br>do what the situation needs.<br>Imperfect action beats<br>perfect inaction every time.</div>
+  </div>
+</div>
+
+<!-- ═══════ CPR ═══════ -->
+<div class="sec-header reveal">
+  <div class="sec-tag">Skill 01</div>
+  <div class="sec-title">CPR — <span>Cardiac Arrest</span></div>
+  <p class="sec-sub">Brain death starts in 4 minutes. Every 30 seconds without CPR cuts survival by 10%.</p>
+</div>
+
+<div class="vis-grid reveal">
+  <!-- 30:2 ratio visual -->
+  <div class="vis-card">
+    <svg width="280" height="240" viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- 30 compressions block -->
+      <rect x="20" y="40" width="180" height="60" rx="4" fill="var(--redlo)" stroke="var(--red)" stroke-width="1.5"/>
+      <text x="110" y="78" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="52" font-weight="900" fill="var(--red)">30</text>
+      <text x="210" y="78" text-anchor="left" font-family="DM Mono, monospace" font-size="10" fill="var(--muted)" letter-spacing="1">COMPRESSIONS</text>
+
+      <!-- Arrow down -->
+      <line x1="110" y1="105" x2="110" y2="128" stroke="var(--border)" stroke-width="2" marker-end="url(#arW)"/>
+
+      <!-- 2 breaths block -->
+      <rect x="20" y="130" width="180" height="60" rx="4" fill="rgba(58,143,232,.08)" stroke="var(--blue)" stroke-width="1.5"/>
+      <text x="110" y="168" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="52" font-weight="900" fill="var(--blue)">2</text>
+      <text x="210" y="168" text-anchor="left" font-family="DM Mono, monospace" font-size="10" fill="var(--muted)" letter-spacing="1">BREATHS</text>
+
+      <!-- Repeat -->
+      <path d="M20,196 Q10,212 20,228 L260,228 Q270,212 260,196" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="140" y="223" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--grey)" letter-spacing="3">REPEAT UNTIL HELP ARRIVES</text>
+
+      <defs>
+        <marker id="arW" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L6,3Z" fill="var(--border)"/>
+        </marker>
+        <marker id="ar" markerWidth="6" markerHeight="6" refX="3" refY="6" orient="auto">
+          <path d="M0,0 L6,0 L3,6Z" fill="var(--red)"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="vis-title">The Ratio</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">30 compressions, 2 breaths — then repeat</div>
+  </div>
+
+  <!-- Compression depth visual -->
+  <div class="vis-card">
+    <svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- Chest cross section -->
+      <ellipse cx="110" cy="130" rx="80" ry="40" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <!-- Sternum -->
+      <rect x="96" y="90" width="28" height="80" rx="4" fill="var(--panel)" stroke="var(--border)" stroke-width="1.5"/>
+      <!-- Hands -->
+      <g style="animation:pushDown .7s ease-in-out infinite alternate;">
+        <rect x="86" y="52" width="48" height="16" rx="8" fill="none" stroke="var(--white)" stroke-width="2"/>
+        <rect x="90" y="36" width="40" height="18" rx="8" fill="none" stroke="var(--white)" stroke-width="2"/>
+        <line x1="110" y1="36" x2="110" y2="20" stroke="var(--white)" stroke-width="2"/>
+        <!-- arms -->
+        <line x1="110" y1="20" x2="88" y2="6" stroke="var(--white)" stroke-width="2" stroke-linecap="round"/>
+        <line x1="110" y1="20" x2="132" y2="6" stroke="var(--white)" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <!-- Depth arrow -->
+      <line x1="184" y1="90" x2="184" y2="114" stroke="var(--red)" stroke-width="2"/>
+      <line x1="178" y1="90" x2="190" y2="90" stroke="var(--red)" stroke-width="1.5"/>
+      <line x1="178" y1="114" x2="190" y2="114" stroke="var(--red)" stroke-width="1.5"/>
+      <text x="196" y="106" font-family="Barlow Condensed, sans-serif" font-size="18" font-weight="700" fill="var(--red)">2"</text>
+      <!-- BPM -->
+      <text x="110" y="200" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="22" font-weight="700" fill="var(--muted)" letter-spacing="2">100–120 BPM</text>
+    </svg>
+    <div class="vis-title">Depth & Speed</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">2 inches deep · Stayin' Alive is exactly 100 BPM</div>
+  </div>
+
+  <!-- Head tilt visual -->
+  <div class="vis-card">
+    <svg width="240" height="200" viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- Profile of head tilted back -->
+      <path d="M60,60 Q80,20 120,22 Q160,24 170,60 Q180,90 165,110 Q150,128 130,130 L130,160 L80,160 L80,130 Q52,128 54,100 Z" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <!-- Airway / throat -->
+      <path d="M100,130 Q100,145 100,160" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M120,130 Q120,145 120,160" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round"/>
+      <!-- Airway open arrow -->
+      <path d="M105,148 Q110,140 115,148" fill="none" stroke="var(--green)" stroke-width="2"/>
+      <!-- Hand under chin -->
+      <path d="M60,110 Q40,118 50,130 Q60,142 80,135" fill="none" stroke="var(--white)" stroke-width="2" stroke-linecap="round"/>
+      <!-- Hand on forehead -->
+      <path d="M140,40 Q160,30 165,50 Q168,65 150,68" fill="none" stroke="var(--white)" stroke-width="2" stroke-linecap="round"/>
+      <!-- Tilt arrow -->
+      <path d="M130,30 Q155,20 165,42" fill="none" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arAmb)"/>
+      <text x="170" y="28" font-family="DM Mono, monospace" font-size="9" fill="var(--amber)" letter-spacing="1">TILT</text>
+      <text x="170" y="40" font-family="DM Mono, monospace" font-size="9" fill="var(--amber)" letter-spacing="1">BACK</text>
+      <!-- Seal marker -->
+      <ellipse cx="94" cy="164" rx="20" ry="6" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <text x="94" y="183" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--blue)" letter-spacing="1">SEAL MOUTH</text>
+      <defs>
+        <marker id="arAmb" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+          <path d="M0,0 L0,5 L5,2.5Z" fill="var(--amber)"/>
+        </marker>
+      </defs>
+    </svg>
+    <div class="vis-title">Rescue Breaths</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">Head tilt — chin lift — seal — 1 second breath — chest should rise</div>
+  </div>
+
+  <!-- AED visual -->
+  <div class="vis-card">
+    <svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- AED device -->
+      <rect x="60" y="30" width="100" height="120" rx="10" fill="var(--panel)" stroke="var(--green)" stroke-width="2.5"/>
+      <!-- Cross on AED -->
+      <rect x="100" y="50" width="20" height="60" rx="2" fill="var(--green)" opacity=".8"/>
+      <rect x="80" y="68" width="60" height="24" rx="2" fill="var(--green)" opacity=".8"/>
+      <!-- Power button -->
+      <circle cx="110" cy="128" r="10" fill="none" stroke="var(--green)" stroke-width="2"/>
+      <text x="110" y="133" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="13" font-weight="700" fill="var(--green)">ON</text>
+      <!-- Pad wires -->
+      <line x1="70" y1="150" x2="40" y2="172" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <line x1="150" y1="150" x2="180" y2="172" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <ellipse cx="40" cy="178" rx="16" ry="10" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+      <ellipse cx="180" cy="178" rx="16" ry="10" fill="none" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="40" y="182" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="var(--green)" letter-spacing="1">L</text>
+      <text x="180" y="182" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="var(--green)" letter-spacing="1">R</text>
+      <!-- "It will tell you what to do" -->
+      <text x="110" y="208" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--green)" letter-spacing="1">IT TALKS YOU THROUGH IT</text>
+    </svg>
+    <div class="vis-title">Use the AED</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">Turn it on. It will tell you exactly what to do. <strong>Don't be scared of it.</strong></div>
+  </div>
+</div>
+
+<!-- ═══════ BLEEDING ═══════ -->
+<div class="sec-header reveal">
+  <div class="sec-tag">Skill 02</div>
+  <div class="sec-title">Severe <span>Bleeding</span></div>
+  <p class="sec-sub">A severed artery can kill in 3 minutes. Pressure is the weapon.</p>
+</div>
+
+<div class="vis-grid reveal">
+  <!-- Direct pressure -->
+  <div class="vis-card">
+    <svg width="200" height="220" viewBox="0 0 200 220" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- Wound -->
+      <ellipse cx="100" cy="140" rx="24" ry="14" fill="var(--red)" opacity=".25" style="animation:bleedPulse 1.5s ease-in-out infinite;"/>
+      <ellipse cx="100" cy="140" rx="14" ry="8" fill="var(--red)" opacity=".5"/>
+      <!-- Cloth -->
+      <rect x="72" y="108" width="56" height="30" rx="4" fill="none" stroke="var(--white)" stroke-width="2"/>
+      <!-- Hands pressing down -->
+      <g style="animation:pressDown .8s ease-in-out infinite alternate;">
+        <path d="M72,108 Q60,95 68,82 Q76,72 86,80 L86,108Z" fill="none" stroke="var(--white)" stroke-width="1.5"/>
+        <path d="M128,108 Q140,95 132,82 Q124,72 114,80 L114,108Z" fill="none" stroke="var(--white)" stroke-width="1.5"/>
+        <line x1="86" y1="80" x2="114" y2="80" stroke="var(--white)" stroke-width="2"/>
+      </g>
+      <!-- DO NOT LIFT label -->
+      <rect x="40" y="54" width="120" height="22" rx="3" fill="var(--redlo)" stroke="var(--red)" stroke-width="1"/>
+      <text x="100" y="69" text-anchor="middle" font-family="Barlow Condensed, sans-serif" font-size="15" font-weight="700" fill="var(--red)" letter-spacing="2">DO NOT LIFT</text>
+      <!-- Arm outline -->
+      <path d="M60,190 L60,130 Q60,110 100,110 Q140,110 140,130 L140,190" fill="none" stroke="var(--border)" stroke-width="1.5" stroke-dasharray="4 4"/>
+    </svg>
+    <div class="vis-title">Direct Pressure</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">Press hard. Don't peek. Don't lift the cloth.<br>Add more on top if it soaks through.</div>
+  </div>
+
+  <!-- Tourniquet -->
+  <div class="vis-card">
+    <svg width="180" height="240" viewBox="0 0 180 240" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- Arm -->
+      <rect x="60" y="20" width="60" height="180" rx="30" fill="none" stroke="var(--border)" stroke-width="2"/>
+      <!-- Tourniquet band -->
+      <rect x="54" y="82" width="72" height="18" rx="3" fill="none" stroke="var(--amber)" stroke-width="3"/>
+      <!-- Windlass -->
+      <line x1="82" y1="82" x2="98" y2="82" stroke="var(--amber)" stroke-width="4" stroke-linecap="round" style="animation:windlass 2s linear infinite;transform-origin:90px 82px;"/>
+      <!-- Distance arrow -->
+      <line x1="148" y1="91" x2="148" y2="148" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 3"/>
+      <line x1="148" y1="91" x2="126" y2="91" stroke="var(--border)" stroke-width="1"/>
+      <line x1="148" y1="148" x2="126" y2="148" stroke="var(--border)" stroke-width="1"/>
+      <text x="155" y="124" font-family="DM Mono, monospace" font-size="9" fill="var(--amber)" letter-spacing="1">2–3"</text>
+      <text x="155" y="136" font-family="DM Mono, monospace" font-size="9" fill="var(--amber)" letter-spacing="1">ABOVE</text>
+      <!-- Wound -->
+      <ellipse cx="90" cy="154" rx="16" ry="10" fill="var(--red)" opacity=".4" style="animation:bleedPulse 1.5s ease-in-out infinite;"/>
+      <!-- Time note -->
+      <rect x="20" y="208" width="140" height="22" rx="3" fill="rgba(232,164,42,.1)" stroke="var(--amber)" stroke-width="1"/>
+      <text x="90" y="223" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--amber)" letter-spacing="1">WRITE TIME ON SKIN</text>
+    </svg>
+    <div class="vis-title">Tourniquet</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">Limb bleeds that won't stop. 2–3" above wound. Tighten until bleeding stops. <strong>Write the time.</strong></div>
+  </div>
+
+  <!-- Wound packing -->
+  <div class="vis-card">
+    <svg width="220" height="200" viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" style="position:relative;z-index:1;">
+      <!-- Deep wound cross section -->
+      <ellipse cx="110" cy="100" rx="50" ry="30" fill="none" stroke="var(--border)" stroke-width="1.5"/>
+      <!-- Cavity -->
+      <path d="M80,100 Q90,130 110,132 Q130,130 140,100" fill="var(--red)" opacity=".15"/>
+      <path d="M80,100 Q90,130 110,132 Q130,130 140,100" fill="none" stroke="var(--red)" stroke-width="1.5"/>
+      <!-- Gauze roll -->
+      <g style="animation:packIn 2s ease-in-out infinite;">
+        <ellipse cx="110" cy="68" rx="20" ry="12" fill="none" stroke="var(--white)" stroke-width="2"/>
+        <!-- Gauze strip entering wound -->
+        <line x1="100" y1="80" x2="98" y2="104" stroke="var(--white)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+        <line x1="110" y1="80" x2="110" y2="108" stroke="var(--white)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+        <line x1="120" y1="80" x2="122" y2="104" stroke="var(--white)" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+      </g>
+      <!-- Pack label -->
+      <text x="110" y="170" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--grey)" letter-spacing="2">PACK INTO CAVITY</text>
+      <text x="110" y="184" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="var(--red)" letter-spacing="2">THEN PRESS HARD</text>
+    </svg>
+    <div class="vis-title">Wound Packing</div>
+    <div class="vis-rule"></div>
+    <div class="vis-note">Deep wounds — push gauze in, pack it tight, then press. Don't pull it out.</div>
+  </div>
+</div>
+
+<!-- ═══════ DO / DON'T ═══════ -->
+<div class="sec-header reveal">
+  <div class="sec-tag">Common Mistakes</div>
+  <div class="sec-title">What to do —<br><span>and what not to</span></div>
+</div>
+
+<div class="do-dont reveal">
+  <div class="do-col">
+    <div class="dd-title">DO</div>
+    <div class="dd-list">
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Stay on scene</strong> — don't move the victim unless they're in immediate danger</div></div>
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Keep them warm</strong> — shock causes dangerous drops in body temp, even in summer</div></div>
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Talk to them</strong> — even if they're unconscious, calm reassurance matters</div></div>
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Keep pressure on</strong> — do not lift cloth to check, ever. Add more on top.</div></div>
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Recovery position</strong> — unconscious but breathing? On their side, airway clear</div></div>
+      <div class="dd-item"><div class="icon-wrap">✓</div><div><strong>Tell EMS everything</strong> — time of injury, what happened, what you did</div></div>
+    </div>
+  </div>
+  <div class="dont-col">
+    <div class="dd-title">DON'T</div>
+    <div class="dd-list">
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't give food or water</strong> — especially if they might need surgery</div></div>
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't remove embedded objects</strong> — a knife or stick in a wound is plugging it</div></div>
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't put ice on burns</strong> — use cool running water for 20 minutes, not ice</div></div>
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't straighten a broken bone</strong> — immobilize it exactly as you find it</div></div>
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't let a tourniquet go once on</strong> — only EMS removes it</div></div>
+      <div class="dd-item"><div class="icon-wrap">✗</div><div><strong>Don't freeze</strong> — doing something imperfect is always better than doing nothing</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ STATS ═══════ -->
+<div class="stat-strip reveal">
+  <div class="stat-box"><div class="stat-n" id="s1">0</div><div class="stat-u">minutes</div><div class="stat-d">Until brain damage begins without CPR</div></div>
+  <div class="stat-box"><div class="stat-n" id="s2">0</div><div class="stat-u">minutes</div><div class="stat-d">To bleed out from a major artery wound</div></div>
+  <div class="stat-box"><div class="stat-n" id="s3">0</div><div class="stat-u">% survival</div><div class="stat-d">Improvement when bystander CPR starts immediately</div></div>
+  <div class="stat-box"><div class="stat-n" id="s4">0</div><div class="stat-u">minutes</div><div class="stat-d">Average rural EMS response time — you are the first responder</div></div>
+</div>
+
+<!-- ═══════ CLOSING ═══════ -->
+<div class="closing reveal">
+  <h2 class="closing-h">You don't need<br>to be <span class="red">calm.</span><br>Just act.</h2>
+  <p class="closing-p">Every paramedic was once someone who had never done it before. The difference between a Scout who saves a life and one who watches is not training — it's the decision to <strong>move</strong>.</p>
+  <div class="tags">
+    <div class="tag">Scene Safety First</div>
+    <div class="tag">Call 911 Early</div>
+    <div class="tag">CPR · 30:2</div>
+    <div class="tag">Pressure Stops Bleeding</div>
+    <div class="tag">Recovery Position</div>
+    <div class="tag">Tourniquet = Write the Time</div>
+    <div class="tag">AED — Just Turn It On</div>
+    <div class="tag">Burns = Cool Water 20 Min</div>
+    <div class="tag">Don't Freeze</div>
+  </div>
+  <p class="closing-foot">Scout Meeting Presentation · March 2026 · First Aid & Emergency Response</p>
+</div>
+
+<style>
+@keyframes scanSweep{from{transform:rotate(-40deg);}to{transform:rotate(40deg);}}
+@keyframes signal{0%,100%{opacity:.2;}50%{opacity:.8;}}
+@keyframes cprHands{from{transform:translateY(0);}to{transform:translateY(6px);}}
+@keyframes arrowPulse{from{opacity:.4;}to{opacity:1;}}
+@keyframes bleedPulse{0%,100%{opacity:.25;}50%{opacity:.55;}}
+@keyframes pressDown{from{transform:translateY(0);}to{transform:translateY(5px);}}
+@keyframes windlass{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+@keyframes packIn{0%,100%{transform:translateY(0);}50%{transform:translateY(10px);}}
+@keyframes pushDown{from{transform:translateY(0);}to{transform:translateY(7px);}}
+</style>
+
+<script>
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement;
+  document.getElementById('bar').style.width=(s.scrollTop/(s.scrollHeight-s.clientHeight)*100)+'%';
+});
+
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('on');}),{threshold:.08});
+document.querySelectorAll('.reveal,.flow-step').forEach(el=>obs.observe(el));
+
+// Stagger flow steps
+const flowObs=new IntersectionObserver(e=>{
+  e.forEach(x=>{
+    if(x.isIntersecting){
+      x.target.querySelectorAll('.flow-step').forEach((s,i)=>{
+        setTimeout(()=>s.classList.add('on'),i*120);
+      });
+    }
+  });
+},{threshold:.1});
+document.querySelectorAll('.flow').forEach(el=>flowObs.observe(el));
+
+// Counters
+const vals={s1:4,s2:3,s3:40,s4:14};
+const cObs=new IntersectionObserver(e=>e.forEach(x=>{
+  if(x.isIntersecting){
+    const id=x.target.id,t=vals[id];
+    if(!t)return;
+    let c=0;const step=t/40;
+    const timer=setInterval(()=>{c=Math.min(c+step,t);x.target.textContent=Math.round(c);if(c>=t)clearInterval(timer);},30);
+    cObs.unobserve(x.target);
+  }
+}),{threshold:.5});
+Object.keys(vals).forEach(id=>{const el=document.getElementById(id);if(el)cObs.observe(el);});
+</script>
+</body>
+</html>
