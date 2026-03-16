@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APUSH Period 7 Study Guide — 1890–1945</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --parchment:   #fdf6ec;
+    --parchment-2: #f5e8d0;
+    --parchment-3: #ede0c4;
+    --amber:       #c97b30;
+    --amber-light: #e8a55a;
+    --amber-dark:  #9a5a1a;
+    --ink:         #2c1f0e;
+    --ink-mid:     #5a3e20;
+    --ink-light:   #8a6840;
+    --rule:        rgba(180,120,50,0.25);
+    --rule-strong: rgba(180,120,50,0.55);
+    --accent-red:  #8b2e1a;
+    --tag-bg:      rgba(201,123,48,0.13);
+  }
+
+  html { scroll-behavior: smooth; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 15.5px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--parchment-2);
+    padding: 52px 48px 44px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(255,255,255,0.03) 28px,
+      rgba(255,255,255,0.03) 29px
+    );
+    pointer-events: none;
+  }
+  header .eyebrow {
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: var(--amber-light);
+    margin-bottom: 10px;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--parchment);
+    margin-bottom: 8px;
+  }
+  header h1 span { color: var(--amber-light); }
+  header .subtitle {
+    font-style: italic;
+    font-weight: 300;
+    font-size: 16px;
+    color: var(--parchment-3);
+    margin-top: 6px;
+  }
+  header .period-bar {
+    margin-top: 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  header .period-bar .pill {
+    background: var(--amber);
+    color: var(--parchment);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 2px;
+  }
+  header .period-bar .range {
+    font-size: 13px;
+    color: var(--ink-light);
+    color: rgba(253,246,236,0.55);
+    font-style: italic;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--parchment-2);
+    border-bottom: 1.5px solid var(--rule-strong);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  nav::-webkit-scrollbar { display: none; }
+  nav a {
+    font-family: 'Source Serif 4', serif;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    text-decoration: none;
+    padding: 16px 22px;
+    border-bottom: 2.5px solid transparent;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  nav a:hover, nav a.active {
+    color: var(--amber-dark);
+    border-bottom-color: var(--amber);
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  section.main-section {
+    padding: 64px 0 48px;
+    border-bottom: 1.5px solid var(--rule);
+  }
+  section.main-section:last-of-type { border-bottom: none; }
+
+  .section-header {
+    margin-bottom: 40px;
+  }
+  .section-header .label {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .section-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(22px, 3vw, 32px);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .section-header p {
+    font-style: italic;
+    color: var(--ink-light);
+    margin-top: 6px;
+    font-size: 15px;
+  }
+  .divider {
+    width: 56px;
+    height: 2px;
+    background: var(--amber);
+    margin-top: 12px;
+  }
+
+  /* ── CHAPTER BLOCKS ── */
+  .chapter-block {
+    margin-bottom: 40px;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    overflow: hidden;
+    background: #fff9f1;
+  }
+  .chapter-block .chapter-head {
+    background: var(--parchment-3);
+    border-bottom: 1px solid var(--rule-strong);
+    padding: 16px 24px;
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .chapter-block .chapter-head:hover { background: #e8d5b8; }
+  .chapter-block .chapter-head .ch-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+    flex-shrink: 0;
+  }
+  .chapter-block .chapter-head h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    flex: 1;
+  }
+  .chapter-block .chapter-head .ch-years {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--ink-light);
+    flex-shrink: 0;
+  }
+  .chapter-block .chapter-head .chevron {
+    font-size: 12px;
+    color: var(--amber);
+    transition: transform 0.25s;
+    flex-shrink: 0;
+  }
+  .chapter-block.open .chevron { transform: rotate(180deg); }
+  .chapter-block .chapter-body {
+    display: none;
+    padding: 24px;
+  }
+  .chapter-block.open .chapter-body { display: block; }
+
+  /* IAETSO grid */
+  .iaetso-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .iaetso-card {
+    background: var(--parchment);
+    border: 1px solid var(--rule-strong);
+    border-left: 3px solid var(--amber);
+    border-radius: 3px;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s;
+    position: relative;
+  }
+  .iaetso-card:hover {
+    background: var(--parchment-2);
+    transform: translateY(-1px);
+  }
+  .iaetso-card.expanded {
+    border-left-color: var(--amber-dark);
+    background: #fef3e2;
+  }
+  .iaetso-card .term {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+  }
+  .iaetso-card .date-chip {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: var(--amber-dark);
+    background: var(--tag-bg);
+    padding: 1px 7px;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+  .iaetso-card .definition {
+    display: none;
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--rule);
+    line-height: 1.55;
+    font-style: italic;
+  }
+  .iaetso-card.expanded .definition { display: block; }
+  .iaetso-card .expand-hint {
+    font-size: 10px;
+    color: var(--ink-light);
+    margin-top: 4px;
+    font-style: italic;
+  }
+  .iaetso-card.expanded .expand-hint { display: none; }
+
+  /* ── LO SECTION ── */
+  .lo-timeline {
+    position: relative;
+    padding-left: 32px;
+  }
+  .lo-timeline::before {
+    content: '';
+    position: absolute;
+    left: 7px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--amber), var(--amber-light), var(--amber));
+  }
+  .lo-item {
+    position: relative;
+    margin-bottom: 32px;
+  }
+  .lo-item::before {
+    content: '';
+    position: absolute;
+    left: -28px;
+    top: 7px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--amber);
+    border: 2px solid var(--parchment);
+    box-shadow: 0 0 0 2px var(--amber);
+  }
+  .lo-item .lo-tag {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber-dark);
+    margin-bottom: 3px;
+  }
+  .lo-item h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .lo-item .lo-desc {
+    font-size: 14px;
+    color: var(--ink-mid);
+    font-style: italic;
+    line-height: 1.6;
+    max-width: 680px;
+  }
+  .lo-item .lo-context {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--ink-mid);
+    background: var(--parchment-2);
+    border-left: 3px solid var(--parchment-3);
+    padding: 8px 14px;
+    border-radius: 0 3px 3px 0;
+    line-height: 1.6;
+  }
+
+  /* ── DBQ SECTION ── */
+  .dbq-intro {
+    background: var(--parchment-2);
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 36px;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--ink-mid);
+  }
+  .dbq-intro strong { color: var(--ink); font-weight: 600; }
+
+  .dbq-subsection-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 44px 0 18px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--rule-strong);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .dbq-subsection-title .icon {
+    width: 26px; height: 26px;
+    background: var(--amber);
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--parchment);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  /* DBQ documents */
+  .doc-card {
+    background: #fff9f1;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .doc-card .doc-header {
+    background: var(--parchment-3);
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .doc-card .doc-header:hover { background: #e0cca8; }
+  .doc-card .doc-num {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--amber);
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+  .doc-card .doc-title {
+    font-weight: 600;
+    font-size: 14.5px;
+    color: var(--ink);
+    flex: 1;
+  }
+  .doc-card .doc-year {
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--ink-light);
+    flex-shrink: 0;
+  }
+  .doc-card .doc-body {
+    display: none;
+    padding: 20px 24px;
+  }
+  .doc-card.open .doc-body { display: block; }
+  .doc-card .doc-source {
+    font-size: 12.5px;
+    font-style: italic;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+  .doc-card .doc-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--ink-mid);
+    border-left: 3px solid var(--amber-light);
+    padding-left: 16px;
+    margin: 10px 0;
+  }
+  .doc-card .doc-happ {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: var(--parchment-2);
+    border-radius: 3px;
+    font-size: 13px;
+    color: var(--ink-mid);
+  }
+  .doc-card .doc-happ strong { color: var(--amber-dark); font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* Sample DBQ answers */
+  .sample-answer {
+    background: #fff9f1;
+    border: 1px solid var(--rule-strong);
+    border-radius: 4px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .sample-answer .sa-header {
+    background: var(--parchment-3);
+    padding: 14px 20px;
+    cursor: pointer;
+    user-select: none;
+    display: flex; align-items: baseline; gap: 12px;
+    transition: background 0.15s;
+  }
+  .sample-answer .sa-header:hover { background: #e0cca8; }
+  .sample-answer .sa-tag {
+    font-size: 10px; font-weight: 700; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--parchment);
+    background: var(--amber-dark); padding: 2px 9px; border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .sample-answer .sa-title {
+    font-weight: 600; font-size: 14.5px; color: var(--ink); flex: 1;
+  }
+  .sample-answer .sa-score {
+    font-size: 12px; color: var(--amber-dark); font-weight: 600; flex-shrink: 0;
+  }
+  .sample-answer .sa-body {
+    display: none; padding: 20px 24px;
+  }
+  .sample-answer.open .sa-body { display: block; }
+  .sample-answer .sa-thesis {
+    background: var(--parchment-2);
+    border-left: 3px solid var(--amber);
+    padding: 12px 16px;
+    font-size: 14px; line-height: 1.7; color: var(--ink-mid);
+    margin-bottom: 14px; border-radius: 0 3px 3px 0;
+  }
+  .sample-answer .sa-thesis strong {
+    font-size: 10.5px; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--amber-dark); display: block; margin-bottom: 4px;
+  }
+  .tip-box {
+    background: rgba(139,46,26,0.06);
+    border: 1px solid rgba(139,46,26,0.2);
+    border-radius: 3px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    font-size: 13.5px;
+    color: var(--ink-mid);
+    line-height: 1.6;
+  }
+  .tip-box strong { color: var(--accent-red); }
+
+  /* Graphic Organizer */
+  .go-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+    margin-top: 8px;
+  }
+  .go-table th {
+    background: var(--ink);
+    color: var(--parchment-2);
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 11px 14px;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .go-table td {
+    border: 1px solid var(--rule-strong);
+    padding: 11px 14px;
+    vertical-align: top;
+    color: var(--ink-mid);
+    background: var(--parchment);
+    line-height: 1.55;
+  }
+  .go-table tr:nth-child(even) td { background: #fdf0df; }
+  .go-table td.era-cell {
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--parchment-2);
+    border-left: 3px solid var(--amber);
+    font-size: 13px;
+  }
+  .go-table td.blank {
+    background: #fffaf4;
+    font-style: italic;
+    color: var(--rule-strong);
+    font-size: 12px;
+  }
+
+  /* ── UTILITY ── */
+  .ch-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber-dark);
+    margin: 20px 0 10px;
+  }
+  .guiding-q {
+    margin-bottom: 20px;
+  }
+  .guiding-q p {
+    font-size: 13.5px;
+    line-height: 1.65;
+    color: var(--ink-mid);
+    font-style: italic;
+    padding-left: 14px;
+    border-left: 2px solid var(--rule-strong);
+    margin-bottom: 6px;
+  }
+  .guiding-q p::before {
+    content: attr(data-n) ". ";
+    font-style: normal;
+    font-weight: 600;
+    color: var(--amber);
+  }
+
+  footer {
+    background: var(--ink);
+    color: rgba(253,246,236,0.45);
+    text-align: center;
+    padding: 28px;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    margin-top: 48px;
+  }
+
+  /* ── SEARCH BAR ── */
+  .search-wrap {
+    padding: 10px 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1.5px solid var(--rule-strong);
+    background: var(--parchment);
+    position: sticky;
+    top: 49px;
+    z-index: 99;
+  }
+  #search-input {
+    width: 100%;
+    max-width: 420px;
+    border: 1.5px solid var(--rule-strong);
+    border-radius: 3px;
+    padding: 7px 12px;
+    font-family: 'Source Serif 4', serif;
+    font-size: 14px;
+    background: var(--parchment-2);
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #search-input:focus { border-color: var(--amber); }
+  #search-input::placeholder { color: var(--ink-light); font-style: italic; }
+  #search-count { font-size: 12.5px; color: var(--ink-light); font-style: italic; white-space: nowrap; }
+  .iaetso-card.hidden { display: none; }
+  .chapter-block.all-hidden .chapter-body { display: none !important; }
+
+  /* ── CHECKBOXES ── */
+  .iaetso-card .card-check {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 17px; height: 17px;
+    accent-color: var(--amber-dark);
+    cursor: pointer;
+  }
+  .iaetso-card.checked { opacity: 0.5; border-left-color: var(--ink-light); }
+  .iaetso-card.checked .term { text-decoration: line-through; color: var(--ink-light); }
+  .progress-bar-wrap {
+    background: var(--parchment-3);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    border: 1px solid var(--rule-strong);
+    margin-bottom: 6px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: var(--amber);
+    border-radius: 4px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-label { font-size: 12px; color: var(--ink-light); font-style: italic; margin-bottom: 10px; }
+
+  /* ── DO'S AND DON'TS ── */
+  .dos-donts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 8px; }
+  .dos-col, .donts-col { border-radius: 4px; overflow: hidden; border: 1px solid var(--rule-strong); }
+  .dos-col .col-head { background: #2a4a2a; color: #c8e6c8; padding: 11px 18px; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .donts-col .col-head { background: #4a1f1f; color: #e6c8c8; padding: 11px 18px; font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; }
+  .dd-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 16px; font-size: 13.5px; color: var(--ink-mid); line-height: 1.55; border-bottom: 1px solid var(--rule); background: var(--parchment); }
+  .dd-item:last-child { border-bottom: none; }
+  .dd-item .dd-icon { flex-shrink: 0; font-size: 14px; margin-top: 1px; }
+  .dd-category { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--amber-dark); display: block; margin-bottom: 2px; }
+
+  /* ── FLASHCARD QUIZ ── */
+  #flashcards { background: var(--parchment-2); border-top: 2px solid var(--rule-strong); }
+  .fc-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .fc-btn {
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px; font-weight: 600;
+    padding: 9px 20px; border-radius: 3px;
+    border: 1.5px solid var(--amber);
+    background: transparent; color: var(--amber-dark);
+    cursor: pointer; transition: background 0.15s, color 0.15s;
+  }
+  .fc-btn:hover, .fc-btn.primary { background: var(--amber); color: var(--parchment); }
+  .fc-btn.primary:hover { background: var(--amber-dark); }
+  .fc-counter { font-size: 13px; color: var(--ink-light); font-style: italic; margin-left: auto; }
+  .fc-stage { perspective: 1000px; margin: 0 auto 28px; max-width: 680px; height: 240px; cursor: pointer; }
+  .fc-card-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.5s cubic-bezier(.4,0,.2,1); }
+  .fc-card-inner.flipped { transform: rotateY(180deg); }
+  .fc-front, .fc-back { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px; border: 1.5px solid var(--rule-strong); text-align: center; }
+  .fc-front { background: var(--ink); color: var(--parchment-2); }
+  .fc-front .fc-chapter { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--amber-light); margin-bottom: 12px; }
+  .fc-front .fc-term { font-family: 'Playfair Display', serif; font-size: clamp(18px, 3vw, 26px); font-weight: 700; line-height: 1.2; color: var(--parchment); }
+  .fc-front .fc-date { font-size: 11px; font-style: italic; color: var(--amber-light); margin-top: 10px; }
+  .fc-front .fc-hint { font-size: 11px; color: rgba(253,246,236,0.4); margin-top: 20px; }
+  .fc-back { background: #fff9f1; color: var(--ink-mid); transform: rotateY(180deg); font-size: 14px; line-height: 1.65; font-style: italic; }
+  .fc-back .fc-sig-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--amber-dark); font-style: normal; margin-bottom: 10px; }
+  .fc-row-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .fc-know { border-color: #2a5e2a; color: #2a5e2a; }
+  .fc-know:hover { background: #2a5e2a !important; color: white !important; }
+  .fc-unsure { border-color: var(--amber-dark); color: var(--amber-dark); }
+  .fc-unsure:hover { background: var(--amber-dark) !important; color: white !important; }
+  .fc-score-display { text-align: center; padding: 32px; background: var(--parchment); border: 1.5px solid var(--rule-strong); border-radius: 6px; max-width: 480px; margin: 0 auto; display: none; }
+  .fc-score-display .fc-score-num { font-family: 'Playfair Display', serif; font-size: 56px; font-weight: 700; color: var(--amber-dark); line-height: 1; }
+  .fc-score-display p { font-size: 14px; color: var(--ink-mid); margin-top: 8px; }
+  .fc-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  .fc-filter-btn { font-family: 'Source Serif 4', serif; font-size: 11.5px; padding: 5px 12px; border-radius: 2px; border: 1px solid var(--rule-strong); background: var(--parchment); color: var(--ink-mid); cursor: pointer; transition: background 0.15s; }
+  .fc-filter-btn:hover, .fc-filter-btn.active { background: var(--parchment-3); border-color: var(--amber); color: var(--amber-dark); }
+
+  @media (max-width: 700px) { .dos-donts-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 640px) {
+    header { padding: 36px 24px 32px; }
+    nav { padding: 0 16px; }
+    .container { padding: 0 18px; }
+    .iaetso-grid { grid-template-columns: 1fr; }
+    .search-wrap { top: 44px; padding: 8px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <p class="eyebrow">AP United States History</p>
+    <h1>Period <span>7</span> Study Guide</h1>
+    <p class="subtitle">America on the World Stage — Empire, Reform, Depression & War</p>
+    <div class="period-bar">
+      <span class="pill">1890 – 1945</span>
+      <span class="range">Chapters 18 · 19 · 20 · 21 · 22</span>
+    </div>
+  </div>
+</header>
+
+<nav id="main-nav">
+  <a href="#iaetso" class="active">IAETSOs</a>
+  <a href="#learning-objectives">Learning Objectives</a>
+  <a href="#dbq">DBQ</a>
+  <a href="#dos-donts">Do's &amp; Don'ts</a>
+  <a href="#flashcards">Flashcards</a>
+</nav>
+
+<div class="search-wrap">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="color:var(--amber);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  <input type="text" id="search-input" placeholder="Search any term across all chapters…" oninput="searchTerms(this.value)">
+  <span id="search-count"></span>
+</div>
+
+<!-- ══════════════════════════════════════
+     SECTION 1 — IAETSOs
+══════════════════════════════════════ -->
+<section class="main-section" id="iaetso">
+  <div class="container">
+    <div class="section-header">
+      <p class="label">Section I</p>
+      <h2>IAETSOs — Identify &amp; Explain the Significance Of</h2>
+      <p>Click any term to reveal its significance. Check off terms you've studied. Organized chronologically by era.</p>
+      <div class="divider"></div>
+    </div>
+    <p class="progress-label" id="progress-label">0 of 0 terms studied</p>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-fill"></div></div>
+
+    <!-- Chapter 18: Progressive Era -->
+    <div class="chapter-block open" id="ch18">
+      <div class="chapter-head" onclick="toggleBlock(this)">
+        <span class="ch-num">Ch. 18</span>
+        <h3>The Progressive Era</h3>
+        <span class="ch-years">1900 – 1916</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="guiding-q">
+          <p data-n="1">"New immigration" — what group, what period, and why was their quest for freedom a struggle?</p>
+          <p data-n="2">Why did socialism thrive during the Progressive Era, and who led it?</p>
+          <p data-n="3">What was "new feminism" and how did it spearhead broader reforms?</p>
+          <p data-n="4">In what ways did Progressivism include both democratic and anti-democratic impulses?</p>
+          <p data-n="5">How did each Progressive Era president view the federal government's role?</p>
+        </div>
+        <div class="iaetso-grid">
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900–1911</span>
+            <div class="term">Triangle Shirtwaist Fire</div>
+            <div class="definition">A 1911 factory fire in NYC that killed 146 garment workers, mostly immigrant women, due to locked exits and poor safety. Galvanized the labor movement and led to major workplace safety legislation and fire codes in New York and across the nation.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900s</span>
+            <div class="term">Muckrakers</div>
+            <div class="definition">Investigative journalists who exposed corruption, unsafe conditions, and corporate abuses. Figures like Upton Sinclair (The Jungle), Ida Tarbell (Standard Oil), and Jacob Riis (How the Other Half Lives) helped shape public opinion and drive Progressive legislation.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900s</span>
+            <div class="term">Child Labor</div>
+            <div class="definition">The widespread employment of children in hazardous industries — mines, factories, mills — was a Progressive Era target. Reformers like Lewis Hine documented abuse; the Keating-Owen Act (1916) was the first federal attempt to limit it (later struck down). Eventually restricted by New Deal laws.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1890s–1910s</span>
+            <div class="term">Ellis Island &amp; Angel Island</div>
+            <div class="definition">Ellis Island (NY) processed millions of European immigrants; Angel Island (CA) processed and often detained Asian immigrants under far harsher conditions. Symbolize both the promise and the inequalities of American immigration policy in the era of "new immigration."</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900s</span>
+            <div class="term">AFL vs. IWW</div>
+            <div class="definition">The American Federation of Labor (craft union, skilled workers, Samuel Gompers) vs. the Industrial Workers of the World ("Wobblies" — radical, unskilled workers, all industries). Represented a fundamental split in labor strategy: incremental reform vs. revolutionary industrial unionism.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900s–1910s</span>
+            <div class="term">Birth-Control Movement</div>
+            <div class="definition">Led by Margaret Sanger, who challenged laws criminalizing contraception. Argued reproductive freedom was essential to women's autonomy. Founded what became Planned Parenthood. Represented the intersection of feminism, public health, and class politics.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1902</span>
+            <div class="term">Coal Miner's Strike of 1902</div>
+            <div class="definition">United Mine Workers struck in PA; TR intervened and forced arbitration (first time federal gov't sided with labor, not capital). Established the precedent of presidential mediation in labor disputes and signaled a new activist role for the executive branch.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1906</span>
+            <div class="term">Pure Food and Drug Act</div>
+            <div class="definition">Passed in 1906 following public outrage (partly spurred by Upton Sinclair's The Jungle). Prohibited adulterated or mislabeled food and drugs sold in interstate commerce. Created the foundation for the modern FDA. Key example of federal consumer protection.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1901–1909</span>
+            <div class="term">Roosevelt and Conservation</div>
+            <div class="definition">TR set aside 150 million acres of national forests, created 5 national parks, 18 national monuments, and 51 wildlife refuges. Signed the Newlands Reclamation Act (1902). Distinguished between preservation (Muir) and sustainable use (Pinchot); placed conservation on the national agenda.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 19: WWI -->
+    <div class="chapter-block" id="ch19">
+      <div class="chapter-head" onclick="toggleBlock(this)">
+        <span class="ch-num">Ch. 19</span>
+        <h3>Safe for Democracy — World War I</h3>
+        <span class="ch-years">1916 – 1920</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="guiding-q">
+          <p data-n="1">How did Progressive Era presidents promote American power overseas?</p>
+          <p data-n="2">What two main events drew the U.S. into WWI?</p>
+          <p data-n="3">How were civil liberties infringed upon during WWI?</p>
+          <p data-n="4">How did the National Woman's Party change suffrage advocacy?</p>
+          <p data-n="5">How were African Americans excluded from Progressive reforms? Compare DuBois vs. Garvey.</p>
+          <p data-n="6">Why was 1919 a watershed year?</p>
+          <p data-n="7">How did Wilson's "self-determination" animate third-world intellectuals?</p>
+        </div>
+        <div class="iaetso-grid">
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1903</span>
+            <div class="term">Panama Canal Zone</div>
+            <div class="definition">The U.S. backed Panamanian independence from Colombia in 1903 to secure canal rights. The Canal (completed 1914) connected Atlantic and Pacific, reducing shipping time dramatically. Symbolized American imperial reach and strategic economic interest in hemispheric dominance.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1904</span>
+            <div class="term">Roosevelt's Corollary</div>
+            <div class="definition">Extension of the Monroe Doctrine (1904): the U.S. claimed the right to intervene in Latin American nations with "chronic wrongdoing" to prevent European interference. Justified repeated interventions (Nicaragua, Haiti, Dominican Republic). Seen across Latin America as Yankee imperialism.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1909–1913</span>
+            <div class="term">Dollar Diplomacy</div>
+            <div class="definition">Taft's policy of using U.S. investment and financial control to advance foreign policy goals, especially in Latin America and China. Backed by force when necessary. Replaced gunboat diplomacy with economic leverage but still served U.S. imperial interests.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1917</span>
+            <div class="term">Zimmermann Telegram</div>
+            <div class="definition">Secret German telegram (intercepted by Britain) proposing a military alliance with Mexico against the U.S., offering Texas, New Mexico, and Arizona. Outraged American public; major catalyst for entering WWI in April 1917.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1917</span>
+            <div class="term">Committee on Public Information (CPI)</div>
+            <div class="definition">George Creel's propaganda bureau created to manufacture consent for WWI. Used posters, films, pamphlets, and "Four-Minute Men" speakers. Stoked nationalist fervor and anti-German hysteria; set a precedent for modern government propaganda and the use of mass media in wartime.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1919</span>
+            <div class="term">18th Amendment</div>
+            <div class="definition">Prohibited the manufacture, sale, and transportation of intoxicating liquors (Prohibition). Ratified 1919, took effect 1920. Driven by Progressive temperance movement. Led to rise of organized crime, speakeasies, and widespread flouting of the law; repealed by 21st Amendment (1933).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1917</span>
+            <div class="term">Espionage Act of 1917</div>
+            <div class="definition">Made it illegal to obstruct military recruitment or interfere with war operations. Used to prosecute antiwar voices including Eugene Debs (sentenced to 10 years). The Supreme Court upheld it in Schenck v. U.S. (1919) with Holmes's "clear and present danger" test. Major civil liberties violation.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1918</span>
+            <div class="term">Sedition Act</div>
+            <div class="definition">Extended the Espionage Act to criminalize "disloyal, profane, scurrilous, or abusive language" about the U.S. government, flag, or military. Effectively suppressed all dissent. Targeted socialists, labor organizers, and immigrants. Repealed in 1920.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1900s</span>
+            <div class="term">Color Line</div>
+            <div class="definition">W.E.B. DuBois's concept (from The Souls of Black Folk, 1903) describing racial segregation as the defining problem of the 20th century. The color line structured American life through Jim Crow, disenfranchisement, lynching, and exclusion from Progressive reform and WWI democracy.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1909</span>
+            <div class="term">NAACP</div>
+            <div class="definition">National Association for the Advancement of Colored People — founded 1909 by DuBois, Ida B. Wells, and others. Fought for civil rights through legal challenges, publicity, and political lobbying. Key organization in the long civil rights struggle; won landmark cases including Brown v. Board (1954).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">Garveyites</div>
+            <div class="definition">Followers of Marcus Garvey's UNIA (Universal Negro Improvement Association). Advocated Black nationalism, Pan-Africanism, and "Back to Africa." Mass movement among urban Black Americans in the 1920s; challenged the integrationist approach of the NAACP. Garvey deported in 1927.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1919–1920</span>
+            <div class="term">Red Scare</div>
+            <div class="definition">Post-WWI wave of anti-communist fear; Palmer Raids (1919–20) arrested thousands of suspected radicals, many immigrants, with little due process. Accelerated nativist sentiment leading to the 1924 Immigration Act. ACLU founded in response. Foreshadowed 1950s McCarthyism.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1918</span>
+            <div class="term">Fourteen Points</div>
+            <div class="definition">Wilson's 1918 peace plan: freedom of the seas, self-determination, open diplomacy, arms reduction, and a League of Nations. Inspired subject peoples worldwide but were largely ignored at Versailles. The Senate rejected U.S. membership in the League; Wilson's idealism crashed against political reality.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1919</span>
+            <div class="term">League of Nations</div>
+            <div class="definition">Wilson's proposed international peacekeeping body (Article X of the Treaty of Versailles). Senate rejected it — isolationists and reservationists (led by Henry Cabot Lodge) refused to surrender U.S. sovereignty. The U.S. never joined. Weakened the League and set the stage for WWII.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 20: The Twenties -->
+    <div class="chapter-block" id="ch20">
+      <div class="chapter-head" onclick="toggleBlock(this)">
+        <span class="ch-num">Ch. 20</span>
+        <h3>Business Culture to Great Depression — The Twenties</h3>
+        <span class="ch-years">1920 – 1932</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="guiding-q">
+          <p data-n="1">What products became staples of the 1920s and how did they create a "new society"?</p>
+          <p data-n="2">How did Harding and Coolidge fuse government and business like no other time?</p>
+          <p data-n="3">How did the Scopes Trial highlight the tension between fundamentalist and modernist?</p>
+          <p data-n="4">How did the KKK's resurgence and Coolidge's race policy inspire the 1924 Immigration Act?</p>
+          <p data-n="5">What were the causes of the Great Depression, and how effective were government responses by 1932?</p>
+        </div>
+        <div class="iaetso-grid">
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1927</span>
+            <div class="term">Sacco and Vanzetti</div>
+            <div class="definition">Italian immigrant anarchists convicted of murder in 1920 and executed in 1927 despite thin evidence. Case became international symbol of nativist hysteria, anti-radical bias, and failure of American justice. Widely seen as victims of the Red Scare and ethnic prejudice.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">"Welfare Capitalism" vs. American Plan</div>
+            <div class="definition">Welfare capitalism: companies offered benefits (pensions, housing) to discourage unionization. American Plan: open-shop movement to eliminate unions entirely. Together they weakened organized labor in the 1920s prosperity decade. When the Depression hit, workers had no safety net.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1923</span>
+            <div class="term">Equal Rights Amendment</div>
+            <div class="definition">First introduced in 1923 by Alice Paul and the NWP — proposed constitutional equality regardless of sex. Opposed by many progressives who feared it would overturn protective labor laws for women. Remained controversial throughout the period; not passed by Congress until 1972.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">Flapper Girls</div>
+            <div class="definition">Symbol of 1920s "new woman" — bobbed hair, short skirts, jazz clubs, cigarettes. Challenged Victorian femininity and gender norms. Reflected new consumer culture, women's greater economic independence post-suffrage, and the cultural rebellion of the Jazz Age.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1923</span>
+            <div class="term">Teapot Dome Scandal</div>
+            <div class="definition">Secretary of Interior Albert Fall secretly leased federal oil reserves at Teapot Dome, WY and Elk Hills, CA to private companies in exchange for bribes. First cabinet member imprisoned for crimes in office. Epitomized Harding administration corruption and government-business collusion.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1924–1928</span>
+            <div class="term">McNary-Haugen Farm Bill</div>
+            <div class="definition">Proposed federal price supports for farm commodities — government would buy surpluses and sell abroad. Twice vetoed by Coolidge as government interference in the market. Highlighted the agricultural crisis of the 1920s and farmer political mobilization; presaged New Deal farm policy.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1930</span>
+            <div class="term">Hays Code</div>
+            <div class="definition">Hollywood's self-censorship code (enforced from 1930s) that prohibited certain content in films — crime, sexuality, religious disrespect. Reflected cultural conservatism reacting against 1920s permissiveness. Showed the power of religious and civic groups to police popular culture.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920</span>
+            <div class="term">American Civil Liberties Union (ACLU)</div>
+            <div class="definition">Founded 1920 by Roger Baldwin in response to the Palmer Raids and WWI civil liberties violations. Defended free speech, press, and due process. Represented John Scopes (1925); has fought landmark civil liberties cases ever since. Essential countervailing force to government repression.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">"100 Percent Americanism"</div>
+            <div class="definition">Nativist ideology of the 1920s demanding cultural, linguistic, and racial conformity. Fueled KKK revival, the 1924 Immigration Act (quotas targeting Southern/Eastern Europeans and Asians), and anti-communist hysteria. Defined "real" Americans against immigrants, Catholics, Jews, and Blacks.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">"Illegal Alien"</div>
+            <div class="definition">Term emerged after the 1924 Immigration Act made Mexican migration illegal for the first time (no quota assigned). Created a new category of criminalized worker; Border Patrol founded 1924. Began the pattern of mass deportations (including during the Depression) that defines modern immigration politics.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1920s</span>
+            <div class="term">New Negro</div>
+            <div class="definition">Cultural movement (Harlem Renaissance) asserting Black dignity, artistic achievement, and political assertion. Alain Locke's 1925 anthology; Hughes, Hurston, Cullen. Harlem became center of Black cultural life. Represented rejection of accommodation and a new assertion of Black identity and pride.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1932</span>
+            <div class="term">Bonus Marchers</div>
+            <div class="definition">WWI veterans who marched to Washington in 1932 demanding early payment of their promised bonus. Hoover ordered MacArthur to forcibly disperse them with tanks and tear gas. The violent response shocked the nation and destroyed Hoover's political standing; contributed to FDR's landslide election.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 21: New Deal -->
+    <div class="chapter-block" id="ch21">
+      <div class="chapter-head" onclick="toggleBlock(this)">
+        <span class="ch-num">Ch. 21</span>
+        <h3>The New Deal</h3>
+        <span class="ch-years">1933 – 1939</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="guiding-q">
+          <p data-n="1">Compare and contrast FDR and Theodore Roosevelt.</p>
+          <p data-n="2">What were the major policy initiatives of the First Hundred Days? How did they transform the role of government?</p>
+          <p data-n="3">What did the CIO set out to do, and what did they accomplish?</p>
+          <p data-n="4">How did the Second New Deal differ from the First?</p>
+          <p data-n="5">To what extent did New Deal benefits apply to women and minorities?</p>
+        </div>
+        <div class="iaetso-grid">
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Bank Holiday</div>
+            <div class="definition">FDR declared a 4-day national bank holiday on March 6, 1933 — his first major act. Stopped bank runs; Treasury inspected banks before reopening only the solvent ones. Restored public confidence. Accompanied by the Emergency Banking Act. The First Hundred Days began here.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Glass-Steagall Act</div>
+            <div class="definition">Separated commercial and investment banking, preventing banks from using deposits for stock speculation. Created FDIC (federal deposit insurance). Addressed the reckless banking that contributed to the Depression. Partially repealed in 1999 — deregulation many blame for the 2008 financial crisis.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">National Recovery Administration (NRA)</div>
+            <div class="definition">Created codes for industry: fair wages, prices, hours, and collective bargaining. Struck down by SCOTUS in Schechter Poultry (1935) as unconstitutional delegation of congressional power. Symbolized First New Deal's attempt at cooperative economic planning and its constitutional limits.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Civilian Conservation Corps (CCC)</div>
+            <div class="definition">Employed 3 million young men in national parks and forests — planting trees, building trails, fighting fires. Provided income sent home to families. Popular and successful; symbol of New Deal's conservation legacy. Excluded women; Black CCC workers often in segregated camps.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Tennessee Valley Authority (TVA)</div>
+            <div class="definition">Federal corporation that built dams and hydroelectric plants across the Tennessee Valley — one of the poorest regions of the U.S. Provided cheap electricity, flood control, and economic development to 7 states. Most ambitious example of New Deal regional planning; still exists today.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Agricultural Adjustment Act (AAA)</div>
+            <div class="definition">Paid farmers to reduce crop production to raise prices. Controversial — destroyed food while people starved; Black sharecroppers often cut out of payments. Struck down in 1936 but reenacted. Established federal role in agricultural markets and transformed the political economy of farming.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1930s</span>
+            <div class="term">Dust Bowl</div>
+            <div class="definition">Drought + over-farming of Great Plains led to catastrophic dust storms ("Black Blizzards") throughout the 1930s. Displaced 3.5 million people — "Okies" migrating to California. John Steinbeck's The Grapes of Wrath captured it. Led to federal soil conservation programs and migrant labor policies.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">21st Amendment</div>
+            <div class="definition">Repealed Prohibition (18th Amendment) in 1933. FDR supported repeal as an economic stimulus (taxable alcohol revenue) and as a morale boost. Symbolized the failure of government moralism and the pragmatic New Deal approach to Depression-era politics.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1930s</span>
+            <div class="term">Huey Long</div>
+            <div class="definition">Louisiana governor and senator, "Kingfish." Populist critic of FDR from the left — "Share Our Wealth" plan proposed capping fortunes and guaranteeing minimum income. Assassinated 1935. His popularity forced FDR left toward the Second New Deal's more redistributive policies.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1935</span>
+            <div class="term">Works Progress Administration (WPA)</div>
+            <div class="definition">Employed 8.5 million workers in public construction, arts, and literacy projects. Built airports, roads, schools; funded Federal Theatre and Writers Projects. Largest New Deal employment agency. Demonstrated government's capacity as employer of last resort. Transformed public infrastructure.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1935</span>
+            <div class="term">Social Security Act</div>
+            <div class="definition">Created old-age insurance, unemployment insurance, and aid for the disabled and dependent children. Most consequential New Deal measure — established the American welfare state. Excluded farmworkers and domestic workers (disproportionately Black and Latino). Expanded significantly in subsequent decades.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1937</span>
+            <div class="term">Court Packing Plan</div>
+            <div class="definition">FDR's attempt to add up to 6 new justices (one for each sitting justice over 70) after SCOTUS struck down New Deal programs. Congress rejected it — even Democrats opposed. Political blunder that damaged FDR's second term. But SCOTUS suddenly began upholding New Deal laws ("switch in time").</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1930s</span>
+            <div class="term">American Communist Party</div>
+            <div class="definition">CPUSA gained influence during the Depression as the only major organization actively fighting for Black civil rights (Scottsboro Boys), organizing unemployed workers, and building multiracial coalitions. Tied to Soviet Comintern policy; later devastated by Cold War repression. Critical to understanding 1930s labor and civil rights history.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1938</span>
+            <div class="term">Minimum Wage Laws</div>
+            <div class="definition">Fair Labor Standards Act (1938) established federal minimum wage (25¢/hr), maximum 44-hour workweek, and abolished child labor in interstate commerce. Final major New Deal reform. Did not cover domestic workers or farmworkers (again excluding minorities). Established federal standards for labor.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1934</span>
+            <div class="term">Indian New Deal</div>
+            <div class="definition">Indian Reorganization Act (1934), John Collier's "Indian New Deal" — ended Dawes Act allotments, restored tribal self-governance, and supported Native cultures. Most significant shift in federal Indian policy since the 1880s. Reversed forced assimilation; restored ~2 million acres. Contested by some Native leaders.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1935–1939</span>
+            <div class="term">The Popular Front</div>
+            <div class="definition">Communist International strategy (1935) to unite liberals, socialists, and communists against fascism. In the U.S., it shaped labor organizing (CIO), cultural production, and civil rights activism. Created a broad left coalition in the 1930s. Collapsed with the Nazi-Soviet Pact (1939).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1931</span>
+            <div class="term">Scottsboro Boys</div>
+            <div class="definition">Nine Black teenagers falsely accused of raping two white women in Alabama (1931). Convicted by all-white juries; SCOTUS overturned twice (Powell v. Alabama, Norris v. Alabama). ILD and CPUSA led the defense. Became international symbol of Jim Crow injustice and the struggle for Black civil rights.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1938</span>
+            <div class="term">House Un-American Activities Committee (HUAC)</div>
+            <div class="definition">Congressional committee created 1938, originally to investigate both Nazi and Communist influence. Became a platform for anti-communist witch hunts. Presaged McCarthyism; targeted Hollywood, labor unions, and civil rights activists. Chilling effect on free speech and political organizing.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chapter 22: WWII -->
+    <div class="chapter-block" id="ch22">
+      <div class="chapter-head" onclick="toggleBlock(this)">
+        <span class="ch-num">Ch. 22</span>
+        <h3>Fighting for the Four Freedoms — WWII</h3>
+        <span class="ch-years">1939 – 1945</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="chapter-body">
+        <div class="guiding-q">
+          <p data-n="1">What steps led to American participation in WWII?</p>
+          <p data-n="2">How did the U.S. mobilize resources and promote popular support for the war?</p>
+          <p data-n="3">How did a war for "essential human freedoms" fail to protect the rights of Blacks, Native peoples, Japanese-Americans, and Mexican-Americans?</p>
+          <p data-n="4">What role did African Americans play in WWII? How did the NAACP, CORE, and Black internationalists fight for equality postwar?</p>
+          <p data-n="5">Was the U.S. justified in dropping atomic bombs on Hiroshima and Nagasaki?</p>
+          <p data-n="6">How did Bretton Woods positively position the U.S. in the postwar period?</p>
+        </div>
+        <div class="iaetso-grid">
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1941</span>
+            <div class="term">Four Freedoms</div>
+            <div class="definition">FDR's Jan. 1941 State of the Union articulated the four freedoms worth fighting for: freedom of speech, freedom of worship, freedom from want, freedom from fear. Defined American war aims ideologically; Norman Rockwell's paintings made them iconic. Created an ironic tension with domestic racism.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1933</span>
+            <div class="term">Good Neighbor Policy</div>
+            <div class="definition">FDR's hemispheric policy — renounced military intervention in Latin America, repealed the Platt Amendment, withdrew from Haiti. Built goodwill and solidarity in WWII. Reversed TR's Corollary; acknowledged prior imperialism. Made Pan-American solidarity possible against the Axis.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1941</span>
+            <div class="term">Lend-Lease Act</div>
+            <div class="definition">1941 act allowing FDR to lend or lease war materials to any nation vital to U.S. defense. Primarily aided Britain and later USSR. Got around neutrality laws. Committed U.S. resources to Allied cause before Pearl Harbor. "Arsenal of Democracy" — $50B total aid by war's end.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">Bataan "Death March"</div>
+            <div class="definition">After fall of Bataan (Philippines, April 1942), 76,000 Filipino and American POWs were force-marched 65 miles in brutal heat with no food or water; thousands died. Shocked American public; intensified Pacific war hatred and propaganda. Symbol of Japanese war crimes.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1944</span>
+            <div class="term">D-Day (Operation Overlord)</div>
+            <div class="definition">June 6, 1944 Allied invasion of Normandy — 156,000 troops, 5,000 ships. Opened Western Front Stalin had demanded. Turned the tide in Western Europe; Germany now fighting on two fronts. Led to liberation of France and ultimate Allied victory in Europe (May 1945).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">Office of War Information</div>
+            <div class="definition">Federal agency managing wartime propaganda — films, posters, radio, print. Promoted unity, patriotism, and enemy hatred. Built on CPI model from WWI. Collaborated with Hollywood. Contradictions: promoted racial tolerance abroad while enforcing Jim Crow at home.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">War Advertising Council</div>
+            <div class="definition">Partnership between government and advertising industry to create pro-war consumer messaging. Promoted war bonds, rationing, and home front sacrifice. Created lasting infrastructure for public service advertising. Became the Ad Council after the war.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">Rosie the Riveter</div>
+            <div class="definition">Cultural icon of female industrial workers during WWII — 6 million women entered the workforce in war industries. J. Howard Miller's "We Can Do It!" poster. Symbolized transformation in gender roles; women proved competence in traditionally male jobs. Many fired after war to give jobs to veterans.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1944</span>
+            <div class="term">Economic Bill of Rights</div>
+            <div class="definition">FDR's 1944 State of the Union proposed a "second bill of rights" — right to employment, fair wages, decent housing, medical care, and education. Never enacted but influenced postwar liberal politics and the GI Bill. Represented FDR's vision of social democracy for postwar America.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1944</span>
+            <div class="term">GI Bill of Rights</div>
+            <div class="definition">Servicemen's Readjustment Act (1944) — provided veterans with college tuition, low-interest home loans, and unemployment benefits. Created the postwar middle class; 8 million veterans attended college. However benefits were administered locally and often denied to Black veterans — deepened racial wealth gap.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">Bracero Program</div>
+            <div class="definition">1942–1964 guest worker program importing Mexican agricultural laborers to replace drafted American workers. 4.6 million contracts; workers often exploited. Demonstrates wartime labor contradictions — needed Mexican labor but simultaneously deported "illegal aliens." Laid groundwork for postwar immigration patterns.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1943</span>
+            <div class="term">Zoot Suit Riots</div>
+            <div class="definition">June 1943 LA — white sailors attacked Mexican-American youth wearing zoot suits, which they deemed unpatriotic (excess fabric). Police arrested victims, not attackers. Symbolized racial violence against Latinos, wartime racial tensions, and the limits of the "Good War" ideology of equality.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942–1945</span>
+            <div class="term">Navajo Code Talkers</div>
+            <div class="definition">Native Americans (primarily Navajo) recruited to develop and transmit military communications in their native language — unbreakable code. Contributed to victories at Iwo Jima and elsewhere. Irony: same people whose language and culture had been suppressed in federal boarding schools were now using it to win the war.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942</span>
+            <div class="term">Executive Order 9066</div>
+            <div class="definition">FDR's order authorizing the internment of 120,000 Japanese Americans on the West Coast — 70,000 were U.S. citizens. Forced into camps; lost homes, businesses, and property. No charges, no trials. One of the worst civil liberties violations in American history; Congress apologized in 1988 (Civil Liberties Act).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1944</span>
+            <div class="term">Korematsu v. United States</div>
+            <div class="definition">SCOTUS upheld EO 9066 in a 6-3 decision (1944), ruling national security interests outweighed individual rights. Dissents by Murphy and Jackson were powerful. Formally overruled by Trump v. Hawaii (2018). Represents SCOTUS's failure to protect civil liberties during wartime and racial hysteria.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942–1945</span>
+            <div class="term">Double-V Campaign</div>
+            <div class="definition">Pittsburgh Courier's 1942 campaign: "Double Victory" — victory abroad over fascism AND victory at home over racism. Linked WWII to civil rights struggle; argued that fighting fascism abroad while tolerating Jim Crow at home was hypocritical. Set agenda for postwar civil rights movement.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1942–1945</span>
+            <div class="term">Manhattan Project</div>
+            <div class="definition">Top-secret program to develop atomic weapons — 130,000 workers, $2B, sites in TN, WA, NM (Los Alamos). Led by Oppenheimer; Einstein's letter prompted it. Produced the bombs dropped on Hiroshima (Aug. 6) and Nagasaki (Aug. 9), 1945. Inaugurated nuclear age and Cold War arms race.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1945</span>
+            <div class="term">Yalta Conference</div>
+            <div class="definition">Feb. 1945 — FDR, Churchill, Stalin. Agreed on post-war occupation zones in Germany, free elections in Eastern Europe (Stalin ignored this), Soviet entry against Japan, and United Nations. Later seen as a "sell-out" to Stalin; set stage for Cold War divisions. FDR died 2 months later.</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+          <div class="iaetso-card" onclick="toggleCard(this)">
+            <input type="checkbox" class="card-check" onclick="event.stopPropagation(); toggleChecked(this)">
+            <span class="date-chip">1944</span>
+            <div class="term">Bretton Woods Conference</div>
+            <div class="definition">July 1944 — 44 nations. Created IMF (International Monetary Fund) and World Bank; established dollar as global reserve currency (tied to gold). Designed postwar international economic order to prevent another Great Depression. Cemented U.S. economic dominance in postwar world until Nixon ended gold standard (1971).</div>
+            <div class="expand-hint">tap to expand</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 2 — LEARNING OBJECTIVES
+══════════════════════════════════════ -->
+<section class="main-section" id="learning-objectives">
+  <div class="container">
+    <div class="section-header">
+      <p class="label">Section II</p>
+      <h2>Learning Objectives &amp; Broader Context</h2>
+      <p>The College Board's framework for Period 7, organized chronologically with context and key events.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="lo-timeline">
+
+      <div class="lo-item">
+        <p class="lo-tag">7.1 · 1890s</p>
+        <h4>Contextualizing Period 7</h4>
+        <p class="lo-desc">Explain the context in which America grew into its role as a world power.</p>
+        <div class="lo-context">By 1890, the American frontier was declared closed (Frederick Jackson Turner). Industrialization had created enormous wealth and corporate power. European imperial powers were carving up Africa and Asia. Alfred Thayer Mahan's <em>The Influence of Sea Power</em> (1890) argued for naval expansion and overseas bases. The U.S. was poised to enter global competition for empire.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.2 · 1890s–1900s</p>
+        <h4>Imperialism: Debates</h4>
+        <p class="lo-desc">Explain the similarities and differences in attitudes about the nation's proper role in the world.</p>
+        <div class="lo-context"><strong>Imperialists</strong> (TR, Lodge, Mahan): racial Anglo-Saxon superiority, commercial markets, naval power, "civilizing mission." <strong>Anti-Imperialists</strong> (Twain, Carnegie, Jane Addams): contradicted democratic values, exploited non-white peoples, threatened the republic. The debate over annexing the Philippines (1898–1902) crystallized these arguments.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.3 · 1898</p>
+        <h4>The Spanish–American War</h4>
+        <p class="lo-desc">Explain the effects of the Spanish–American War.</p>
+        <div class="lo-context">Triggered by yellow journalism (Hearst, Pulitzer), the sinking of the USS Maine, and Cuban independence. "Splendid little war" — U.S. acquired Puerto Rico, Guam, and the Philippines. TR's Rough Riders at San Juan Hill. Philippine-American War (1899–1902) followed — brutal counterinsurgency. U.S. became a formal Pacific and Caribbean empire.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.4 · 1900–1920</p>
+        <h4>The Progressives</h4>
+        <p class="lo-desc">Compare the goals and effects of the Progressive reform movement. Compare attitudes toward natural resource use from 1890 to 1945.</p>
+        <div class="lo-context">Urban, middle-class reform movement addressing industrial capitalism's excesses. Key reforms: direct democracy (initiative, referendum, recall), direct election of senators (17th Amendment), women's suffrage (19th Amendment), income tax (16th Amendment), antitrust, food safety, labor protections, and conservation. TR = "New Nationalism" (federal regulation); Wilson = "New Freedom" (restore competition); Taft more conservative.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.5 · 1917–1918</p>
+        <h4>World War I: Military and Diplomacy</h4>
+        <p class="lo-desc">Explain the causes and consequences of U.S. involvement in World War I.</p>
+        <div class="lo-context">U.S. entered April 1917: unrestricted submarine warfare + Zimmermann Telegram. 2 million U.S. troops (AEF) under Pershing. Broke stalemate; Germany collapsed Nov. 1918. Paris Peace Conference — Wilson's 14 Points vs. Clemenceau's punitive demands. Treaty of Versailles: war guilt, reparations, territorial losses. Senate rejected League; U.S. returned to "normalcy."</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.6 · 1917–1920</p>
+        <h4>World War I: Home Front</h4>
+        <p class="lo-desc">Explain the causes and effects of international and internal migration patterns over time.</p>
+        <div class="lo-context">Great Migration: 1.6 million Black Americans moved north (1910–1930) for factory jobs and escape from Jim Crow — transformed cities like Chicago, New York, Detroit. War industries brought women into workforce. CPI propaganda stoked xenophobia. Espionage/Sedition Acts suppressed dissent. 1919: race riots (Chicago, Tulsa), Red Scare, steel strikes — "watershed year."</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.7 · 1920s</p>
+        <h4>1920s: Innovations in Communication and Technology</h4>
+        <p class="lo-desc">Explain the causes and effects of innovations in communication and technology in the United States over time.</p>
+        <div class="lo-context">Mass production (Ford's Model T, assembly line) made consumer goods affordable. Radio (first commercial station KDKA, 1920) created national mass culture. Hollywood and talkies. Advertising industry. Consumer credit / installment buying. These created the "new society" of the 1920s — but also overproduction and debt that contributed to the Depression crash.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.8 · 1920s</p>
+        <h4>1920s: Cultural and Political Controversies</h4>
+        <p class="lo-desc">Explain the causes and effects of international and internal migration patterns over time.</p>
+        <div class="lo-context">Cultural fault lines: fundamentalism vs. modernism (Scopes Trial, 1925); nativism vs. pluralism (KKK revival, 1924 Immigration Act); tradition vs. modernity (Prohibition, flappers, Harlem Renaissance). "100 percent Americanism" vs. New Negro. The prosperity decade concealed deep social fractures that the Depression would tear open.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.9 · 1929–1933</p>
+        <h4>The Great Depression</h4>
+        <p class="lo-desc">Explain the causes of the Great Depression and its effects on the economy.</p>
+        <div class="lo-context"><strong>Causes:</strong> stock speculation, overproduction, agricultural crisis, weak banking system, overextended consumer credit, Smoot-Hawley tariff (1930), global economic interconnection. Stock market crash Oct. 1929. By 1933: 25% unemployment, 5,000 bank failures, GDP fell 30%. Hoover's response inadequate — Reconstruction Finance Corp, but opposed direct relief. Bonus March (1932) destroyed Hoover.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.10 · 1933–1939</p>
+        <h4>The New Deal</h4>
+        <p class="lo-desc">Explain how the Great Depression and the New Deal impacted American political, social, and economic life over time.</p>
+        <div class="lo-context">FDR's New Deal fundamentally transformed the federal government's role. First New Deal (1933–34): emergency relief and economic recovery. Second New Deal (1935–36): structural reforms (Social Security, Wagner Act, WPA) — more redistributive, responding to critics from left (Huey Long) and right. New Deal coalition: labor, urban immigrants, South, African Americans. Legacy: modern regulatory/welfare state.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.11 · 1919–1941</p>
+        <h4>Interwar Foreign Policy</h4>
+        <p class="lo-desc">Explain the similarities and differences in attitudes about the nation's proper role in the world.</p>
+        <div class="lo-context">U.S. retreated into isolationism: rejected League, Washington Naval Treaty (1922), Kellogg-Briand Pact (1928, outlawed war). Neutrality Acts (1935–37) tried to prevent another WWI entanglement. FDR's Good Neighbor Policy improved Latin American relations. As Hitler rose, isolationists (America First, Lindbergh) vs. interventionists. Lend-Lease (1941) and Atlantic Charter moved U.S. toward Allies before Pearl Harbor.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.12 · 1941–1945</p>
+        <h4>World War II: Mobilization</h4>
+        <p class="lo-desc">Explain how and why U.S. participation in WWII transformed American society.</p>
+        <div class="lo-context">Pearl Harbor (Dec. 7, 1941) unified the nation. War production ended the Depression — GDP doubled, unemployment to 1%. Women (Rosie the Riveter) and minorities entered industrial workforce. Internment of Japanese Americans (EO 9066). Double-V campaign. Bracero program. GI Bill transformed postwar society. Military spending created the military-industrial complex Eisenhower would warn about in 1961.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.13 · 1942–1945</p>
+        <h4>World War II: Military</h4>
+        <p class="lo-desc">Explain the causes and effects of the victory of the United States and its allies over the Axis powers.</p>
+        <div class="lo-context">Two-front war: Europe (North Africa → Italy → D-Day → Berlin) and Pacific (island hopping: Guadalcanal → Iwo Jima → Okinawa). Eastern Front: USSR bore the brunt (27M dead). Allied unity despite tensions (second front debate). Manhattan Project → Hiroshima (Aug. 6) and Nagasaki (Aug. 9) → Japanese surrender Sept. 2, 1945. V-E Day May 8, 1945.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.14 · 1944–1945</p>
+        <h4>Postwar Diplomacy</h4>
+        <p class="lo-desc">Explain the consequences of U.S. involvement in World War II.</p>
+        <div class="lo-context">Bretton Woods (1944) — dollar-centered international monetary system; World Bank and IMF. Yalta (Feb. 1945) — Allied occupation zones, UN, Soviet promise of free elections in Eastern Europe (broken). UN founded (April 1945). Nuremberg Trials established individual accountability for war crimes. U.S. emerged as dominant global superpower; tensions with USSR immediately evident.</div>
+      </div>
+
+      <div class="lo-item">
+        <p class="lo-tag">7.15 · Synthesis</p>
+        <h4>Comparison in Period 7</h4>
+        <p class="lo-desc">Compare the relative significance of the major events of the first half of the 20th century in shaping American identity.</p>
+        <div class="lo-context">Key comparison themes: continuity and change in federal power (Progressive Era → New Deal), debates over American internationalism (imperialism → isolationism → WWII), struggles for civil rights and equality (NAACP → Double-V → postwar movement), and the tension between American ideals and American practice (Four Freedoms vs. Jim Crow, internment, exclusion).</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 3 — DBQ
+══════════════════════════════════════ -->
+<section class="main-section" id="dbq">
+  <div class="container">
+    <div class="section-header">
+      <p class="label">Section III</p>
+      <h2>DBQ — Document-Based Question</h2>
+      <p>Documents, sample thesis/body paragraphs, and a graphic organizer for Period 7.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="dbq-intro">
+      <strong>What the DBQ tests:</strong> Your ability to construct a historically defensible argument using at least 3 of the provided documents + outside evidence. You must: (1) write a thesis with a line of reasoning, (2) contextualize, (3) use evidence from docs, (4) use evidence beyond the docs (HAPP), (5) demonstrate complex understanding (comparison, continuity/change, cause/effect, or historiography).
+      <br><br>
+      <strong>Scoring:</strong> 1 pt thesis · 1 pt contextualization · 2 pts evidence (docs) · 1 pt evidence (beyond) · 1 pt HAPP (Historical Argument Perspective/Purpose) · 1 pt complexity = <strong>7 points total</strong>
+    </div>
+
+    <!-- ── DOCUMENTS ── -->
+    <h3 class="dbq-subsection-title">
+      <span class="icon">📄</span>
+      Primary Source Documents
+    </h3>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 1</span>
+        <span class="doc-title">Alfred Thayer Mahan — The Influence of Sea Power upon History</span>
+        <span class="doc-year">1890</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Alfred Thayer Mahan, naval officer and strategist, 1890</p>
+        <div class="doc-text">
+          "Whether they will or not, Americans must now begin to look outward. The growing production of the country demands it. An increase of commerce will follow the line of greatest yield. Such increase must be supported by a merchant marine, which again will be backed by naval power."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> Mahan was a naval officer writing for military and political audiences. His purpose was to advocate for U.S. imperial expansion and naval buildup. His argument was deeply influential on TR, Lodge, and the imperialist movement. Use this doc to argue for commercial/strategic motivations for American imperialism.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 2</span>
+        <span class="doc-title">Platform of the Anti-Imperialist League</span>
+        <span class="doc-year">1899</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Anti-Imperialist League, October 1899</p>
+        <div class="doc-text">
+          "We hold that the policy known as imperialism is hostile to liberty and tends toward militarism, an evil from which it has been our glory to be free. We regret that it has become necessary in the land of Washington and Lincoln to reaffirm that all men, of whatever race or color, are entitled to life, liberty, and the pursuit of happiness."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> Written by prominent Americans including Andrew Carnegie and Mark Twain. Purpose: oppose annexation of Philippines. Invokes founding ideals against imperialism. Use to argue that expansion contradicted American democratic values and created a hypocritical foreign policy.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 3</span>
+        <span class="doc-title">Woodrow Wilson — War Message to Congress</span>
+        <span class="doc-year">1917</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Woodrow Wilson, Address to Congress, April 2, 1917</p>
+        <div class="doc-text">
+          "The world must be made safe for democracy. Its peace must be planted upon the tested foundations of political liberty. We have no selfish ends to serve. We desire no conquest, no dominion. We seek no indemnities for ourselves, no material compensation for the sacrifices we shall freely make."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> Wilson framing U.S. entry into WWI in idealistic, democratic terms for Congress and the public. Purpose: build political and popular support for war. Contrast this idealism with the Espionage/Sedition Acts passed weeks later. Use to discuss the tension between war aims and civil liberties.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 4</span>
+        <span class="doc-title">Franklin D. Roosevelt — First Inaugural Address</span>
+        <span class="doc-year">1933</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Franklin D. Roosevelt, First Inaugural Address, March 4, 1933</p>
+        <div class="doc-text">
+          "The only thing we have to fear is fear itself — nameless, unreasoning, unjustified terror which paralyzes needed efforts to convert retreat into advance... Our greatest primary task is to put people to work."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> FDR as new president addressing a nation in crisis (25% unemployment, bank failures). Purpose: restore confidence and signal activist government. Use to analyze the New Deal's transformation of government's role and the political context of the Great Depression.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 5</span>
+        <span class="doc-title">FDR — Four Freedoms Speech (State of the Union)</span>
+        <span class="doc-year">1941</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Franklin D. Roosevelt, Annual Message to Congress, January 6, 1941</p>
+        <div class="doc-text">
+          "In the future days, which we seek to make secure, we look forward to a world founded upon four essential human freedoms... freedom of speech and expression... freedom of every person to worship God in his own way... freedom from want... freedom from fear."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> FDR justifying Lend-Lease and preparing public opinion for possible U.S. entry into WWII. Audience: Congress and the American public. Use this to discuss the ideological stakes of WWII and the irony of fighting for freedoms denied to Black Americans, Japanese Americans, and others at home.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 6</span>
+        <span class="doc-title">Pittsburgh Courier — Double-V Campaign Editorial</span>
+        <span class="doc-year">1942</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: James G. Thompson, letter published in the Pittsburgh Courier, January 31, 1942</p>
+        <div class="doc-text">
+          "Should I sacrifice my life to live half American? The V for Victory sign is being displayed prominently in all so-called democratic countries... let colored Americans adopt the double VV for a double victory. The first V for victory over our enemies from without, the second V for victory over our enemies from within."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> Black American civilian writing to a Black newspaper weeks after Pearl Harbor. Purpose: challenge the contradiction of fighting for democracy abroad while denied it at home. Use to argue that WWII both exposed American racial hypocrisy and accelerated the civil rights movement.
+        </div>
+      </div>
+    </div>
+
+    <div class="doc-card" onclick="toggleDoc(this)">
+      <div class="doc-header">
+        <span class="doc-num">Doc 7</span>
+        <span class="doc-title">Justice Robert Jackson — Korematsu v. U.S. (Dissent)</span>
+        <span class="doc-year">1944</span>
+      </div>
+      <div class="doc-body">
+        <p class="doc-source">Source: Justice Robert H. Jackson, dissent in Korematsu v. United States, 1944</p>
+        <div class="doc-text">
+          "A military order, however unconstitutional, is not apt to last longer than the military emergency... But once a judicial opinion rationalizes such an order to show that it conforms to the Constitution, or rather rationalizes the Constitution to show that the Constitution sanctions such an order, the court for all time has validated the principle."
+        </div>
+        <div class="doc-happ">
+          <strong>HAPP Analysis:</strong> A Supreme Court justice dissenting from the majority opinion upholding Japanese American internment. Purpose: warning about judicial precedent and constitutional erosion. Use to discuss the limits of constitutional protection during wartime and the broader civil liberties failures of WWII.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── SAMPLE ANSWERS ── -->
+    <h3 class="dbq-subsection-title">
+      <span class="icon">✍</span>
+      Sample DBQ Responses
+    </h3>
+
+    <div class="tip-box">
+      <strong>Before you read:</strong> A strong DBQ thesis (1) makes a historically defensible claim, (2) establishes a clear line of reasoning, and (3) does NOT simply restate the prompt. Your contextualization paragraph should come <em>before</em> your thesis and discuss broader historical context from <em>before</em> the documents' timeframe.
+    </div>
+
+    <div class="sample-answer" onclick="toggleSample(this)">
+      <div class="sa-header">
+        <span class="sa-tag">Sample A</span>
+        <span class="sa-title">Thesis: American Foreign Policy &amp; Empire, 1890–1945</span>
+        <span class="sa-score">Full Credit Thesis</span>
+      </div>
+      <div class="sa-body">
+        <div class="sa-thesis">
+          <strong>Thesis</strong>
+          From 1890 to 1945, American foreign policy was driven primarily by economic interests and strategic competition with European powers, but was consistently framed in the language of democratic idealism — a contradiction that shaped both global outcomes and domestic civil liberties, as seen in the tension between Wilson's Fourteen Points and the Espionage Act, and between FDR's Four Freedoms and the internment of Japanese Americans.
+        </div>
+        <p style="font-size:14px; color:var(--ink-mid); line-height:1.7;"><strong>Why this works:</strong> It makes a specific, defensible argument (economic interests + strategic competition framed as democratic idealism), establishes a clear line of reasoning (the contradiction between ideals and practice), and previews evidence it will use (Wilson, Espionage Act, Four Freedoms, internment). It does not simply describe — it argues.</p>
+        <div class="tip-box" style="margin-top:12px;">
+          <strong>Body paragraph tip:</strong> Each body paragraph should open with a topic sentence that supports your thesis. Use at least one document + HAPP analysis per paragraph. Then bring in outside evidence (something not in the documents). Aim for 3 body paragraphs with 2–3 docs used per paragraph.
+        </div>
+      </div>
+    </div>
+
+    <div class="sample-answer" onclick="toggleSample(this)">
+      <div class="sa-header">
+        <span class="sa-tag">Sample B</span>
+        <span class="sa-title">Contextualization Paragraph: New Deal &amp; Government's Role</span>
+        <span class="sa-score">Contextualization Example</span>
+      </div>
+      <div class="sa-body">
+        <div class="sa-thesis">
+          <strong>Contextualization Paragraph</strong>
+          The Great Depression did not emerge in a vacuum. Throughout the late 19th and early 20th centuries, the Progressive movement had gradually expanded the federal government's role in regulating the economy and protecting workers — from TR's antitrust suits and the Pure Food and Drug Act (1906) to Wilson's Federal Reserve Act (1913) and Clayton Antitrust Act (1914). However, the 1920s represented a sharp conservative reaction: under Harding and Coolidge, government systematically retreated from regulation, embraced "welfare capitalism" and the open shop, and cut taxes on the wealthy. This decade of unfettered corporate power — combined with agricultural crisis, consumer debt, and stock speculation — created the structural conditions for catastrophic economic collapse. When the Depression hit in 1929, the insufficiency of Hoover's response (limited to the Reconstruction Finance Corporation, refusing direct relief) demonstrated that the 1920s model of minimal government had fundamentally failed, setting the stage for FDR's radical expansion of federal authority.
+        </div>
+        <div class="tip-box" style="margin-top:12px;">
+          <strong>Contextualization rules:</strong> Must describe broader historical context <em>before or around</em> the time frame of the prompt. Must be a full, developed paragraph — not just a sentence. Must be meaningfully connected to the argument, not just background noise.
+        </div>
+      </div>
+    </div>
+
+    <div class="sample-answer" onclick="toggleSample(this)">
+      <div class="sa-header">
+        <span class="sa-tag">Sample C</span>
+        <span class="sa-title">Body Paragraph: Civil Liberties &amp; WWII (Using Doc 6 + Outside Evidence)</span>
+        <span class="sa-score">Evidence + HAPP + Outside Evidence</span>
+      </div>
+      <div class="sa-body">
+        <div class="sa-thesis">
+          <strong>Body Paragraph</strong>
+          The tension between America's democratic war aims and its domestic racial oppression was perhaps the defining contradiction of WWII. As James G. Thompson wrote in the Pittsburgh Courier in January 1942, Black Americans demanded a "Double-V" — victory abroad against fascism and victory at home against racism. Thompson, writing as a Black civilian to a Black newspaper audience just weeks after Pearl Harbor, was explicitly challenging the government's claim that the war was a struggle for universal freedom. The irony he identified was structural: the same government that broadcast the Four Freedoms (Document 5) was enforcing Jim Crow in the military, excluding Black workers from defense industry jobs until A. Philip Randolph threatened a March on Washington in 1941 (outside evidence — Executive Order 8802), and within months would intern 120,000 Japanese Americans under Executive Order 9066 with no charges or trial (Document 7, Jackson dissent). This contradiction did not resolve itself during the war — but it planted the seeds of the postwar civil rights movement, as returning Black veterans who had fought fascism abroad refused to accept second-class citizenship at home.
+        </div>
+        <div class="tip-box" style="margin-top:12px;">
+          <strong>Scoring check:</strong> ✓ Uses Doc 6 with HAPP (who wrote it, for whom, why) · ✓ References Doc 5 and Doc 7 · ✓ Brings in outside evidence (EO 8802, March on Washington threat) · ✓ Connects to thesis (contradiction between democratic ideals and practice) · ✓ Addresses complexity (seeds of civil rights movement)
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ── GRAPHIC ORGANIZER ── -->
+    <h3 class="dbq-subsection-title">
+      <span class="icon">📊</span>
+      Graphic Organizer — Period 7 at a Glance
+    </h3>
+
+    <p style="font-size:14px; color:var(--ink-mid); margin-bottom:16px; font-style:italic;">Use this to organize your thinking before writing. Fill in your own evidence in the blank cells.</p>
+
+    <div style="overflow-x:auto;">
+    <table class="go-table">
+      <thead>
+        <tr>
+          <th>Era / Topic</th>
+          <th>Key Cause / Context</th>
+          <th>Major Event / Policy</th>
+          <th>Effect / Significance</th>
+          <th>Your Evidence</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="era-cell">Imperialism<br><small style="font-weight:400;font-style:italic;">1890s–1900s</small></td>
+          <td>Closed frontier, industrial surpluses, European imperial competition, Mahan's sea power thesis</td>
+          <td>Spanish-American War (1898); Philippines annexation; Panama Canal</td>
+          <td>U.S. becomes Pacific/Caribbean empire; Anti-Imperialist backlash; sets up interventionism</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">Progressive Era<br><small style="font-weight:400;font-style:italic;">1900–1916</small></td>
+          <td>Industrial capitalism's abuses; urbanization; middle-class reform impulse; muckrakers</td>
+          <td>Antitrust, food safety, conservation, 16th/17th/18th/19th Amendments</td>
+          <td>Expanded federal power; mixed record on race/class; set template for New Deal</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">World War I<br><small style="font-weight:400;font-style:italic;">1917–1920</small></td>
+          <td>Unrestricted sub warfare, Zimmermann Telegram, Wilson's democratic idealism</td>
+          <td>U.S. entry (April 1917); AEF; Versailles Treaty; Senate rejects League</td>
+          <td>Civil liberties suppressed; Great Migration accelerated; isolationism in 1920s; seeds of WWII</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">The Twenties<br><small style="font-weight:400;font-style:italic;">1920–1929</small></td>
+          <td>Post-war prosperity; mass production; consumer culture; nativism / Red Scare</td>
+          <td>1924 Immigration Act; Harlem Renaissance; KKK revival; radio/auto/film boom</td>
+          <td>Cultural conflict; weakened labor; agricultural crisis; debt-fueled bubble sets up Depression</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">Great Depression<br><small style="font-weight:400;font-style:italic;">1929–1933</small></td>
+          <td>Stock speculation, overproduction, bank failures, Smoot-Hawley tariff, global economic ties</td>
+          <td>Stock market crash (Oct. 1929); 25% unemployment; Hoover's limited response; Bonus March</td>
+          <td>Demanded new role for federal government; Hoover destroyed politically; New Deal mandate</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">The New Deal<br><small style="font-weight:400;font-style:italic;">1933–1939</small></td>
+          <td>FDR's mandate; First 100 Days; pressure from left (Long, CIO); SCOTUS challenges</td>
+          <td>CCC, TVA, AAA, NRA, Glass-Steagall, WPA, Social Security, Wagner Act</td>
+          <td>Modern welfare state; New Deal coalition; excluded minorities; transformed political economy</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+        <tr>
+          <td class="era-cell">WWII<br><small style="font-weight:400;font-style:italic;">1941–1945</small></td>
+          <td>Lend-Lease; Pearl Harbor; Nazi expansionism; Good Neighbor Policy groundwork</td>
+          <td>D-Day, Manhattan Project, EO 9066, Double-V, Bracero, GI Bill, Bretton Woods</td>
+          <td>Ended Depression; transformed society; civil rights tensions; U.S. global superpower; Cold War begins</td>
+          <td class="blank">add your IAETSO / doc evidence here</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div style="margin-top:32px; padding:20px 24px; background:var(--parchment-2); border:1px solid var(--rule-strong); border-radius:4px; border-left: 3px solid var(--amber);">
+      <p style="font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--amber-dark); margin-bottom:8px;">Complexity Point Strategies</p>
+      <p style="font-size:14px; color:var(--ink-mid); line-height:1.7;">
+        <strong>Continuity &amp; Change:</strong> How did the federal government's role in the economy change from 1890 to 1945?
+        <br><strong>Comparison:</strong> Compare Progressive Era reforms to New Deal reforms — similarities, differences, what changed?
+        <br><strong>Causation:</strong> How did WWI cause the conditions that led to the Great Depression?
+        <br><strong>Corroboration:</strong> Use multiple docs that point to the same argument from different perspectives.
+        <br><strong>Qualification:</strong> Acknowledge a counterargument — e.g., "While the New Deal transformed federal power, it consistently excluded Black Americans from full benefits."
+      </p>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════
+     SECTION 4 — DO'S AND DON'TS
+══════════════════════════════════════ -->
+<section class="main-section" id="dos-donts">
+  <div class="container">
+    <div class="section-header">
+      <p class="label">Section IV</p>
+      <h2>DBQ Do's &amp; Don'ts</h2>
+      <p>Based on the College Board's updated 2024 scoring guidelines — what earns points and what loses them.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="dos-donts-grid">
+      <div class="dos-col">
+        <div class="col-head">✓ Do These Things</div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Thesis</span>Write a thesis that makes a <strong>historically defensible claim</strong> AND establishes a clear <strong>line of reasoning</strong>. It can be more than one sentence. Place it in your intro OR conclusion.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Thesis</span>Mention at least <strong>two different interpretations</strong> of the question and offer a judgment about which part of your argument is most significant.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Contextualization</span>Write a full, developed paragraph connecting broader historical context to your argument — from <strong>before or around</strong> the time period of the prompt. Must be meaningfully connected, not just background.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Evidence</span>Use content from <strong>at least 3 documents</strong> to address the topic (1 pt). Use at least <strong>4 documents</strong> to support your argument with explanation (2 pts). Show how each doc supports your specific claim.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Outside Evidence</span>Include <strong>at least one piece of evidence not in the documents</strong> that supports your argument. This must be a specific historical fact, not a vague reference.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">HAPP (APCP)</span>For <strong>at least 2 documents</strong>, explain how or why the document's <strong>Historical Situation, Audience, Purpose, or Point of View</strong> is relevant to your argument — not just "this person believed X."</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Complexity</span>Choose ONE pathway: (a) demonstrate nuance — highlight contradictions, connect across periods, explain both cause &amp; effect; (b) explain HAPP for <strong>4 documents</strong>; or (c) use <strong>all 7 documents</strong> as evidence.</div></div>
+        <div class="dd-item"><span class="dd-icon">✓</span><div><span class="dd-category">Structure</span>Organize around your <strong>line of reasoning</strong>, not around each document in order. Group documents thematically to support your argument.</div></div>
+      </div>
+      <div class="donts-col">
+        <div class="col-head">✗ Avoid These Mistakes</div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Thesis</span><strong>Don't restate the prompt</strong> as your thesis. "This essay will discuss the causes of WWI" earns zero points. You must take a position and establish a line of reasoning.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Thesis</span><strong>Don't write a thesis that can't be argued</strong> — "The New Deal had many effects" is not defensible. A thesis must be specific enough that someone could disagree with it.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Contextualization</span><strong>Don't write only one sentence</strong> of context. The College Board requires a full, developed explanation — a single sentence will not earn the point.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Evidence</span><strong>Don't just describe or summarize documents</strong>. Graders will not award evidence points for students who walk through each document in order without connecting to an argument.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Evidence</span><strong>Don't misattribute or misread documents.</strong> Misidentifying the author or misrepresenting a document's content can undermine your entire argument and lose points.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">HAPP</span><strong>Don't just name the author's identity</strong>. "This was written by a politician" earns nothing. Explain WHY their position, purpose, or situation makes the document say what it says.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Complexity</span><strong>Don't tack on a complexity sentence at the end.</strong> Complexity must be woven into your argument throughout — a disconnected final paragraph will not earn the point.</div></div>
+        <div class="dd-item"><span class="dd-icon">✗</span><div><span class="dd-category">Structure</span><strong>Don't write 7 body paragraphs, one per document.</strong> This almost always results in summary, not argument. Aim for 3 thematic body paragraphs with multiple documents per paragraph.</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; padding:18px 22px; background:var(--parchment-2); border:1px solid var(--rule-strong); border-radius:4px; border-left:3px solid var(--amber);">
+      <p style="font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amber-dark);margin-bottom:6px;">2024 Rubric Update — Key Changes</p>
+      <p style="font-size:14px;color:var(--ink-mid);line-height:1.7;">The College Board updated the APUSH DBQ rubric for 2023–24. You now need <strong>4 documents</strong> (down from 6) for full evidence points, and <strong>2 HAPP analyses</strong> (down from 3). The complexity point now has three alternative pathways: demonstrate nuance, explain HAPP for 4 docs, or cite all 7 documents. The DBQ is worth <strong>25% of your total exam score</strong>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+     SECTION 5 — FLASHCARDS
+══════════════════════════════════════ -->
+<section class="main-section" id="flashcards">
+  <div class="container">
+    <div class="section-header">
+      <p class="label">Section V</p>
+      <h2>Flashcard Study Mode</h2>
+      <p>Test yourself on all IAETSO terms. Flip to reveal significance. Mark what you know.</p>
+      <div class="divider"></div>
+    </div>
+
+    <div class="fc-filter-row" id="fc-filters">
+      <button class="fc-filter-btn active" onclick="setFilter('all', this)">All Chapters</button>
+      <button class="fc-filter-btn" onclick="setFilter('Ch. 18', this)">Ch. 18 — Progressive Era</button>
+      <button class="fc-filter-btn" onclick="setFilter('Ch. 19', this)">Ch. 19 — WWI</button>
+      <button class="fc-filter-btn" onclick="setFilter('Ch. 20', this)">Ch. 20 — The Twenties</button>
+      <button class="fc-filter-btn" onclick="setFilter('Ch. 21', this)">Ch. 21 — New Deal</button>
+      <button class="fc-filter-btn" onclick="setFilter('Ch. 22', this)">Ch. 22 — WWII</button>
+      <button class="fc-filter-btn" onclick="setFilter('unsure', this)" id="unsure-filter-btn">⚑ Marked for Review</button>
+    </div>
+
+    <div class="fc-controls">
+      <button class="fc-btn primary" onclick="shuffleDeck()">⇄ Shuffle</button>
+      <button class="fc-btn" onclick="restartDeck()">↺ Restart</button>
+      <span class="fc-counter" id="fc-counter">Card 1 of 0</span>
+    </div>
+
+    <div class="fc-stage" onclick="flipCard()" id="fc-stage">
+      <div class="fc-card-inner" id="fc-inner">
+        <div class="fc-front" id="fc-front">
+          <div class="fc-chapter" id="fc-chapter">Chapter</div>
+          <div class="fc-term" id="fc-term">Loading…</div>
+          <div class="fc-date" id="fc-date"></div>
+          <div class="fc-hint">click to reveal significance</div>
+        </div>
+        <div class="fc-back" id="fc-back">
+          <div class="fc-sig-label">Significance</div>
+          <div id="fc-definition"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-row-btns" id="fc-action-btns">
+      <button class="fc-btn fc-know" onclick="markCard(true)">✓ Got It</button>
+      <button class="fc-btn fc-unsure" onclick="markCard(false)">⚑ Review Again</button>
+    </div>
+
+    <div class="fc-score-display" id="fc-score">
+      <div class="fc-score-num" id="fc-score-num">0/0</div>
+      <p id="fc-score-msg">Round complete!</p>
+      <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <button class="fc-btn primary" onclick="restartDeck()">↺ Study All Again</button>
+        <button class="fc-btn" onclick="studyUnsure()">⚑ Study Marked Only</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>APUSH Period 7 Study Guide · 1890–1945 · Chapters 18–22</p>
+</footer>
+
+<script>
+  /* ── BASIC TOGGLES ── */
+  function toggleCard(card) { card.classList.toggle('expanded'); }
+  function toggleBlock(header) { header.closest('.chapter-block').classList.toggle('open'); }
+  function toggleDoc(card) { card.classList.toggle('open'); }
+  function toggleSample(sa) { sa.classList.toggle('open'); }
+
+  /* ── CHECKBOXES + PROGRESS ── */
+  const STORAGE_KEY = 'apush_p7_checked';
+  function getChecked() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch { return {}; } }
+  function saveChecked(obj) { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(obj)); } catch {} }
+
+  function toggleChecked(cb) {
+    const card = cb.closest('.iaetso-card');
+    const term = card.querySelector('.term').textContent.trim();
+    const checked = getChecked();
+    if (cb.checked) { checked[term] = true; card.classList.add('checked'); }
+    else { delete checked[term]; card.classList.remove('checked'); }
+    saveChecked(checked);
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const all = document.querySelectorAll('.iaetso-card');
+    const done = document.querySelectorAll('.iaetso-card.checked');
+    const pct = all.length ? (done.length / all.length) * 100 : 0;
+    const fill = document.getElementById('progress-fill');
+    const label = document.getElementById('progress-label');
+    if (fill) fill.style.width = pct + '%';
+    if (label) label.textContent = done.length + ' of ' + all.length + ' terms studied';
+  }
+
+  function initCheckboxes() {
+    const checked = getChecked();
+    document.querySelectorAll('.iaetso-card').forEach(card => {
+      const term = card.querySelector('.term').textContent.trim();
+      const cb = card.querySelector('.card-check');
+      if (checked[term]) { cb.checked = true; card.classList.add('checked'); }
+    });
+    updateProgress();
+  }
+
+  /* ── SEARCH ── */
+  function searchTerms(q) {
+    const val = q.toLowerCase().trim();
+    const allCards = document.querySelectorAll('.iaetso-card');
+    let visible = 0;
+    allCards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const match = !val || text.includes(val);
+      card.classList.toggle('hidden', !match);
+      if (match) visible++;
+    });
+    // Hide/show chapter blocks
+    document.querySelectorAll('.chapter-block').forEach(block => {
+      const anyVisible = [...block.querySelectorAll('.iaetso-card')].some(c => !c.classList.contains('hidden'));
+      block.style.display = anyVisible ? '' : 'none';
+      if (val && anyVisible) block.classList.add('open');
+    });
+    const countEl = document.getElementById('search-count');
+    if (countEl) countEl.textContent = val ? visible + ' result' + (visible !== 1 ? 's' : '') : '';
+  }
+
+  /* ── NAV HIGHLIGHT ── */
+  const sections = document.querySelectorAll('section.main-section');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 90) current = s.id; });
+    navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+  });
+
+  /* ── FLASHCARDS ── */
+  const FLASHCARD_DATA = [
+    // Ch. 18
+    { chapter: 'Ch. 18', term: 'Triangle Shirtwaist Fire', date: '1911', def: 'A factory fire that killed 146 workers, exposing dangerous conditions. Galvanized the labor movement and drove landmark workplace safety legislation in New York and beyond.' },
+    { chapter: 'Ch. 18', term: 'Muckrakers', date: '1900s', def: 'Investigative journalists (Sinclair, Tarbell, Riis) who exposed corporate corruption and unsafe conditions, shaping public opinion and driving Progressive legislation.' },
+    { chapter: 'Ch. 18', term: 'Child Labor', date: '1900s', def: 'Widespread employment of children in hazardous industries; a Progressive Era target. Eventually restricted by New Deal laws after decades of activism.' },
+    { chapter: 'Ch. 18', term: 'Ellis Island & Angel Island', date: '1890s–1910s', def: 'Ellis Island (NY) processed European immigrants; Angel Island (CA) detained Asian immigrants under harsher conditions — together symbolizing the inequalities of American immigration.' },
+    { chapter: 'Ch. 18', term: 'AFL vs. IWW', date: '1900s', def: 'Fundamental split in labor strategy: AFL (craft union, skilled workers, incremental reform) vs. IWW "Wobblies" (radical, all-industry, revolutionary unionism).' },
+    { chapter: 'Ch. 18', term: 'Birth-Control Movement', date: '1900s–1910s', def: 'Led by Margaret Sanger; challenged laws criminalizing contraception. Argued reproductive freedom was essential to women\'s autonomy. Founded what became Planned Parenthood.' },
+    { chapter: 'Ch. 18', term: 'Coal Miner\'s Strike of 1902', date: '1902', def: 'TR intervened and forced arbitration — first time the federal government sided with labor, not capital. Set precedent for presidential mediation in labor disputes.' },
+    { chapter: 'Ch. 18', term: 'Pure Food and Drug Act', date: '1906', def: 'Prohibited adulterated or mislabeled food and drugs in interstate commerce. Created the foundation for the modern FDA. Key Progressive consumer protection law.' },
+    { chapter: 'Ch. 18', term: 'Roosevelt and Conservation', date: '1901–1909', def: 'TR set aside 150M acres of national forests, 5 national parks, 18 monuments, 51 wildlife refuges. Distinguished preservation (Muir) vs. sustainable use (Pinchot).' },
+    // Ch. 19
+    { chapter: 'Ch. 19', term: 'Panama Canal Zone', date: '1903', def: 'U.S. backed Panamanian independence to secure canal rights. Canal (completed 1914) connected Atlantic and Pacific, symbolizing American imperial reach.' },
+    { chapter: 'Ch. 19', term: "Roosevelt's Corollary", date: '1904', def: 'Extension of Monroe Doctrine: U.S. claimed right to intervene in Latin American nations with "chronic wrongdoing." Justified repeated interventions; seen as Yankee imperialism.' },
+    { chapter: 'Ch. 19', term: 'Dollar Diplomacy', date: '1909–1913', def: "Taft's policy using U.S. investment to advance foreign policy, backed by force when needed. Replaced gunboat diplomacy with economic leverage while still serving imperial interests." },
+    { chapter: 'Ch. 19', term: 'Zimmermann Telegram', date: '1917', def: 'Secret German telegram proposing a military alliance with Mexico against the U.S., offering Texas, New Mexico, and Arizona. Major catalyst for U.S. entry into WWI.' },
+    { chapter: 'Ch. 19', term: 'Committee on Public Information (CPI)', date: '1917', def: "George Creel's propaganda bureau using posters, film, and speakers to manufacture consent for WWI. Stoked nationalist fervor; set precedent for modern government propaganda." },
+    { chapter: 'Ch. 19', term: '18th Amendment', date: '1919', def: 'Prohibited manufacture, sale, and transport of alcohol (Prohibition). Led to organized crime and speakeasies; widely flouted. Repealed by 21st Amendment (1933).' },
+    { chapter: 'Ch. 19', term: 'Espionage Act of 1917', date: '1917', def: 'Made it illegal to obstruct military recruitment. Used to prosecute antiwar voices including Eugene Debs. SCOTUS upheld in Schenck v. U.S. (1919) — major civil liberties violation.' },
+    { chapter: 'Ch. 19', term: 'Sedition Act', date: '1918', def: 'Criminalized "disloyal" speech about the U.S. government, flag, or military. Effectively suppressed all wartime dissent. Repealed 1920.' },
+    { chapter: 'Ch. 19', term: 'Color Line', date: '1900s', def: "W.E.B. DuBois's concept describing racial segregation as the defining problem of the 20th century — structuring American life through Jim Crow, disenfranchisement, and exclusion." },
+    { chapter: 'Ch. 19', term: 'NAACP', date: '1909', def: 'National Association for the Advancement of Colored People — founded by DuBois, Ida B. Wells, others. Fought for civil rights through legal challenges; won Brown v. Board (1954).' },
+    { chapter: 'Ch. 19', term: 'Garveyites', date: '1920s', def: "Followers of Marcus Garvey's UNIA — advocated Black nationalism, Pan-Africanism, and Back to Africa. Mass urban movement in the 1920s; challenged the NAACP's integrationist approach." },
+    { chapter: 'Ch. 19', term: 'Red Scare', date: '1919–1920', def: 'Post-WWI anti-communist wave; Palmer Raids arrested thousands with little due process. Accelerated nativism; ACLU founded in response. Foreshadowed McCarthyism.' },
+    { chapter: 'Ch. 19', term: 'Fourteen Points', date: '1918', def: "Wilson's peace plan: freedom of seas, self-determination, open diplomacy, League of Nations. Largely ignored at Versailles; Senate rejected the League. Idealism crashed against reality." },
+    { chapter: 'Ch. 19', term: 'League of Nations', date: '1919', def: "Wilson's proposed international peacekeeping body. Senate rejected it — Lodge and isolationists refused to surrender U.S. sovereignty. U.S. never joined; weakened the League." },
+    // Ch. 20
+    { chapter: 'Ch. 20', term: 'Sacco and Vanzetti', date: '1927', def: 'Italian immigrant anarchists convicted and executed on thin evidence. International symbol of nativist hysteria, anti-radical bias, and failure of American justice.' },
+    { chapter: 'Ch. 20', term: '"Welfare Capitalism" vs. American Plan', date: '1920s', def: 'Welfare capitalism offered benefits to discourage unions; American Plan pushed open shops. Together they weakened organized labor in the 1920s, leaving workers without a safety net when Depression hit.' },
+    { chapter: 'Ch. 20', term: 'Equal Rights Amendment', date: '1923', def: "First introduced by Alice Paul and the NWP in 1923; proposed constitutional equality regardless of sex. Opposed by many who feared it would overturn protective labor laws for women." },
+    { chapter: 'Ch. 20', term: 'Flapper Girls', date: '1920s', def: 'Symbol of the 1920s "new woman" — bobbed hair, short skirts, jazz clubs. Challenged Victorian gender norms; reflected new consumer culture and women\'s post-suffrage independence.' },
+    { chapter: 'Ch. 20', term: 'Teapot Dome Scandal', date: '1923', def: 'Secretary Fall leased federal oil reserves in exchange for bribes; first cabinet member imprisoned for crimes in office. Epitomized Harding administration corruption.' },
+    { chapter: 'Ch. 20', term: 'McNary-Haugen Farm Bill', date: '1924–1928', def: 'Proposed federal price supports for farm commodities; twice vetoed by Coolidge. Highlighted the agricultural crisis of the 1920s; presaged New Deal farm policy.' },
+    { chapter: 'Ch. 20', term: 'Hays Code', date: '1930', def: "Hollywood's self-censorship code enforced from the 1930s, prohibiting certain content in films. Reflected cultural conservatism reacting against 1920s permissiveness." },
+    { chapter: 'Ch. 20', term: 'American Civil Liberties Union (ACLU)', date: '1920', def: 'Founded 1920 by Roger Baldwin in response to the Palmer Raids. Defended free speech and due process; represented Scopes (1925). Essential countervailing force to government repression.' },
+    { chapter: 'Ch. 20', term: '"100 Percent Americanism"', date: '1920s', def: 'Nativist ideology demanding cultural and racial conformity. Fueled KKK revival, 1924 Immigration Act, and anti-communist hysteria.' },
+    { chapter: 'Ch. 20', term: '"Illegal Alien"', date: '1920s', def: 'Term emerged after 1924 Immigration Act made Mexican migration illegal for the first time. Border Patrol founded 1924; began the pattern of mass deportations defining modern immigration politics.' },
+    { chapter: 'Ch. 20', term: 'New Negro', date: '1920s', def: 'Harlem Renaissance movement asserting Black dignity and artistic achievement. Hughes, Hurston, Cullen. Harlem became center of Black cultural life; rejected accommodation for a new identity.' },
+    { chapter: 'Ch. 20', term: 'Bonus Marchers', date: '1932', def: 'WWI veterans marched to Washington demanding early bonus payment. Hoover ordered MacArthur to disperse them with tanks — shocked the nation and contributed to FDR\'s landslide victory.' },
+    // Ch. 21
+    { chapter: 'Ch. 21', term: 'Bank Holiday', date: '1933', def: "FDR's first act — 4-day national bank holiday stopping bank runs. Treasury inspected banks before reopening only solvent ones. Accompanied by Emergency Banking Act; restored confidence." },
+    { chapter: 'Ch. 21', term: 'Glass-Steagall Act', date: '1933', def: 'Separated commercial and investment banking; created FDIC (federal deposit insurance). Addressed reckless banking that contributed to the Depression. Partially repealed 1999.' },
+    { chapter: 'Ch. 21', term: 'National Recovery Administration (NRA)', date: '1933', def: 'Created industry codes for fair wages, prices, hours, and collective bargaining. Struck down by SCOTUS in Schechter Poultry (1935) as unconstitutional delegation of power.' },
+    { chapter: 'Ch. 21', term: 'Civilian Conservation Corps (CCC)', date: '1933', def: 'Employed 3 million young men in national parks and forests. Provided income sent home to families; popular symbol of the New Deal\'s conservation legacy. Segregated camps for Black workers.' },
+    { chapter: 'Ch. 21', term: 'Tennessee Valley Authority (TVA)', date: '1933', def: 'Federal corporation building dams and hydroelectric plants across the Tennessee Valley. Provided electricity, flood control, and economic development to 7 states. Most ambitious New Deal regional planning.' },
+    { chapter: 'Ch. 21', term: 'Agricultural Adjustment Act (AAA)', date: '1933', def: 'Paid farmers to reduce crop production to raise prices. Controversial — destroyed food while people starved; Black sharecroppers often excluded from payments. Struck down 1936 but reenacted.' },
+    { chapter: 'Ch. 21', term: 'Dust Bowl', date: '1930s', def: 'Drought + over-farming caused catastrophic dust storms on the Great Plains. Displaced 3.5 million people ("Okies"). Led to federal soil conservation programs and migrant labor policies.' },
+    { chapter: 'Ch. 21', term: '21st Amendment', date: '1933', def: 'Repealed Prohibition. FDR supported repeal as an economic stimulus and morale boost. Symbolized the failure of government moralism and the pragmatic New Deal approach.' },
+    { chapter: 'Ch. 21', term: 'Huey Long', date: '1930s', def: 'Louisiana populist senator; "Share Our Wealth" plan proposed capping fortunes and guaranteeing minimum income. Assassinated 1935. His popularity forced FDR left toward more redistributive Second New Deal policies.' },
+    { chapter: 'Ch. 21', term: 'Works Progress Administration (WPA)', date: '1935', def: 'Employed 8.5 million in public construction, arts, and literacy projects. Built airports, roads, schools; funded Federal Theatre. Largest New Deal employment agency.' },
+    { chapter: 'Ch. 21', term: 'Social Security Act', date: '1935', def: 'Created old-age insurance, unemployment insurance, and aid for disabled and dependent children. Most consequential New Deal measure. Excluded farmworkers and domestic workers (disproportionately Black and Latino).' },
+    { chapter: 'Ch. 21', term: 'Court Packing Plan', date: '1937', def: "FDR's attempt to add up to 6 new SCOTUS justices after New Deal programs were struck down. Congress rejected it — political blunder. But SCOTUS then began upholding New Deal laws (\"switch in time\")." },
+    { chapter: 'Ch. 21', term: 'American Communist Party', date: '1930s', def: 'CPUSA gained influence during the Depression as the only major organization actively fighting for Black civil rights (Scottsboro Boys) and building multiracial coalitions. Later devastated by Cold War repression.' },
+    { chapter: 'Ch. 21', term: 'Minimum Wage Laws', date: '1938', def: 'Fair Labor Standards Act (1938) established federal minimum wage (25¢/hr), 44-hour workweek, and abolished child labor in interstate commerce. Did not cover domestic workers or farmworkers.' },
+    { chapter: 'Ch. 21', term: 'Indian New Deal', date: '1934', def: 'Indian Reorganization Act — ended Dawes Act allotments, restored tribal self-governance, supported Native cultures. Reversed forced assimilation; restored ~2 million acres to tribal ownership.' },
+    { chapter: 'Ch. 21', term: 'The Popular Front', date: '1935–1939', def: 'Communist International strategy to unite liberals, socialists, and communists against fascism. Shaped labor organizing (CIO), cultural production, and civil rights activism in the U.S. Collapsed with Nazi-Soviet Pact (1939).' },
+    { chapter: 'Ch. 21', term: 'Scottsboro Boys', date: '1931', def: 'Nine Black teenagers falsely accused of rape in Alabama. Convicted by all-white juries; SCOTUS overturned twice. International symbol of Jim Crow injustice; CPUSA led the defense.' },
+    { chapter: 'Ch. 21', term: 'House Un-American Activities Committee (HUAC)', date: '1938', def: 'Congressional committee created 1938 to investigate Nazi and Communist influence. Became platform for anti-communist witch hunts; targeted Hollywood and labor unions. Foreshadowed McCarthyism.' },
+    // Ch. 22
+    { chapter: 'Ch. 22', term: 'Four Freedoms', date: '1941', def: "FDR's Jan. 1941 State of the Union: freedom of speech, worship, from want, from fear. Defined American war aims ideologically; Norman Rockwell's paintings made them iconic." },
+    { chapter: 'Ch. 22', term: 'Good Neighbor Policy', date: '1933', def: "FDR's hemispheric policy renouncing military intervention in Latin America, repealing the Platt Amendment, building Pan-American solidarity against the Axis." },
+    { chapter: 'Ch. 22', term: 'Lend-Lease Act', date: '1941', def: "Allowed FDR to lend or lease war materials to any nation vital to U.S. defense. Committed U.S. resources to Allied cause before Pearl Harbor. \"Arsenal of Democracy\" — $50B total aid." },
+    { chapter: 'Ch. 22', term: 'Bataan "Death March"', date: '1942', def: '76,000 Filipino and American POWs force-marched 65 miles after fall of Bataan; thousands died. Shocked American public; intensified Pacific war hatred and propaganda.' },
+    { chapter: 'Ch. 22', term: 'D-Day (Operation Overlord)', date: '1944', def: 'June 6, 1944 — 156,000 Allied troops invaded Normandy, opening the Western Front. Turned the tide in Western Europe and led to liberation of France and Allied victory (May 1945).' },
+    { chapter: 'Ch. 22', term: 'Office of War Information', date: '1942', def: 'Federal propaganda agency managing films, posters, and radio. Built on WWI CPI model. Promoted unity and patriotism while enforcing Jim Crow domestically.' },
+    { chapter: 'Ch. 22', term: 'War Advertising Council', date: '1942', def: 'Partnership between government and advertising industry for pro-war consumer messaging — war bonds, rationing, home front sacrifice. Became the Ad Council after the war.' },
+    { chapter: 'Ch. 22', term: 'Rosie the Riveter', date: '1942', def: '6 million women entered industrial workforce during WWII; J. Howard Miller\'s "We Can Do It!" poster became the symbol. Many fired after war to give jobs back to returning veterans.' },
+    { chapter: 'Ch. 22', term: 'Economic Bill of Rights', date: '1944', def: "FDR's 1944 proposed \"second bill of rights\" — right to employment, fair wages, housing, medical care, education. Never enacted but influenced postwar liberal politics and the GI Bill." },
+    { chapter: 'Ch. 22', term: 'GI Bill of Rights', date: '1944', def: 'Provided veterans with college tuition, low-interest home loans, and unemployment benefits. Created the postwar middle class. Benefits often denied to Black veterans, deepening the racial wealth gap.' },
+    { chapter: 'Ch. 22', term: 'Bracero Program', date: '1942', def: '1942–1964 guest worker program importing Mexican agricultural laborers. 4.6 million contracts; workers often exploited. Laid groundwork for postwar immigration patterns.' },
+    { chapter: 'Ch. 22', term: 'Zoot Suit Riots', date: '1943', def: 'June 1943 LA — white sailors attacked Mexican-American youth in zoot suits. Police arrested victims, not attackers. Symbolized racial violence against Latinos and limits of wartime equality ideology.' },
+    { chapter: 'Ch. 22', term: 'Navajo Code Talkers', date: '1942–1945', def: 'Native Americans (primarily Navajo) used their language as an unbreakable military code. Contributed to victories at Iwo Jima. Irony: same language suppressed in federal boarding schools now won the war.' },
+    { chapter: 'Ch. 22', term: 'Executive Order 9066', date: '1942', def: "FDR's order interns 120,000 Japanese Americans on the West Coast — 70,000 were U.S. citizens. No charges, no trials. One of America's worst civil liberties violations; Congress apologized in 1988." },
+    { chapter: 'Ch. 22', term: 'Korematsu v. United States', date: '1944', def: 'SCOTUS upheld EO 9066 in a 6-3 decision, ruling national security outweighed individual rights. Formally overruled 2018. Represents SCOTUS failure to protect civil liberties during wartime.' },
+    { chapter: 'Ch. 22', term: 'Double-V Campaign', date: '1942–1945', def: 'Pittsburgh Courier\'s campaign: victory abroad over fascism AND victory at home over racism. Linked WWII to civil rights struggle; set agenda for the postwar civil rights movement.' },
+    { chapter: 'Ch. 22', term: 'Manhattan Project', date: '1942–1945', def: 'Top-secret program to develop atomic weapons — 130,000 workers, $2B. Led to bombs dropped on Hiroshima (Aug. 6) and Nagasaki (Aug. 9), 1945. Inaugurated the nuclear age and Cold War arms race.' },
+    { chapter: 'Ch. 22', term: 'Yalta Conference', date: '1945', def: 'Feb. 1945 — FDR, Churchill, Stalin agreed on occupation zones, UN, and free elections in Eastern Europe (Stalin ignored). Set stage for Cold War divisions; FDR died 2 months later.' },
+    { chapter: 'Ch. 22', term: 'Bretton Woods Conference', date: '1944', def: '44 nations created IMF and World Bank; established dollar as global reserve currency. Designed postwar economic order to prevent another Depression. Cemented U.S. economic dominance.' },
+  ];
+
+  let deck = [];
+  let currentIndex = 0;
+  let known = 0;
+  let unsureList = [];
+  let currentFilter = 'all';
+  let isFlipped = false;
+
+  function buildDeck(filter) {
+    if (filter === 'unsure') {
+      deck = unsureList.length ? [...unsureList] : [...FLASHCARD_DATA];
+    } else if (filter === 'all') {
+      deck = [...FLASHCARD_DATA];
+    } else {
+      deck = FLASHCARD_DATA.filter(c => c.chapter === filter);
+    }
+    currentIndex = 0;
+    known = 0;
+    isFlipped = false;
+    showCard();
+    document.getElementById('fc-score').style.display = 'none';
+    document.getElementById('fc-stage').style.display = '';
+    document.getElementById('fc-action-btns').style.display = '';
+  }
+
+  function showCard() {
+    if (currentIndex >= deck.length) { showScore(); return; }
+    const card = deck[currentIndex];
+    document.getElementById('fc-chapter').textContent = card.chapter;
+    document.getElementById('fc-term').textContent = card.term;
+    document.getElementById('fc-date').textContent = card.date;
+    document.getElementById('fc-definition').textContent = card.def;
+    document.getElementById('fc-counter').textContent = 'Card ' + (currentIndex + 1) + ' of ' + deck.length;
+    // Reset flip
+    const inner = document.getElementById('fc-inner');
+    inner.classList.remove('flipped');
+    isFlipped = false;
+  }
+
+  function flipCard() {
+    const inner = document.getElementById('fc-inner');
+    inner.classList.toggle('flipped');
+    isFlipped = !isFlipped;
+  }
+
+  function markCard(gotIt) {
+    if (!isFlipped) { flipCard(); return; } // require flip first
+    if (gotIt) { known++; }
+    else {
+      if (!unsureList.find(c => c.term === deck[currentIndex].term)) {
+        unsureList.push(deck[currentIndex]);
+      }
+    }
+    currentIndex++;
+    showCard();
+  }
+
+  function showScore() {
+    document.getElementById('fc-stage').style.display = 'none';
+    document.getElementById('fc-action-btns').style.display = 'none';
+    const scoreEl = document.getElementById('fc-score');
+    scoreEl.style.display = 'block';
+    const pct = deck.length ? Math.round((known / deck.length) * 100) : 0;
+    document.getElementById('fc-score-num').textContent = known + '/' + deck.length;
+    const msgs = ['Keep studying — you\'ve got this.', 'Getting there! Review the marked ones.', 'Solid! A few more rounds and you\'ll have it.', 'Strong work! Almost there.', 'Excellent — you know this material.'];
+    document.getElementById('fc-score-msg').textContent = pct === 100 ? '🏆 Perfect round! You know all of these.' : msgs[Math.floor(pct / 25)] || msgs[0];
+    document.getElementById('fc-counter').textContent = 'Round complete';
+  }
+
+  function shuffleDeck() {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    currentIndex = 0; known = 0; isFlipped = false;
+    showCard();
+    document.getElementById('fc-score').style.display = 'none';
+    document.getElementById('fc-stage').style.display = '';
+    document.getElementById('fc-action-btns').style.display = '';
+  }
+
+  function restartDeck() { buildDeck(currentFilter); }
+  function studyUnsure() { currentFilter = 'unsure'; buildDeck('unsure'); setFilterActive(document.getElementById('unsure-filter-btn')); }
+
+  function setFilter(filter, btn) {
+    currentFilter = filter;
+    setFilterActive(btn);
+    buildDeck(filter);
+  }
+
+  function setFilterActive(btn) {
+    document.querySelectorAll('.fc-filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  /* ── INIT ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    initCheckboxes();
+    buildDeck('all');
+  });
+</script>
+</body>
+</html>
