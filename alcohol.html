@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Alcohol &amp; Addiction — Drug Education Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,200;0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05050a;
+  --glass:rgba(218,208,148,0.05);
+  --glass-hi:rgba(230,220,160,0.085);
+  --gb:rgba(228,215,145,0.12);
+  --gb2:rgba(240,228,160,0.22);
+  --text:#cec9a6;
+  --dim:#787060;
+  --haze:#9e9870;
+  --bright:#f2eccc;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);font-family:'DM Sans',sans-serif;font-weight:300;color:var(--text);line-height:1.7;}
+
+/* THREE canvas fills screen behind everything */
+#c{position:fixed;inset:0;z-index:0;}
+
+/* Grain overlay */
+#grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  opacity:.038;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:300px 300px;
+}
+
+/* Vignette */
+#vig{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:radial-gradient(ellipse 80% 70% at 50% 50%, transparent 40%, rgba(5,5,10,0.65) 100%);
+}
+
+/* SLIDE CONTENT layer — sits above everything visual */
+#deck{position:fixed;inset:0;z-index:5;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:72px 6vw 68px;
+  opacity:0;pointer-events:none;
+  transition:opacity .45s cubic-bezier(.4,0,.2,1);
+}
+.slide.vis{opacity:1;pointer-events:all;}
+
+/* NAV */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:20;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 2.4rem;
+  background:rgba(5,5,10,0.5);
+  backdrop-filter:blur(30px) saturate(0.6);
+  border-bottom:1px solid var(--gb);
+}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;letter-spacing:.14em;color:var(--haze);text-shadow:0 0 24px rgba(200,185,80,0.3);}
+#dots{display:flex;gap:6px;}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--dim);border:none;cursor:pointer;padding:0;transition:all .3s;}
+.dot.on{background:var(--haze);transform:scale(1.6);box-shadow:0 0 10px rgba(200,185,90,0.6);}
+#ctr{font-family:'DM Mono',monospace;font-size:.64rem;letter-spacing:.15em;color:var(--dim);}
+
+/* CONTROLS */
+#ctrl{position:fixed;bottom:1.8rem;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:center;gap:1.1rem;}
+.cb{width:44px;height:44px;border-radius:50%;background:var(--glass);backdrop-filter:blur(22px);border:1px solid var(--gb);color:var(--haze);font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s,transform .18s,box-shadow .25s;box-shadow:inset 0 1px 0 rgba(240,228,140,0.09);}
+.cb:hover{background:var(--glass-hi);border-color:var(--gb2);transform:scale(1.1);box-shadow:0 8px 28px rgba(200,185,80,0.15);}
+.cb:active{transform:scale(.94);}
+.cb:disabled{opacity:.18;cursor:default;transform:none!important;}
+#pw{width:160px;height:1.5px;background:rgba(200,185,80,.1);border-radius:2px;overflow:hidden;}
+#pb{height:100%;background:linear-gradient(90deg,var(--haze),var(--bright));border-radius:2px;transition:width .65s cubic-bezier(.76,0,.24,1);box-shadow:0 0 8px rgba(220,205,110,0.45);}
+
+/* SLIDE INDEX badge */
+.slide-idx{
+  position:absolute;bottom:4.5rem;right:2.5rem;
+  font-family:'DM Mono',monospace;font-size:.58rem;
+  letter-spacing:.2em;color:var(--dim);opacity:.5;
+}
+
+/* ── GLASS CARD ── */
+.gc{
+  background:var(--glass);
+  backdrop-filter:blur(26px) saturate(1.15);
+  -webkit-backdrop-filter:blur(26px) saturate(1.15);
+  border:1px solid var(--gb);
+  border-radius:18px;
+  box-shadow:inset 0 1px 0 rgba(240,228,140,0.08),0 4px 24px rgba(0,0,0,.3);
+  transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;
+}
+.gc:hover{background:var(--glass-hi);border-color:var(--gb2);transform:translateY(-2px);box-shadow:inset 0 1px 0 rgba(240,228,140,0.14),0 16px 40px rgba(0,0,0,.35),0 0 0 1px rgba(200,185,80,.04);}
+
+/* TYPE */
+.lbl{font-family:'DM Mono',monospace;font-size:.6rem;letter-spacing:.32em;color:var(--haze);text-transform:uppercase;opacity:.6;margin-bottom:.42rem;}
+.ttl{font-family:'Bebas Neue',sans-serif;font-size:clamp(2.4rem,4.6vw,4rem);letter-spacing:.05em;line-height:.95;color:var(--bright);text-shadow:0 0 60px rgba(240,228,140,0.18),0 2px 8px rgba(0,0,0,.95);margin-bottom:0;}
+.ttl span{color:#fffae0;text-shadow:0 0 40px rgba(255,248,180,.6),0 0 100px rgba(240,228,120,.3);}
+.ql{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:.28rem;opacity:.7;}
+.qh{font-size:.7rem;font-weight:700;color:var(--haze);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.42rem;}
+.qb{font-size:.84rem;color:var(--text);line-height:1.72;font-weight:300;}
+.qb strong{color:var(--bright);font-weight:500;}
+.tag{display:inline-block;background:rgba(210,200,120,.07);border:1px solid rgba(210,200,120,.15);color:var(--haze);padding:.2rem .62rem;font-size:.68rem;font-family:'DM Mono',monospace;letter-spacing:.04em;border-radius:999px;margin:.17rem .17rem 0 0;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.8rem;}
+.g2 .full{grid-column:1/-1;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.8rem;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;}
+.g2s{display:grid;grid-template-columns:1fr 1fr;gap:.46rem;}
+.inner{width:100%;max-width:960px;}
+.p{padding:1.3rem 1.5rem;}
+
+/* HERO SLIDE */
+#s1{text-align:center;}
+.eye{font-family:'DM Mono',monospace;font-size:.66rem;letter-spacing:.3em;color:var(--haze);text-transform:uppercase;margin-bottom:1.4rem;opacity:.55;}
+.h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(5rem,12.5vw,10.5rem);letter-spacing:.03em;line-height:.88;color:var(--bright);text-shadow:0 0 80px rgba(240,228,140,.3),0 0 160px rgba(220,205,100,.12),0 6px 16px rgba(0,0,0,.98);}
+.h1 span{color:#fffbe8;text-shadow:0 0 50px rgba(255,250,180,.68),0 0 120px rgba(240,228,120,.35),0 0 240px rgba(220,200,80,.18);}
+.hsub{font-size:.94rem;color:var(--dim);max-width:440px;margin:1.3rem auto 0;font-weight:300;line-height:1.65;}
+.srow{display:flex;gap:.82rem;margin-top:2.5rem;justify-content:center;flex-wrap:wrap;}
+.sp{padding:.88rem 1.4rem;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--gb);border-radius:14px;box-shadow:inset 0 1px 0 rgba(240,228,140,.08),0 4px 20px rgba(0,0,0,.3);text-align:center;min-width:102px;}
+.sn{font-family:'Bebas Neue',sans-serif;font-size:2.1rem;line-height:1;color:var(--bright);text-shadow:0 0 22px rgba(220,205,110,.32);}
+.sl{font-size:.57rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;margin-top:.14rem;font-family:'DM Mono',monospace;}
+
+/* EFFECT ICONS */
+.ei{width:28px;height:28px;border-radius:7px;background:rgba(200,185,80,.09);border:1px solid rgba(200,185,80,.16);display:flex;align-items:center;justify-content:center;margin-bottom:.68rem;}
+.ei svg{width:13px;height:13px;fill:none;stroke:var(--haze);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;}
+.etl{font-family:'Bebas Neue',sans-serif;font-size:.9rem;letter-spacing:.07em;color:var(--bright);margin-bottom:.3rem;}
+.ed{font-size:.77rem;color:var(--dim);line-height:1.62;}
+
+/* DANGER */
+.dg{background:rgba(200,185,80,.04);backdrop-filter:blur(20px);border:1px solid rgba(200,185,80,.09);border-radius:14px;padding:1.2rem 1.4rem;transition:background .3s,transform .3s;}
+.dg:hover{background:rgba(200,185,80,.07);transform:translateY(-2px);}
+.dt{font-size:.67rem;font-weight:700;color:var(--haze);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.18rem;}
+.dd{font-size:.76rem;color:var(--dim);line-height:1.6;}
+
+/* MYTHS */
+.ms{display:flex;flex-direction:column;gap:.55rem;margin-top:.8rem;}
+.mc{background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:12px;padding:.85rem 1.3rem;display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;box-shadow:inset 0 1px 0 rgba(240,228,140,.06),0 3px 16px rgba(0,0,0,.25);transition:background .3s,border-color .3s;}
+.mc:hover{background:var(--glass-hi);border-color:var(--gb2);}
+.bdg{font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;font-family:'DM Mono',monospace;padding:.15rem .48rem;border-radius:999px;display:inline-block;margin-bottom:.24rem;}
+.bm{background:rgba(200,180,80,.09);color:var(--haze);border:1px solid rgba(200,180,80,.17);}
+.bf{background:rgba(120,175,100,.07);color:#7aaa6a;border:1px solid rgba(120,175,100,.15);}
+.mt{font-size:.8rem;line-height:1.62;color:var(--text);}
+
+/* CELEBRITY */
+.cl{display:grid;grid-template-columns:220px 1fr;gap:1.15rem;margin-top:.8rem;align-items:start;}
+.cc{background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:16px;padding:1.4rem 1.25rem;text-align:center;box-shadow:inset 0 1px 0 rgba(240,228,140,.07),0 4px 24px rgba(0,0,0,.3);}
+.cm{width:60px;height:60px;border-radius:50%;background:rgba(200,185,80,.07);border:1px solid rgba(200,185,80,.14);display:flex;align-items:center;justify-content:center;margin:0 auto .82rem;font-family:'Bebas Neue',sans-serif;font-size:1.45rem;color:rgba(200,185,80,.28);}
+.cn{font-family:'Bebas Neue',sans-serif;font-size:1.25rem;letter-spacing:.07em;color:var(--bright);text-shadow:0 0 20px rgba(220,205,110,.17);margin-bottom:.12rem;}
+.cr{font-size:.6rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase;font-family:'DM Mono',monospace;}
+.sp2{display:inline-flex;align-items:center;gap:.35rem;margin-top:.6rem;background:rgba(100,155,80,.07);border:1px solid rgba(100,155,80,.17);padding:.24rem .68rem;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:#75a865;font-family:'DM Mono',monospace;border-radius:999px;}
+.sd{width:4px;height:4px;border-radius:50%;background:#75a865;animation:sd 2.5s ease-in-out infinite;}
+@keyframes sd{0%,100%{opacity:1}50%{opacity:.25}}
+.tl{margin-top:.95rem;text-align:left;}
+.tr{display:grid;grid-template-columns:52px 1fr;gap:.38rem;padding:.38rem 0;border-bottom:1px solid rgba(200,185,80,.06);}
+.ty{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--haze);opacity:.6;}
+.tx{font-size:.71rem;color:var(--text);line-height:1.38;}
+.cqs{display:flex;flex-direction:column;gap:.58rem;}
+.cq{background:var(--glass);backdrop-filter:blur(22px);border:1px solid var(--gb);border-radius:12px;padding:.9rem 1.2rem;box-shadow:inset 0 1px 0 rgba(240,228,140,.06),0 3px 16px rgba(0,0,0,.25);transition:background .3s,border-color .3s;}
+.cq:hover{background:var(--glass-hi);border-color:var(--gb2);}
+.cq h3{font-size:.63rem;font-weight:700;color:var(--haze);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem;}
+.cq p{font-size:.78rem;color:var(--text);line-height:1.65;font-weight:300;}
+.cq p strong{color:var(--bright);font-weight:500;}
+
+/* TREATMENT */
+.tc{background:var(--glass);backdrop-filter:blur(24px);border:1px solid var(--gb);border-radius:17px;padding:1.55rem 1.3rem;box-shadow:inset 0 1px 0 rgba(240,228,140,.07),0 4px 24px rgba(0,0,0,.3);transition:background .3s,border-color .3s,transform .3s,box-shadow .3s;}
+.tc:hover{background:var(--glass-hi);border-color:var(--gb2);transform:translateY(-3px);box-shadow:inset 0 1px 0 rgba(240,228,140,.13),0 18px 40px rgba(0,0,0,.35);}
+.tn{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:rgba(200,190,100,.07);line-height:1;margin-bottom:.58rem;}
+.ttt{font-size:.76rem;font-weight:700;color:var(--bright);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem;}
+.td{font-size:.75rem;color:var(--dim);line-height:1.65;}
+.td strong{color:var(--text);font-weight:500;}
+
+/* SOURCES */
+.si{background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--gb);border-radius:11px;padding:.78rem .92rem;box-shadow:0 3px 12px rgba(0,0,0,.22);transition:background .3s,border-color .3s;}
+.si:hover{background:var(--glass-hi);border-color:var(--gb2);}
+.st{font-size:.75rem;color:var(--text);line-height:1.35;margin-bottom:.14rem;}
+.st em{color:var(--dim);font-style:italic;}
+.su{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--haze);opacity:.65;}
+.su a{color:inherit;text-decoration:none;}
+.su a:hover{opacity:1;text-decoration:underline;}
+
+@media(max-width:768px){
+  .g2,.g3,.g4,.g2s{grid-template-columns:1fr;}
+  .g2 .full{grid-column:1;}
+  .cl{grid-template-columns:1fr;}
+  #dots{display:none;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+<div id="grain"></div>
+<div id="vig"></div>
+
+<nav id="nav">
+  <div class="logo">Alcohol &amp; Addiction</div>
+  <div id="dots"></div>
+  <div id="ctr">01 / 09</div>
+</nav>
+
+<div id="deck">
+
+<!-- S1 HERO -->
+<div class="slide" id="s1">
+  <p class="eye">Drug Education Project &nbsp;&middot;&nbsp; Health Class &nbsp;&middot;&nbsp; AITE</p>
+  <h1 class="h1"><span>Alcohol</span><br>&amp; Addiction</h1>
+  <p class="hsub">A comprehensive look at one of the world&rsquo;s most widely used and most misused substances &mdash; and a celebrity whose life it nearly destroyed.</p>
+  <div class="srow">
+    <div class="sp"><div class="sn">88K</div><div class="sl">Deaths / year</div></div>
+    <div class="sp"><div class="sn">5th</div><div class="sl">Preventable cause</div></div>
+    <div class="sp"><div class="sn">28.9M</div><div class="sl">Americans with AUD</div></div>
+    <div class="sp"><div class="sn">&minus;10yr</div><div class="sl">Life expectancy lost</div></div>
+  </div>
+  <div class="slide-idx">01</div>
+</div>
+
+<!-- S2 THE DRUG -->
+<div class="slide" id="s2">
+  <div class="inner">
+    <p class="lbl">01 &mdash; The Drug</p>
+    <h2 class="ttl">What Is <span>Alcohol?</span></h2>
+    <div class="g2" style="margin-top:.86rem;">
+      <div class="gc p">
+        <div class="ql">Q 01</div><div class="qh">The Drug &amp; Street Names</div>
+        <div class="qb">The active compound is <strong>ethyl alcohol (ethanol)</strong> &mdash; found in beer, wine, and distilled spirits.
+          <div style="margin-top:.6rem;"><span class="tag">Booze</span><span class="tag">Hooch</span><span class="tag">The Sauce</span><span class="tag">Spirits</span><span class="tag">Liquid Courage</span><span class="tag">Rotgut</span><span class="tag">Brew</span><span class="tag">Juice</span></div>
+        </div>
+      </div>
+      <div class="gc p">
+        <div class="ql">Q 02</div><div class="qh">Type of Drug</div>
+        <div class="qb">Alcohol is a <strong>Central Nervous System (CNS) Depressant</strong>. It slows brain activity and impairs judgment, coordination, and memory &mdash; despite the widespread belief it&rsquo;s a stimulant because it initially lowers inhibitions.</div>
+      </div>
+      <div class="gc p full">
+        <div class="ql">Q 03</div><div class="qh">History &amp; Important Facts</div>
+        <div class="qb">Alcohol use dates back <strong>thousands of years</strong> across nearly every civilization. Benjamin Rush (1700s) first called alcoholism a medical condition &mdash; not a moral failure. Prohibition (1920&ndash;1933) failed; production went underground. In <strong>1935</strong>, Bill Wilson and Dr. Bob Smith founded <strong>Alcoholics Anonymous</strong>. Clinicians now prefer <strong>Alcohol Use Disorder (AUD)</strong> to reduce stigma. Alcohol kills ~88,000 Americans annually &mdash; the 5th-leading preventable cause of death.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-idx">02</div>
+</div>
+
+<!-- S3 ACCESS -->
+<div class="slide" id="s3">
+  <div class="inner">
+    <p class="lbl">01 &mdash; The Drug (cont.)</p>
+    <h2 class="ttl">Access, Cost<br>&amp; <span>Addiction</span></h2>
+    <div class="g2" style="margin-top:.86rem;">
+      <div class="gc p">
+        <div class="ql">Q 04</div><div class="qh">How It Is Taken</div>
+        <div class="qb">Almost exclusively <strong>consumed orally</strong>: beer (~5% ABV), wine (~12%), spirits (~40%). A 12 oz beer, 5 oz wine, and 1.5 oz shot all contain one <strong>standard drink</strong> &mdash; identical alcohol regardless of form.</div>
+      </div>
+      <div class="gc p">
+        <div class="ql">Q 07</div><div class="qh">Access &amp; Cost</div>
+        <div class="qb"><strong>Legally sold</strong> to anyone 21+ in the U.S. A six-pack ~$8&ndash;15, wine ~$10&ndash;30, liquor ~$15&ndash;50+. <strong>Low cost and legal status</strong> make it the most accessible addictive substance in existence &mdash; available at every corner store.</div>
+      </div>
+      <div class="gc p">
+        <div class="ql">Q 08</div><div class="qh">Why People Become Addicted</div>
+        <div class="qb">Alcohol floods the brain&rsquo;s <strong>dopamine reward system</strong>, creating a loop the brain is wired to repeat. The brain undergoes <strong>neuroadaptation</strong> &mdash; rewiring to require alcohol for normal function. Genetics account for 50&ndash;60% of AUD risk; those with an addicted parent are <strong>3&ndash;4&times; more likely</strong> to develop AUD.</div>
+      </div>
+      <div class="gc p">
+        <div class="ql">Q 10</div><div class="qh">Dangers</div>
+        <div class="qb"><strong>Short-term:</strong> impaired driving, blackouts, alcohol poisoning, violence.<br><strong>Long-term:</strong> liver disease, heart failure, brain damage, 7 types of cancer. More U.S. deaths annually than <strong>all illegal drugs combined</strong>.</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-idx">03</div>
+</div>
+
+<!-- S4 BODY EFFECTS -->
+<div class="slide" id="s4">
+  <div class="inner">
+    <p class="lbl">02 &mdash; Effects on the Body</p>
+    <h2 class="ttl">What Alcohol <span>Does</span></h2>
+    <p style="font-size:.81rem;color:var(--dim);margin-top:.26rem;">Once in the bloodstream, alcohol triggers immediate changes across multiple organ systems.</p>
+    <div class="g3" style="margin-top:.8rem;">
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg></div><div class="etl">Brain</div><div class="ed">Impairs judgment, slows reaction time, reduces inhibitions. Long-term: dementia, memory loss, Wernicke&ndash;Korsakoff syndrome.</div></div>
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="etl">Heart</div><div class="ed">Causes arrhythmia, weakens heart muscle, raises blood pressure &mdash; dramatically increasing stroke risk over time.</div></div>
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M7 12h10"/></svg></div><div class="etl">Liver</div><div class="ed">Heavy use causes fatty liver, hepatitis, and irreversible cirrhosis &mdash; permanent scarring that destroys liver function.</div></div>
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="etl">Cancer Risk</div><div class="ed">Raises risk of mouth, throat, liver, esophagus, colon, and breast cancers. WHO Group 1 carcinogen &mdash; no safe level.</div></div>
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg></div><div class="etl">Body Temperature</div><div class="ed">Dilates skin vessels &mdash; you feel warm while core temperature actually drops. Hypothermia risk is significantly elevated.</div></div>
+      <div class="gc p"><div class="ei"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div><div class="etl">Fetal Development</div><div class="ed">Drinking during pregnancy causes Fetal Alcohol Syndrome &mdash; permanent brain damage and physical abnormalities. No safe amount exists.</div></div>
+    </div>
+  </div>
+  <div class="slide-idx">04</div>
+</div>
+
+<!-- S5 ADDICTION SCIENCE -->
+<div class="slide" id="s5">
+  <div class="inner">
+    <p class="lbl">03 &mdash; Addiction Science</p>
+    <h2 class="ttl">The Science of <span>Addiction</span></h2>
+    <div class="g2" style="margin-top:.8rem;">
+      <div class="gc p">
+        <div class="ql">Q 08</div><div class="qh">Why People Get Addicted</div>
+        <div class="qb">Alcohol floods the brain&rsquo;s <strong>dopamine reward pathway</strong>, creating a pleasure loop the brain is designed to repeat. With continued use, the brain undergoes <strong>neuroadaptation</strong> &mdash; rewiring to require alcohol for normal function. Genetics account for 50&ndash;60% of AUD risk. Environmental factors &mdash; trauma, stress, mental illness, peer pressure &mdash; account for the rest.</div>
+      </div>
+      <div class="gc p">
+        <div class="ql">Q 10</div><div class="qh">Why It&rsquo;s Uniquely Dangerous</div>
+        <div class="qb">Unlike most drugs, stopping alcohol <strong>cold turkey can be fatal</strong> &mdash; severe withdrawal causes life-threatening seizures and delirium tremens. It reduces life expectancy by <strong>10 years</strong>. It is a known carcinogen linked to 7 cancers. It kills more Americans than all illegal drugs combined &mdash; and it&rsquo;s sold legally at every grocery store.</div>
+      </div>
+    </div>
+    <div class="g2" style="margin-top:.8rem;">
+      <div class="dg"><div class="dt">Drunk Driving</div><div class="dd">One person dies every 45 minutes in a drunk-driving crash &mdash; the single largest cause of U.S. traffic fatalities.</div></div>
+      <div class="dg"><div class="dt">Alcohol Poisoning</div><div class="dd">The amount needed to pass someone out is dangerously close to a lethal dose. Passing out from alcohol is a medical emergency.</div></div>
+      <div class="dg"><div class="dt">Withdrawal Risk</div><div class="dd">Heavy drinkers cannot quit without medical supervision. Benzodiazepines are required to prevent fatal seizures during withdrawal.</div></div>
+      <div class="dg"><div class="dt">Reduced Life Expectancy</div><div class="dd">Chronic alcoholism costs an average of 10 years of life &mdash; 88,000 Americans per year. The 5th-leading preventable cause of death.</div></div>
+    </div>
+  </div>
+  <div class="slide-idx">05</div>
+</div>
+
+<!-- S6 MYTHS -->
+<div class="slide" id="s6">
+  <div class="inner">
+    <p class="lbl">04 &mdash; Myths vs. Facts</p>
+    <h2 class="ttl">Common <span>Myths</span></h2>
+    <div class="ms">
+      <div class="mc"><div><span class="bdg bm">Myth</span><p class="mt">Coffee or a cold shower will sober you up.</p></div><div><span class="bdg bf">Fact</span><p class="mt">Only time metabolizes alcohol. Coffee makes you feel alert while remaining fully impaired &mdash; making you more dangerous, not safer.</p></div></div>
+      <div class="mc"><div><span class="bdg bm">Myth</span><p class="mt">Beer is safer than hard liquor.</p></div><div><span class="bdg bf">Fact</span><p class="mt">A 12 oz beer, 5 oz wine, and 1.5 oz shot contain identical amounts of alcohol. Only total consumption matters &mdash; not the form.</p></div></div>
+      <div class="mc"><div><span class="bdg bm">Myth</span><p class="mt">High tolerance means you&rsquo;re fine.</p></div><div><span class="bdg bf">Fact</span><p class="mt">Tolerance is a warning sign of neuroadaptation &mdash; your brain has rewired around alcohol. Internal damage continues regardless of how normal you feel.</p></div></div>
+      <div class="mc"><div><span class="bdg bm">Myth</span><p class="mt">You have to drink every day to be an alcoholic.</p></div><div><span class="bdg bf">Fact</span><p class="mt">AUD is defined by inability to control drinking once started &mdash; not frequency. Weekend binge drinking fully qualifies as Alcohol Use Disorder.</p></div></div>
+      <div class="mc"><div><span class="bdg bm">Myth</span><p class="mt">Red wine is good for your heart.</p></div><div><span class="bdg bf">Fact</span><p class="mt">Early studies were flawed and correlational. The WHO states there is no safe level of alcohol. It is a Group 1 carcinogen.</p></div></div>
+    </div>
+  </div>
+  <div class="slide-idx">06</div>
+</div>
+
+<!-- S7 CELEBRITY -->
+<div class="slide" id="s7">
+  <div class="inner">
+    <p class="lbl">05 &mdash; Celebrity Case Study</p>
+    <h2 class="ttl">Bradley <span>Cooper</span></h2>
+    <div class="cl">
+      <div>
+        <div class="cc">
+          <div class="cm">BC</div>
+          <div class="cn">Bradley Cooper</div>
+          <div class="cr">Actor &middot; Director &middot; Producer</div>
+          <div style="margin-top:.5rem;"><span class="sp2"><span class="sd"></span>Sober since 2004</span></div>
+          <div class="tl">
+            <div class="tr"><div class="ty">1975</div><div class="tx">Born, Philadelphia PA</div></div>
+            <div class="tr"><div class="ty">1997</div><div class="tx">Georgetown BA in English</div></div>
+            <div class="tr"><div class="ty">Early '00s</div><div class="tx"><em>Alias</em> &mdash; fired; addiction deepens</div></div>
+            <div class="tr"><div class="ty">2004</div><div class="tx">Will Arnett intervenes; sober at 29</div></div>
+            <div class="tr"><div class="ty">2009</div><div class="tx"><em>The Hangover</em> &mdash; breakthrough</div></div>
+            <div class="tr"><div class="ty">2018</div><div class="tx"><em>A Star Is Born</em> &mdash; 8 Oscar noms.</div></div>
+            <div class="tr"><div class="ty">2023</div><div class="tx"><em>Maestro</em>; 20+ years sober</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cqs">
+        <div class="cq"><h3>Who Is He?</h3><p>Award-winning American actor, director, and producer. Georgetown BA, Actors Studio MFA. Multiple Academy Award nominations across acting, directing, and producing.</p></div>
+        <div class="cq"><h3>Substance Use</h3><p>Battled both <strong>alcohol and cocaine addiction</strong> throughout his 20s &mdash; using substances to cope with a stalling career and severe imposter syndrome. He has described suicidal thoughts during this period.</p></div>
+        <div class="cq"><h3>Impact on Life &amp; Career</h3><p>Fired from <em>Alias</em>, severed his Achilles tendon, hit rock bottom. Friend Will Arnett confronted him in July 2004: <em>&ldquo;That was the first time I realized I had a problem. Will is the reason I got sober.&rdquo;</em> His entire addiction predates his fame &mdash; by <em>The Hangover</em> he had been clean for 5 years.</p></div>
+        <div class="cq"><h3>Current Status</h3><p><strong>Alive, healthy, sober</strong> &mdash; over 20 years clean. He drew directly on his addiction to portray an alcoholic rock star in <em>A Star Is Born</em>, praised universally for its raw authenticity. He credits sobriety as the foundation of everything.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-idx">07</div>
+</div>
+
+<!-- S8 TREATMENT -->
+<div class="slide" id="s8">
+  <div class="inner">
+    <p class="lbl">06 &mdash; Rehabilitation</p>
+    <h2 class="ttl">Treatment &amp; <span>Recovery</span></h2>
+    <p style="font-size:.81rem;color:var(--dim);margin-top:.26rem;">Treatment is most effective when multiple approaches are combined. Recovery is possible &mdash; millions have done it.</p>
+    <div class="g4" style="margin-top:.8rem;">
+      <div class="tc"><div class="tn">01</div><div class="ttt">Medical Detox</div><div class="td">The most critical first step. Alcohol withdrawal can be fatal &mdash; benzodiazepines prevent seizures and delirium tremens during medically supervised withdrawal.</div></div>
+      <div class="tc"><div class="tn">02</div><div class="ttt">Medication</div><div class="td"><strong>Naltrexone</strong> blocks pleasure effects. <strong>Acamprosate</strong> restores brain chemistry. <strong>Disulfiram</strong> causes illness if alcohol is consumed &mdash; a powerful behavioral deterrent.</div></div>
+      <div class="tc"><div class="tn">03</div><div class="ttt">Therapy</div><div class="td">Cognitive Behavioral Therapy (CBT), motivational interviewing, and family therapy address the psychological roots of addiction and rebuild self-image and coping skills.</div></div>
+      <div class="tc"><div class="tn">04</div><div class="ttt">Support Groups</div><div class="td"><strong>Alcoholics Anonymous (AA)</strong> and SMART Recovery offer long-term community and accountability. Sustained peer support is the #1 predictor of lasting sobriety.</div></div>
+    </div>
+  </div>
+  <div class="slide-idx">08</div>
+</div>
+
+<!-- S9 SOURCES -->
+<div class="slide" id="s9">
+  <div class="inner">
+    <p class="lbl">07 &mdash; References</p>
+    <h2 class="ttl">Works <span>Cited</span></h2>
+    <div class="g2s" style="margin-top:.8rem;">
+      <div class="si"><div class="st">National Institute on Alcohol Abuse and Alcoholism (NIAAA). <em>Overview of Alcohol Consumption.</em></div><div class="su"><a href="https://www.niaaa.nih.gov" target="_blank">niaaa.nih.gov</a></div></div>
+      <div class="si"><div class="st">American Addiction Centers. <em>Alcohol and Drug Abuse Statistics.</em></div><div class="su"><a href="https://americanaddictioncenters.org" target="_blank">americanaddictioncenters.org</a></div></div>
+      <div class="si"><div class="st">Wikipedia. <em>Alcoholism.</em></div><div class="su"><a href="https://en.wikipedia.org/wiki/Alcoholism" target="_blank">en.wikipedia.org/wiki/Alcoholism</a></div></div>
+      <div class="si"><div class="st">Healthline. <em>30 Facts About Alcohol, Plus 5 Myths.</em></div><div class="su"><a href="https://www.healthline.com/health/facts-about-alcohol" target="_blank">healthline.com</a></div></div>
+      <div class="si"><div class="st">Mayo Clinic Press. <em>Common Myths About Alcohol Use.</em></div><div class="su"><a href="https://mcpress.mayoclinic.org" target="_blank">mcpress.mayoclinic.org</a></div></div>
+      <div class="si"><div class="st">MedlinePlus. <em>Myths About Drinking Alcohol.</em></div><div class="su"><a href="https://medlineplus.gov/ency/patientinstructions/000856.htm" target="_blank">medlineplus.gov</a></div></div>
+      <div class="si"><div class="st">CNN. <em>Bradley Cooper talks about being addicted to cocaine in his 20s.</em></div><div class="su"><a href="https://www.cnn.com/2022/06/15/entertainment/bradley-cooper-addiction/index.html" target="_blank">cnn.com</a></div></div>
+      <div class="si"><div class="st">Variety. <em>Bradley Cooper on How Past Addiction Helped Him in A Star Is Born.</em></div><div class="su"><a href="https://variety.com/2023/film/news/bradley-cooper-sober-a-star-is-born-addict-1235701045/" target="_blank">variety.com</a></div></div>
+      <div class="si"><div class="st">Gratitude Lodge. <em>Bradley Cooper&rsquo;s Sobriety and Recovery Journey.</em></div><div class="su"><a href="https://www.gratitudelodge.com/bradley-cooper-sobriety/" target="_blank">gratitudelodge.com</a></div></div>
+      <div class="si"><div class="st">Spectrum Health Systems. <em>Celebrity Recovery Spotlight: Bradley Cooper.</em></div><div class="su"><a href="https://www.spectrumhealthsystems.org" target="_blank">spectrumhealthsystems.org</a></div></div>
+      <div class="si"><div class="st">Shatterproof. <em>The History of Addiction.</em></div><div class="su"><a href="https://www.shatterproof.org/blog/history-addiction" target="_blank">shatterproof.org</a></div></div>
+      <div class="si"><div class="st">Missouri Dept. of Mental Health. <em>Myths About Alcohol.</em></div><div class="su"><a href="https://dmh.mo.gov/alcohol-drug/satop/myths" target="_blank">dmh.mo.gov</a></div></div>
+    </div>
+  </div>
+  <div class="slide-idx">09</div>
+</div>
+
+</div><!-- /deck -->
+
+<div id="ctrl">
+  <button class="cb" id="bp" disabled>&#8592;</button>
+  <div id="pw"><div id="pb" style="width:11.11%"></div></div>
+  <button class="cb" id="bn">&#8594;</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   IMAGE MANIFEST
+   Using Unsplash Source API — free, no attribution required,
+   returns a random photo matching the query at the given size.
+   Each slide gets its own thematic background image layered
+   with depth parallax offset driven by mouse position.
+═══════════════════════════════════════════════════════════════ */
+const IMG_W = 1920, IMG_H = 1080;
+
+// Direct Unsplash source URLs — each returns a photo for that query
+const SLIDE_IMAGES = [
+  // S1 Hero — whiskey glass dark moody
+  `https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S2 What is alcohol — bottles bar
+  `https://images.unsplash.com/photo-1516997121675-4c2d1684aa3e?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S3 Access / cost — liquor store shelf
+  `https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S4 Body effects — dark dramatic
+  `https://images.unsplash.com/photo-1574027542338-98e75acfd385?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S5 Addiction science — neon bar
+  `https://images.unsplash.com/photo-1470337458703-46ad1756a187?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S6 Myths — wine glass close-up
+  `https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S7 Celebrity — cinematic portrait light leak
+  `https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S8 Treatment — clean dawn hope
+  `https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+  // S9 Sources — library books study
+  `https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=${IMG_W}&h=${IMG_H}&fit=crop&auto=format`,
+];
+
+/* ═══════════════════════════════════════════════════════════════
+   THREE.JS SETUP
+═══════════════════════════════════════════════════════════════ */
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.autoClear = false;
+
+const scene  = new THREE.Scene();
+const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+/* Full-screen quad */
+const quad = new THREE.PlaneBufferGeometry(2, 2);
+
+/* ── VERTEX SHADER (shared) ── */
+const VS = `varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position, 1.0); }`;
+
+/* ═══════════════════════════════════════════════════════════════
+   BACKGROUND SCENE
+   Two layered image planes per slide:
+     Layer 0 (bg)  — fills screen, slow parallax
+     Layer 1 (mid) — slightly scaled up, medium parallax
+   These give the Lando-style depth without needing 3D geometry.
+═══════════════════════════════════════════════════════════════ */
+
+// Image material — shows a texture with fit-cover UV + parallax offset + dark tint overlay + haze vignette
+function makeImageMat(tex) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uTex:      { value: tex },
+      uOffset:   { value: new THREE.Vector2(0, 0) }, // parallax
+      uScale:    { value: 1.0 },
+      uAlpha:    { value: 1.0 },
+      uRes:      { value: new THREE.Vector2(innerWidth, innerHeight) },
+      uImgRes:   { value: new THREE.Vector2(IMG_W, IMG_H) },
+      uDark:     { value: 0.62 },  // darken multiplier (0=black, 1=full)
+    },
+    vertexShader: VS,
+    fragmentShader: `
+      precision highp float;
+      varying vec2 vUv;
+      uniform sampler2D uTex;
+      uniform vec2 uOffset;
+      uniform float uScale;
+      uniform float uAlpha;
+      uniform vec2 uRes;
+      uniform vec2 uImgRes;
+      uniform float uDark;
+
+      void main() {
+        // Cover fit UV
+        vec2 screenAR = uRes / min(uRes.x, uRes.y);
+        vec2 imgAR    = uImgRes / min(uImgRes.x, uImgRes.y);
+        vec2 scale    = screenAR / imgAR;
+        float maxScale = max(scale.x, scale.y) * uScale;
+        vec2 uv = (vUv - 0.5) / maxScale + 0.5 + uOffset;
+        uv = clamp(uv, 0.0, 1.0);
+
+        vec4 col = texture2D(uTex, uv);
+
+        // Amber haze tint on top of image
+        vec3 haze = vec3(0.14, 0.10, 0.02);
+        col.rgb = mix(col.rgb, haze, 0.28);
+
+        // Darken
+        col.rgb *= uDark;
+
+        // Vignette
+        vec2 vc = vUv * 2.0 - 1.0;
+        float vig = 1.0 - dot(vc * 0.55, vc * 0.55);
+        vig = clamp(pow(vig, 0.7), 0.0, 1.0);
+        col.rgb *= mix(0.25, 1.0, vig);
+
+        gl_FragColor = vec4(col.rgb, uAlpha);
+      }
+    `,
+    transparent: true,
+    depthTest: false,
+  });
+}
+
+/* ── TRANSITION / WARP SHADER ── */
+// This is the money shot. Samples two full-screen textures (FROM render target, TO render target)
+// and applies:
+//   - Multi-layer fBm displacement warping both UVs (intensity peaks at p=0.5)
+//   - Chromatic aberration (R/G/B channels drift apart)
+//   - Organic noise-threshold dissolve (not a flat fade — edges eat into each other like ink in water)
+//   - Pixelation burst at exact midpoint
+//   - Amber light-leak flash
+//   - Vignette crush
+const warpMat = new THREE.ShaderMaterial({
+  uniforms: {
+    uFrom:     { value: null },
+    uTo:       { value: null },
+    uProg:     { value: 0.0 },
+    uTime:     { value: 0.0 },
+    uDir:      { value: 1.0 },
+    uRes:      { value: new THREE.Vector2(innerWidth, innerHeight) },
+  },
+  vertexShader: VS,
+  fragmentShader: `
+    precision highp float;
+    varying vec2 vUv;
+    uniform sampler2D uFrom;
+    uniform sampler2D uTo;
+    uniform float uProg;
+    uniform float uTime;
+    uniform float uDir;
+    uniform vec2  uRes;
+
+    // ── Noise ──
+    float rnd(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7))) * 43758.5453); }
+    float ns(vec2 p){
+      vec2 i = floor(p), f = fract(p);
+      f = f*f*(3.0-2.0*f);
+      return mix(
+        mix(rnd(i), rnd(i+vec2(1,0)), f.x),
+        mix(rnd(i+vec2(0,1)), rnd(i+vec2(1,1)), f.x),
+        f.y
+      );
+    }
+    float fbm(vec2 p){
+      float v=0.0, a=0.5;
+      for(int i=0;i<7;i++){
+        v += a * ns(p);
+        p  = p * 2.1 + vec2(1.7+float(i)*0.3, 9.2-float(i)*0.5);
+        a *= 0.47;
+      }
+      return v;
+    }
+
+    void main(){
+      vec2 uv = vUv;
+      float p  = uProg;
+      float t  = uTime;
+
+      // Bell: 0 at start/end, 1 at midpoint
+      float bell  = sin(p * 3.14159265);
+      float bell2 = bell * bell;
+
+      // ── 3-layer turbulent displacement ──
+      vec2 s1 = uv * 3.0 + vec2(t*0.24*uDir,  t*0.17);
+      vec2 d1; d1.x = fbm(s1); d1.y = fbm(s1 + vec2(5.2, 1.3));
+      d1 = (d1 - 0.5) * 2.0;
+
+      vec2 s2 = uv * 6.0 + vec2(t*-0.15, t*0.31);
+      vec2 d2; d2.x = fbm(s2 + vec2(1.7,9.2)); d2.y = fbm(s2 + vec2(8.3,2.8));
+      d2 = (d2 - 0.5) * 2.0;
+
+      vec2 s3 = uv * 1.6 + vec2(t*0.09, t*-0.22);
+      vec2 d3; d3.x = fbm(s3); d3.y = fbm(s3 + vec2(3.1, 6.7));
+      d3 = (d3 - 0.5) * 2.0;
+
+      // Combined warp — peaks at bell peak, direction-aware
+      vec2 disp = (d1*0.52 + d2*0.30 + d3*0.18) * bell * 0.60 * vec2(uDir, 1.0);
+
+      // ── Pixelation burst at midpoint ──
+      float pixPeak = max(0.0, 1.0 - abs(p - 0.5) * 8.5);
+      float pxSz = 1.0 + pixPeak * 60.0;
+      vec2 pixUv = floor(uv * uRes / pxSz) * pxSz / uRes;
+      vec2 base  = mix(uv, pixUv, pixPeak * 0.68);
+
+      // ── Chromatic aberration ──
+      float ab = bell * 0.028;
+      vec2 uvR = clamp(base + disp + vec2( ab, -ab*0.7), 0.0, 1.0);
+      vec2 uvG = clamp(base + disp,                       0.0, 1.0);
+      vec2 uvB = clamp(base + disp + vec2(-ab,  ab*0.7), 0.0, 1.0);
+
+      // ── Ink-water noise dissolve mask ──
+      // A noise field determines which pixels dissolve first — organic, not uniform
+      float noiseD = fbm(uv * 3.5 + vec2(t * 0.4 * uDir, 0.0));
+      float edge   = 0.22;
+      float mask   = smoothstep(p - edge, p + edge, noiseD);
+
+      // Sample FROM (leaving)
+      vec3 fCol = vec3(
+        texture2D(uFrom, uvR).r,
+        texture2D(uFrom, uvG).g,
+        texture2D(uFrom, uvB).b
+      );
+
+      // Sample TO (arriving)
+      vec3 tCol = vec3(
+        texture2D(uTo, uvR).r,
+        texture2D(uTo, uvG).g,
+        texture2D(uTo, uvB).b
+      );
+
+      // Blend: noise mask drives the dissolve, p drives fallback linearity
+      float mix_f = clamp(mix(mask, p, 0.38), 0.0, 1.0);
+      vec3 col    = mix(fCol, tCol, mix_f);
+
+      // ── Amber light-leak flash ──
+      float flash = max(0.0, 1.0 - abs(p - 0.5) * 10.0);
+      col += vec3(0.32, 0.22, 0.04) * flash * 0.72;
+
+      // ── Vignette crush + brightness dip at peak ──
+      vec2 vc  = uv * 2.0 - 1.0;
+      float vg = pow(clamp(1.0 - dot(vc*0.5, vc*0.5), 0.0, 1.0), 0.5);
+      col *= mix(1.0, vg, bell * 0.78);
+      col *= (1.0 - bell * 0.45);
+      col  = max(col, vec3(0.0));
+
+      gl_FragColor = vec4(col, max(1.0 - (1.0-p)*(1.0-p), p*p));
+    }
+  `,
+  transparent: true,
+  depthTest: false,
+});
+
+const warpMesh = new THREE.Mesh(quad, warpMat);
+warpMesh.visible = false;
+scene.add(warpMesh);
+
+/* ── RENDER TARGETS (capture rendered scenes for GPU transition) ── */
+function makeRT(){
+  return new THREE.WebGLRenderTarget(innerWidth, innerHeight, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    format: THREE.RGBAFormat,
+    type: THREE.UnsignedByteType,
+  });
+}
+let rtA = makeRT(), rtB = makeRT();
+
+/* ── RESIZE ── */
+function onResize(){
+  const W = innerWidth, H = innerHeight;
+  renderer.setSize(W, H);
+  warpMat.uniforms.uRes.value.set(W, H);
+  [rtA, rtB].forEach(rt => rt.setSize(W, H));
+  imageMats.forEach(m => {
+    if(m) m.uniforms.uRes.value.set(W, H);
+  });
+}
+window.addEventListener('resize', onResize);
+
+/* ── LOAD ALL TEXTURES ── */
+const loader = new THREE.TextureLoader();
+loader.crossOrigin = 'anonymous';
+
+const textures   = new Array(SLIDE_IMAGES.length).fill(null);
+const imageMats  = new Array(SLIDE_IMAGES.length).fill(null);
+const imageMeshs = new Array(SLIDE_IMAGES.length).fill(null);
+
+// Fallback solid color if image fails
+function makeFallbackTex(slideIdx){
+  const col = new THREE.Color();
+  col.setHSL((slideIdx / 9) * 0.1 + 0.09, 0.3, 0.08);
+  const d = new Uint8Array([
+    Math.round(col.r*255), Math.round(col.g*255), Math.round(col.b*255), 255
+  ]);
+  const t = new THREE.DataTexture(d, 1, 1, THREE.RGBAFormat);
+  t.needsUpdate = true;
+  return t;
+}
+
+let loadedCount = 0;
+SLIDE_IMAGES.forEach((url, i) => {
+  loader.load(
+    url,
+    (tex) => {
+      tex.generateMipmaps = false;
+      tex.minFilter = THREE.LinearFilter;
+      tex.wrapS = tex.wrapT = THREE.ClampToEdgeWrapping;
+      textures[i] = tex;
+      const mat  = makeImageMat(tex);
+      const mesh = new THREE.Mesh(quad.clone(), mat);
+      mesh.renderOrder = 0;
+      imageMats[i]  = mat;
+      imageMeshs[i] = mesh;
+      loadedCount++;
+    },
+    undefined,
+    () => {
+      const tex = makeFallbackTex(i);
+      const mat  = makeImageMat(tex);
+      const mesh = new THREE.Mesh(quad.clone(), mat);
+      mesh.renderOrder = 0;
+      imageMats[i]  = mat;
+      imageMeshs[i] = mesh;
+      loadedCount++;
+    }
+  );
+});
+
+/* ── MOUSE PARALLAX ── */
+let mouseX = 0, mouseY = 0, targetMX = 0, targetMY = 0;
+document.addEventListener('mousemove', e => {
+  targetMX = (e.clientX / innerWidth  - 0.5) * 2;
+  targetMY = (e.clientY / innerHeight - 0.5) * 2;
+});
+
+/* ── RENDER A SCENE FOR SLIDE idx INTO A RENDER TARGET ── */
+function renderSlideToRT(idx, rt) {
+  const mesh = imageMeshs[idx];
+  if (!mesh) return;
+
+  // Temporarily add to scene, render, remove
+  scene.add(mesh);
+  renderer.setRenderTarget(rt);
+  renderer.clear();
+  renderer.render(scene, camera);
+  renderer.setRenderTarget(null);
+  scene.remove(mesh);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SLIDE SYSTEM
+═══════════════════════════════════════════════════════════════ */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const N = slides.length;
+let cur = 0, busy = false;
+
+const BP   = document.getElementById('bp');
+const BN   = document.getElementById('bn');
+const CTR  = document.getElementById('ctr');
+const PROG = document.getElementById('pb');
+const DOTS = document.getElementById('dots');
+
+slides.forEach((_,i) => {
+  const d = document.createElement('button');
+  d.className = 'dot' + (i===0?' on':'');
+  d.setAttribute('aria-label','Slide '+(i+1));
+  d.onclick = () => goTo(i);
+  DOTS.appendChild(d);
+});
+
+function updateUI(){
+  DOTS.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur));
+  CTR.textContent = `${String(cur+1).padStart(2,'0')} / ${String(N).padStart(2,'0')}`;
+  PROG.style.width = `${((cur+1)/N)*100}%`;
+  BP.disabled = cur===0;
+  BN.disabled = cur===N-1;
+}
+
+function showSlide(idx){
+  slides.forEach((s,i)=>{
+    if(i===idx){ s.classList.add('vis'); }
+    else { s.classList.remove('vis'); }
+  });
+}
+
+/* ── TRANSITION ── */
+let warpRAF = null;
+const DUR = 1300; // ms
+
+function easeInOut3(t){ return t<.5 ? 4*t*t*t : (t-1)*(2*t-2)*(2*t-2)+1; }
+
+async function goTo(idx){
+  if(idx===cur || busy || idx<0 || idx>=N) return;
+  busy = true;
+  const prev = cur;
+  cur = idx;
+  updateUI();
+
+  // Hide current slide content immediately
+  slides[prev].classList.remove('vis');
+  slides[idx].classList.remove('vis');
+
+  // Wait one frame for images to be available, then capture both scenes into RTs
+  await new Promise(r => requestAnimationFrame(r));
+
+  // Make sure image mats get correct parallax zero for capture
+  if(imageMats[prev]) imageMats[prev].uniforms.uOffset.value.set(0,0);
+  if(imageMats[idx])  imageMats[idx].uniforms.uOffset.value.set(0,0);
+
+  renderSlideToRT(prev, rtA);
+  renderSlideToRT(idx,  rtB);
+
+  // Hand to warp shader
+  warpMat.uniforms.uFrom.value = rtA.texture;
+  warpMat.uniforms.uTo.value   = rtB.texture;
+  warpMat.uniforms.uProg.value = 0.0;
+  warpMat.uniforms.uDir.value  = idx > prev ? 1.0 : -1.0;
+  warpMesh.visible = true;
+
+  const t0 = performance.now();
+  if(warpRAF) cancelAnimationFrame(warpRAF);
+
+  function frame(){
+    const p = Math.min((performance.now()-t0)/DUR, 1.0);
+    warpMat.uniforms.uProg.value = easeInOut3(p);
+    warpMat.uniforms.uTime.value = performance.now()/1000;
+
+    if(p < 1.0){
+      warpRAF = requestAnimationFrame(frame);
+    } else {
+      warpMesh.visible = false;
+      showSlide(idx);
+      busy = false;
+      warpRAF = null;
+    }
+  }
+  warpRAF = requestAnimationFrame(frame);
+}
+
+BP.onclick = () => goTo(cur-1);
+BN.onclick = () => goTo(cur+1);
+document.addEventListener('keydown', e => {
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') goTo(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')   goTo(cur-1);
+});
+let tx=null;
+document.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; },{passive:true});
+document.addEventListener('touchend',   e=>{
+  if(tx===null) return;
+  const dx = e.changedTouches[0].clientX - tx;
+  if(Math.abs(dx) > 50) goTo(dx<0 ? cur+1 : cur-1);
+  tx=null;
+},{passive:true});
+
+/* ═══════════════════════════════════════════════════════════════
+   MAIN RENDER LOOP
+═══════════════════════════════════════════════════════════════ */
+let frameCount = 0;
+function animate(){
+  requestAnimationFrame(animate);
+  frameCount++;
+
+  // Smooth mouse
+  mouseX += (targetMX - mouseX) * 0.06;
+  mouseY += (targetMY - mouseY) * 0.06;
+
+  const t = performance.now() / 1000;
+
+  renderer.setRenderTarget(null);
+  renderer.setClearColor(0x05050a, 1);
+  renderer.clear();
+
+  if(warpMesh.visible){
+    // During transition: warp shader takes over entirely
+    warpMat.uniforms.uTime.value = t;
+    renderer.render(scene, camera);
+  } else {
+    // Normal: show current slide's image with live parallax
+    const mesh = imageMeshs[cur];
+    if(mesh){
+      // Apply parallax offset based on mouse
+      const mat = imageMats[cur];
+      mat.uniforms.uOffset.value.set(mouseX * -0.012, mouseY * 0.012);
+      mat.uniforms.uAlpha.value = 1.0;
+      mat.uniforms.uScale.value = 1.04; // slight zoom out for parallax room
+      scene.add(mesh);
+      renderer.render(scene, camera);
+      scene.remove(mesh);
+    }
+  }
+}
+
+/* ── INIT ── */
+renderer.setSize(innerWidth, innerHeight);
+showSlide(0);
+updateUI();
+animate();
+</script>
+</body>
+</html>
