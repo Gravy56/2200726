@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>U-Substitution Study Guide — AB Calculus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+<style>
+  :root {
+    --ink: #0f0e0b;
+    --paper: #faf8f3;
+    --cream: #f0ece0;
+    --rule: #d4cdb8;
+    --accent: #c84b2f;
+    --accent2: #1a5e8a;
+    --accent3: #3a7d44;
+    --highlight: #f5e642;
+    --muted: #7a7060;
+    --card-bg: #ffffff;
+    --shadow: 0 2px 12px rgba(15,14,11,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    font-size: 16px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 3.5rem 2rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(255,255,255,0.04) 39px,
+      rgba(255,255,255,0.04) 40px
+    );
+  }
+  header .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.2rem, 6vw, 4rem);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    position: relative;
+  }
+  header h1 em {
+    font-style: italic;
+    color: #ffd07a;
+  }
+  header p {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    color: rgba(250,248,243,0.6);
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+  }
+  .score-badge {
+    display: inline-block;
+    margin-top: 1.5rem;
+    background: var(--accent);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    padding: 0.35rem 1rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  /* ── NAV ── */
+  nav {
+    background: var(--cream);
+    border-bottom: 1px solid var(--rule);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 0 1.5rem;
+  }
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  nav ul::-webkit-scrollbar { display: none; }
+  nav li a {
+    display: block;
+    padding: 0.9rem 1.1rem;
+    text-decoration: none;
+    color: var(--muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  nav li a:hover { color: var(--ink); border-bottom-color: var(--accent); }
+  nav li a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin: 3.5rem 0 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .section-header h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.75rem;
+    font-weight: 400;
+  }
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+  .card h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+  }
+  .card p, .card li { font-size: 0.94rem; color: #2a2820; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    padding: 1.5rem 2rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .formula-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--accent);
+  }
+  .formula-box .katex { color: var(--paper); }
+
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .formula-tile {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+  .formula-tile .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+
+  /* ── STEP-BY-STEP ── */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 500;
+    margin-top: 0.1rem;
+  }
+  .step-body h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 0.3rem;
+  }
+  .step-body p { font-size: 0.9rem; color: #3a3830; }
+
+  /* ── ACCORDION (Practice Problems) ── */
+  .problem-block {
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+  .problem-header {
+    background: var(--cream);
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+    transition: background 0.15s;
+  }
+  .problem-header:hover { background: #e8e3d5; }
+  .problem-header h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  .problem-header .diff {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+  }
+  .diff.easy { background: #d4edda; color: #1e5c2c; }
+  .diff.medium { background: #fff3cd; color: #6b4c00; }
+  .diff.hard { background: #f8d7da; color: #7a1a22; }
+  .diff.tricky { background: #d1ecf1; color: #0c4a54; }
+
+  .problem-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+    color: var(--muted);
+    margin-left: 1rem;
+  }
+  .problem-block.open .problem-arrow { transform: rotate(180deg); }
+
+  .problem-body {
+    display: none;
+    padding: 1.5rem;
+    border-top: 1px solid var(--rule);
+    background: var(--card-bg);
+  }
+  .problem-block.open .problem-body { display: block; }
+
+  .problem-statement {
+    font-size: 1.1rem;
+    margin-bottom: 1.25rem;
+    padding: 1rem 1.25rem;
+    background: var(--cream);
+    border-radius: 3px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  .hint-btn, .solution-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.45rem 1rem;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    border-radius: 3px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.15s;
+  }
+  .hint-btn:hover { background: var(--ink); color: var(--paper); }
+  .solution-btn { background: var(--accent); color: white; border-color: var(--accent); }
+  .solution-btn:hover { background: #a83a20; border-color: #a83a20; }
+
+  .hint-box {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: #fff9e6;
+    border: 1px solid #f5e642;
+    border-radius: 3px;
+    font-size: 0.9rem;
+  }
+  .hint-box.show { display: block; }
+
+  .solution-box {
+    display: none;
+    margin-top: 0.75rem;
+    padding: 1rem 1.25rem;
+    background: #f0f8f0;
+    border: 1px solid #b8d4be;
+    border-radius: 3px;
+  }
+  .solution-box.show { display: block; }
+  .solution-box h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--accent3);
+    margin-bottom: 0.75rem;
+  }
+
+  .solution-step {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.6rem;
+    font-size: 0.9rem;
+    align-items: flex-start;
+  }
+  .solution-step .s-num {
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    padding-top: 0.15rem;
+  }
+
+  /* ── CHEAT SHEET ── */
+  .cheat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+  }
+  .cheat-cell {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    padding: 0.9rem 1rem;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .cheat-cell .cheat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  /* ── COMMON ERRORS ── */
+  .error-card {
+    border-left: 4px solid var(--accent);
+    background: var(--card-bg);
+    border-radius: 0 4px 4px 0;
+    padding: 1rem 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .error-card .wrong {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+  .error-card .fix {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--accent3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 0.5rem 0 0.3rem;
+  }
+
+  /* ── QUIZ ── */
+  #quiz-section .quiz-q {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .quiz-q p.q-text {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--cream);
+    border-radius: 3px;
+    border-left: 3px solid var(--accent2);
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 0.5rem; }
+  .quiz-option {
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.15s;
+    background: var(--paper);
+  }
+  .quiz-option:hover { background: var(--cream); border-color: var(--ink); }
+  .quiz-option.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+  .quiz-option.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+  .quiz-feedback {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: 3px;
+    display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.right { background: #d4edda; color: #155724; }
+  .quiz-feedback.wrong-fb { background: #f8d7da; color: #721c24; }
+
+  #quiz-score {
+    text-align: center;
+    padding: 2rem;
+    background: var(--ink);
+    color: var(--paper);
+    border-radius: 4px;
+    margin-top: 1rem;
+    display: none;
+  }
+  #quiz-score h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: #ffd07a;
+  }
+  #quiz-score p { color: rgba(250,248,243,0.7); margin-top: 0.5rem; }
+
+  /* ── STRATEGY CARDS ── */
+  .strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media(max-width:600px){ .strategy-grid { grid-template-columns: 1fr; } }
+  .strategy-card {
+    background: var(--card-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 1.25rem;
+  }
+  .strategy-card .s-icon {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .strategy-card h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    margin-bottom: 0.4rem;
+  }
+  .strategy-card p { font-size: 0.85rem; color: var(--muted); }
+
+  /* ── TABLES ── */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 1rem 0;
+  }
+  .ref-table th {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+  }
+  .ref-table td {
+    padding: 0.6rem 0.9rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  .ref-table tr:hover td { background: var(--cream); }
+
+  /* ── PRINT BTN ── */
+  .print-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 0.5rem 1.1rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 0.75rem;
+  }
+  .print-btn:hover { background: #333; }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    border-top: 1px solid var(--rule);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  @media(max-width:600px){
+    .formula-grid { grid-template-columns: 1fr; }
+    .cheat-grid { grid-template-columns: 1fr 1fr; }
+    main { padding: 2rem 1rem 4rem; }
+  }
+
+  @media print {
+    nav, .hint-btn, .solution-btn, .print-btn { display: none !important; }
+    .problem-body { display: block !important; }
+    .solution-box { display: block !important; }
+    .hint-box { display: none !important; }
+    body { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <span class="tag">AB Calculus · Unit: Integration Techniques</span>
+  <h1>Integration by<br><em>U-Substitution</em></h1>
+  <p>Every concept, formula, worked example, and practice problem you need to walk in and score a 100.</p>
+  <span class="score-badge">Complete Study Guide</span>
+</header>
+
+<nav>
+  <ul>
+    <li><a href="#concept">Concept</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#formulas">Formulas</a></li>
+    <li><a href="#worked">Worked Examples</a></li>
+    <li><a href="#practice">Practice</a></li>
+    <li><a href="#definite">Definite Integrals</a></li>
+    <li><a href="#errors">Common Errors</a></li>
+    <li><a href="#quiz">Quick Quiz</a></li>
+    <li><a href="#cheatsheet">Cheat Sheet</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- CONCEPT -->
+  <div id="concept">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <h2>The Core Concept</h2>
+    </div>
+
+    <div class="card">
+      <h3>What is U-Substitution?</h3>
+      <p>U-substitution is the integration counterpart of the <strong>chain rule</strong> for differentiation. When an integrand contains a composite function, we replace the inner function with $u$ to simplify the integral into a basic form we can evaluate directly.</p>
+    </div>
+
+    <div class="formula-box">
+      $$\int f(g(x))\cdot g'(x)\,dx = \int f(u)\,du \quad \text{where } u = g(x)$$
+    </div>
+
+    <div class="card">
+      <h3>The Intuition</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Spot the Pattern</h4>
+            <p>You need a function and its derivative (or a constant multiple of it) both present in the integrand.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Substitute</h4>
+            <p>Replace the inner function with $u$, and rewrite $dx$ in terms of $du$. This transforms the messy integral into a clean one.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Integrate</h4>
+            <p>Evaluate the resulting integral in $u$ using basic antiderivative rules.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Back-Substitute</h4>
+            <p>Replace $u$ with the original expression in $x$ to get your final answer.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METHOD -->
+  <div id="method">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <h2>The 5-Step Method</h2>
+    </div>
+
+    <div class="card">
+      <p style="margin-bottom:1.25rem;">Follow these steps <em>every time</em> — no exceptions:</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Choose $u$</h4>
+            <p>Pick $u$ = the inner function (usually what's inside a power, root, trig function, or exponent). Look for a function whose derivative is also present.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Find $\dfrac{du}{dx}$, solve for $dx$</h4>
+            <p>Differentiate $u$ with respect to $x$. Rearrange to express $dx$ in terms of $du$: $\;dx = \dfrac{du}{u'}$.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Substitute everything</h4>
+            <p>Replace the inner expression with $u$ AND replace $dx$ with the $du$ expression. The result should have <em>no remaining $x$'s</em>.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Integrate in $u$</h4>
+            <p>Evaluate $\int f(u)\,du$ using the basic rules (power rule, trig integrals, exponential rules).</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>Back-substitute (indefinite integrals only)</h4>
+            <p>Replace $u$ with your original expression in $x$. Add $+ C$.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>How to Choose $u$ — Decision Guide</h3>
+      <div class="strategy-grid">
+        <div class="strategy-card">
+          <span class="s-icon">⊙</span>
+          <h4>Inside a Power</h4>
+          <p>$\int (3x+1)^5\,dx$ → let $u = 3x+1$</p>
+        </div>
+        <div class="strategy-card">
+          <span class="s-icon">√</span>
+          <h4>Inside a Root</h4>
+          <p>$\int \sqrt{2x-1}\,dx$ → let $u = 2x-1$</p>
+        </div>
+        <div class="strategy-card">
+          <span class="s-icon">e</span>
+          <h4>Exponent of $e$</h4>
+          <p>$\int e^{3x}\,dx$ → let $u = 3x$</p>
+        </div>
+        <div class="strategy-card">
+          <span class="s-icon">~</span>
+          <h4>Inside Trig</h4>
+          <p>$\int \cos(2x)\,dx$ → let $u = 2x$</p>
+        </div>
+      </div>
+      <p style="margin-top:1rem; font-size:0.88rem; color:var(--muted);">
+        <strong>Pro tip:</strong> If your derivative brings an unwanted constant (like $\frac{1}{3}$), just multiply outside the integral to compensate — you can always divide it out.
+      </p>
+    </div>
+  </div>
+
+  <!-- FORMULAS -->
+  <div id="formulas">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <h2>Essential Formulas</h2>
+    </div>
+
+    <div class="card">
+      <h3>Basic Antiderivatives (after substitution, $u$ is the variable)</h3>
+      <div class="formula-grid">
+        <div class="formula-tile">
+          <span class="label">Power Rule</span>
+          $$\int u^n\,du = \frac{u^{n+1}}{n+1} + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Exponential</span>
+          $$\int e^u\,du = e^u + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Natural Log</span>
+          $$\int \frac{1}{u}\,du = \ln|u| + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Sine</span>
+          $$\int \sin u\,du = -\cos u + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Cosine</span>
+          $$\int \cos u\,du = \sin u + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Secant Squared</span>
+          $$\int \sec^2 u\,du = \tan u + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Square Root</span>
+          $$\int \sqrt{u}\,du = \frac{2}{3}u^{3/2} + C$$
+        </div>
+        <div class="formula-tile">
+          <span class="label">Cosecant Squared</span>
+          $$\int \csc^2 u\,du = -\cot u + C$$
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Definite Integral with U-Sub — Limits Rule</h3>
+      <p style="margin-bottom:0.75rem;">When evaluating definite integrals, change the limits of integration to $u$-values:</p>
+      <div class="formula-box">
+        $$\text{If } u = g(x), \text{ then: new lower} = g(a),\quad \text{new upper} = g(b)$$
+      </div>
+      <p style="font-size:0.88rem; color:var(--muted); margin-top:0.75rem;">This means you <strong>never need to back-substitute</strong> — just evaluate the $u$-integral at the new limits directly.</p>
+    </div>
+  </div>
+
+  <!-- WORKED EXAMPLES -->
+  <div id="worked">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <h2>Worked Examples</h2>
+    </div>
+    <p style="margin-bottom:1.5rem; font-size:0.9rem; color:var(--muted);">These are based on the problems from your study guide. Every step is shown.</p>
+
+    <!-- Example 1 -->
+    <div class="problem-block open">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>Example 1 — Definite Integral with Trig</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="diff easy">Easy</span>
+          <span class="problem-arrow">▼</span>
+        </div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">
+          $$\int_0^{\pi/2} 4\cos(2x)\,dx$$
+        </div>
+        <div class="solution-box show">
+          <h4>Full Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>Let $u = 2x$, so $\dfrac{du}{dx} = 2$, giving $dx = \dfrac{du}{2}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>Change limits: when $x=0$, $u=0$; when $x=\pi/2$, $u=\pi$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Substitute: $\displaystyle\int_0^{\pi} 4\cos(u)\cdot\frac{du}{2} = \int_0^{\pi} 2\cos(u)\,du$</span></div>
+          <div class="solution-step"><span class="s-num">④</span><span>Integrate: $\Big[2\sin(u)\Big]_0^{\pi}$</span></div>
+          <div class="solution-step"><span class="s-num">⑤</span><span>Evaluate: $2\sin(\pi) - 2\sin(0) = 2(0) - 2(0) = \boxed{0}$</span></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:0.75rem;">Note: $\sin(\pi) = 0$ and $\sin(0) = 0$, so the integral evaluates to zero.</p>
+      </div>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>Example 2 — Sum of Two Integrals (Splitting)</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="diff medium">Medium</span>
+          <span class="problem-arrow">▼</span>
+        </div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">
+          $$\int \left(-4e^{3x} + \sqrt{2x-1}\right)dx$$
+        </div>
+        <div class="solution-box show">
+          <h4>Full Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>Split into two integrals: $\displaystyle\int -4e^{3x}\,dx + \int \sqrt{2x-1}\,dx$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span><strong>Left integral:</strong> Let $u = 3x$, $du = 3\,dx$, so $dx = \dfrac{du}{3}$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>$\displaystyle -4\int e^u \cdot \frac{du}{3} = -\frac{4}{3}\int e^u\,du = -\frac{4}{3}e^u = -\frac{4}{3}e^{3x}$</span></div>
+          <div class="solution-step"><span class="s-num">④</span><span><strong>Right integral:</strong> Let $v = 2x-1$, $dv = 2\,dx$, so $dx = \dfrac{dv}{2}$</span></div>
+          <div class="solution-step"><span class="s-num">⑤</span><span>$\displaystyle \int \sqrt{v}\cdot\frac{dv}{2} = \frac{1}{2}\int v^{1/2}\,dv = \frac{1}{2}\cdot\frac{2}{3}v^{3/2} = \frac{1}{3}v^{3/2}$</span></div>
+          <div class="solution-step"><span class="s-num">⑥</span><span>Back-sub: $\dfrac{1}{3}(2x-1)^{3/2}$</span></div>
+          <div class="solution-step"><span class="s-num">⑦</span><span>Final answer: $\displaystyle\boxed{-\frac{4}{3}e^{3x} + \frac{1}{3}(2x-1)^{3/2} + C}$</span></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:0.75rem;">Key technique: when the integrand is a sum, split it and apply u-sub independently to each part.</p>
+      </div>
+    </div>
+
+    <!-- Example 3 -->
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>Example 3 — Definite Integral, Composite Polynomial</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="diff medium">Medium</span>
+          <span class="problem-arrow">▼</span>
+        </div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">
+          $$\int_{-1}^{0} (3x+3)(x^2+2x-1)^3\,dx$$
+        </div>
+        <div class="solution-box show">
+          <h4>Full Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>Let $u = x^2 + 2x - 1$, so $\dfrac{du}{dx} = 2x+2$, giving $dx = \dfrac{du}{2x+2}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>Notice $3x+3 = 3(x+1)$ and $2x+2 = 2(x+1)$. So $\dfrac{3(x+1)}{2(x+1)} = \dfrac{3}{2}$. The $x$ terms cancel!</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Change limits: $x=-1 \Rightarrow u = 1-2-1 = -2$; $x=0 \Rightarrow u = 0+0-1 = -1$</span></div>
+          <div class="solution-step"><span class="s-num">④</span><span>Integral becomes: $\displaystyle\frac{3}{2}\int_{-2}^{-1} u^3\,du$</span></div>
+          <div class="solution-step"><span class="s-num">⑤</span><span>$\displaystyle = \frac{3}{2}\cdot\frac{u^4}{4}\Bigg|_{-2}^{-1} = \frac{3}{8}u^4\Bigg|_{-2}^{-1}$</span></div>
+          <div class="solution-step"><span class="s-num">⑥</span><span>$= \dfrac{3}{8}(-1)^4 - \dfrac{3}{8}(-2)^4 = \dfrac{3}{8}(1) - \dfrac{3}{8}(16) = \dfrac{3}{8} - \dfrac{48}{8}$</span></div>
+          <div class="solution-step"><span class="s-num">⑦</span><span>$= \boxed{-\dfrac{45}{8} = -5.625}$</span></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:0.75rem;">Key technique: recognize when a factor outside cancels with the derivative of $u$, leaving only a constant multiplier.</p>
+      </div>
+    </div>
+
+    <!-- Example 4 -->
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>Example 4 — Double Substitution (Nested)</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;">
+          <span class="diff hard">Hard</span>
+          <span class="problem-arrow">▼</span>
+        </div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">
+          $$\int \frac{1}{\sqrt{x}\,(1+\sqrt{x})^2}\,dx$$
+        </div>
+        <div class="solution-box show">
+          <h4>Full Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span><strong>First sub:</strong> Let $u = \sqrt{x} = x^{1/2}$. Then $\dfrac{du}{dx} = \dfrac{1}{2\sqrt{x}}$, so $\dfrac{1}{\sqrt{x}}\,dx = 2\,du$ (i.e., $dx = 2u\,du$ since $\sqrt{x} = u$)</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>Rewrite: $\displaystyle\int \frac{1}{u(1+u)^2}\cdot 2u\,du = 2\int\frac{1}{(1+u)^2}\,du$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span><strong>Second sub:</strong> Let $v = 1+u$, so $dv = du$</span></div>
+          <div class="solution-step"><span class="s-num">④</span><span>$\displaystyle 2\int v^{-2}\,dv = 2\cdot\frac{v^{-1}}{-1} = -\frac{2}{v}$</span></div>
+          <div class="solution-step"><span class="s-num">⑤</span><span>Back-sub $v = 1+u$: $-\dfrac{2}{1+u}$</span></div>
+          <div class="solution-step"><span class="s-num">⑥</span><span>Back-sub $u = \sqrt{x}$: $\displaystyle\boxed{-\frac{2}{1+\sqrt{x}} + C}$</span></div>
+        </div>
+        <p style="font-size:0.82rem;color:var(--muted);margin-top:0.75rem;">Key technique: apply u-sub twice in sequence. Start with the most deeply nested expression ($\sqrt{x}$), then substitute again for the remaining composite.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEFINITE INTEGRALS -->
+  <div id="definite">
+    <div class="section-header">
+      <span class="section-num">05</span>
+      <h2>Definite Integrals — Special Rules</h2>
+    </div>
+    <div class="card">
+      <h3>Two Valid Methods</h3>
+      <table class="ref-table">
+        <thead>
+          <tr><th>Method</th><th>Steps</th><th>When to Use</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Change Limits</strong></td>
+            <td>Convert $a, b$ to $u$-values → integrate in $u$ → evaluate directly</td>
+            <td>Preferred — faster, no back-substitution needed</td>
+          </tr>
+          <tr>
+            <td><strong>Keep Original Limits</strong></td>
+            <td>Integrate in $u$ → back-substitute → evaluate at $x = a, b$</td>
+            <td>When you forget to change limits (still valid)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="formula-box" style="margin-top:1rem;">
+        $$\int_a^b f(g(x))\,g'(x)\,dx = \int_{g(a)}^{g(b)} f(u)\,du$$
+      </div>
+    </div>
+    <div class="card">
+      <h3>Limit Conversion Practice</h3>
+      <table class="ref-table">
+        <thead><tr><th>$u$ substitution</th><th>$x = a$</th><th>New lower $u$</th><th>$x = b$</th><th>New upper $u$</th></tr></thead>
+        <tbody>
+          <tr><td>$u = 2x$</td><td>$0$</td><td>$0$</td><td>$\pi/2$</td><td>$\pi$</td></tr>
+          <tr><td>$u = x^2+2x-1$</td><td>$-1$</td><td>$-2$</td><td>$0$</td><td>$-1$</td></tr>
+          <tr><td>$u = 3x+1$</td><td>$0$</td><td>$1$</td><td>$2$</td><td>$7$</td></tr>
+          <tr><td>$u = x^2$</td><td>$1$</td><td>$1$</td><td>$3$</td><td>$9$</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PRACTICE PROBLEMS -->
+  <div id="practice">
+    <div class="section-header">
+      <span class="section-num">06</span>
+      <h2>Practice Problems</h2>
+    </div>
+    <p style="margin-bottom:1.5rem;font-size:0.9rem;color:var(--muted);">Click a problem to expand it. Use the hint before revealing the full solution.</p>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P1 — Basic U-Sub (Indefinite)</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff easy">Easy</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int (5x+2)^4\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Let $u = 5x + 2$. What does $\frac{du}{dx}$ equal? How does that help you rewrite $dx$?</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = 5x+2$, $\quad du = 5\,dx$, $\quad dx = \dfrac{du}{5}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>$\displaystyle\int u^4 \cdot \frac{du}{5} = \frac{1}{5}\int u^4\,du = \frac{1}{5}\cdot\frac{u^5}{5} = \frac{u^5}{25}$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Back-sub: $\boxed{\dfrac{(5x+2)^5}{25} + C}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P2 — Exponential U-Sub</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff easy">Easy</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int x\,e^{x^2}\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Notice that the derivative of $x^2$ is $2x$ — and $x$ is already there in the integrand. Let $u = x^2$.</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = x^2$, $\quad du = 2x\,dx$, $\quad x\,dx = \dfrac{du}{2}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>$\displaystyle\int e^u\cdot\frac{du}{2} = \frac{1}{2}e^u$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Back-sub: $\boxed{\dfrac{1}{2}e^{x^2} + C}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P3 — Trigonometric U-Sub</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff easy">Easy</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int \sin^3(x)\cos(x)\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Let $u = \sin(x)$. What is $\frac{du}{dx}$? Can you express $\cos(x)\,dx$ in terms of $du$?</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = \sin(x)$, $\quad du = \cos(x)\,dx$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>$\displaystyle\int u^3\,du = \frac{u^4}{4}$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Back-sub: $\boxed{\dfrac{\sin^4(x)}{4} + C}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P4 — Definite Integral with Changed Limits</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff medium">Medium</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int_0^1 3x^2(x^3+1)^4\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Let $u = x^3 + 1$. Find $du$. Notice $x^2$ is already outside. Don't forget to change your limits!</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = x^3+1$, $\quad du = 3x^2\,dx$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>New limits: $x=0\Rightarrow u=1$; $x=1\Rightarrow u=2$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>$\displaystyle\int_1^2 u^4\,du = \frac{u^5}{5}\Bigg|_1^2 = \frac{32}{5} - \frac{1}{5} = \boxed{\frac{31}{5}}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P5 — Rational / Log Form</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff medium">Medium</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int \frac{x}{x^2+4}\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">The derivative of $x^2 + 4$ is $2x$. Since $x$ is in the numerator, let $u = x^2 + 4$.</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = x^2+4$, $\quad du = 2x\,dx$, $\quad x\,dx = \dfrac{du}{2}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>$\displaystyle\frac{1}{2}\int\frac{1}{u}\,du = \frac{1}{2}\ln|u|$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Back-sub: $\boxed{\dfrac{1}{2}\ln(x^2+4) + C}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P6 — Tricky: Adjust for Missing Factor</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff tricky">Tricky</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int x\sqrt{x^2+3}\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Let $u = x^2 + 3$. The derivative $du = 2x\,dx$ — notice you have $x\,dx$ in the integrand already, just divide by 2.</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = x^2+3$, $\quad du = 2x\,dx$, $\quad x\,dx = \dfrac{du}{2}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>$\displaystyle\frac{1}{2}\int u^{1/2}\,du = \frac{1}{2}\cdot\frac{2}{3}u^{3/2} = \frac{1}{3}u^{3/2}$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>Back-sub: $\boxed{\dfrac{1}{3}(x^2+3)^{3/2} + C}$</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="problem-block">
+      <div class="problem-header" onclick="toggle(this)">
+        <h3>P7 — Challenge: Trig with Definite Bounds</h3>
+        <div style="display:flex;align-items:center;gap:0.5rem;"><span class="diff hard">Hard</span><span class="problem-arrow">▼</span></div>
+      </div>
+      <div class="problem-body">
+        <div class="problem-statement">$$\int_0^{\pi/4} \sec^2(3x)\,dx$$</div>
+        <button class="hint-btn" onclick="toggleHint(this)">Show Hint</button>
+        <button class="solution-btn" onclick="toggleSolution(this)">Show Solution</button>
+        <div class="hint-box">Let $u = 3x$. Don't forget: $\int \sec^2(u)\,du = \tan(u) + C$. Change the limits too.</div>
+        <div class="solution-box">
+          <h4>Solution</h4>
+          <div class="solution-step"><span class="s-num">①</span><span>$u = 3x$, $\quad du = 3\,dx$, $\quad dx = \dfrac{du}{3}$</span></div>
+          <div class="solution-step"><span class="s-num">②</span><span>New limits: $x=0\Rightarrow u=0$; $x=\pi/4\Rightarrow u=3\pi/4$</span></div>
+          <div class="solution-step"><span class="s-num">③</span><span>$\displaystyle\frac{1}{3}\int_0^{3\pi/4}\sec^2(u)\,du = \frac{1}{3}\Big[\tan(u)\Big]_0^{3\pi/4}$</span></div>
+          <div class="solution-step"><span class="s-num">④</span><span>$= \dfrac{1}{3}\left(\tan\!\left(\dfrac{3\pi}{4}\right) - \tan(0)\right) = \dfrac{1}{3}(-1 - 0) = \boxed{-\dfrac{1}{3}}$</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMMON ERRORS -->
+  <div id="errors">
+    <div class="section-header">
+      <span class="section-num">07</span>
+      <h2>Common Errors to Avoid</h2>
+    </div>
+    <p style="margin-bottom:1.25rem;font-size:0.9rem;color:var(--muted);">These are the mistakes that cost students points. Know them cold.</p>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #1 — Forgetting to change limits on definite integrals</div>
+      <p style="font-size:0.9rem;">After substituting $u$, you <strong>must</strong> also convert the limits $a$ and $b$ to $u$-values using $u = g(a)$ and $u = g(b)$. Leaving old $x$-limits on a $u$-integral gives the wrong answer.</p>
+      <div class="fix">✓ Fix: Always write new limits immediately when you write $u = \ldots$</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #2 — Not back-substituting on indefinite integrals</div>
+      <p style="font-size:0.9rem;">An answer with $u$ in it is incomplete for an indefinite integral. Always replace $u$ with the original expression in $x$ before writing your final answer.</p>
+      <div class="fix">✓ Fix: Circle your definition of $u$ at the start; check your final answer has no $u$ in it.</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #3 — Forgetting the $+ C$ on indefinite integrals</div>
+      <p style="font-size:0.9rem;">Every indefinite integral has a constant of integration. Omitting it on a test is a guaranteed point deduction.</p>
+      <div class="fix">✓ Fix: Train yourself to automatically write $+ C$ at every step where you integrate indefinitely.</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #4 — Mishandling the constant factor</div>
+      <p style="font-size:0.9rem;">When $du$ gives a coefficient you don't want (e.g., $du = 5\,dx$), you must divide: $dx = \frac{du}{5}$, bringing $\frac{1}{5}$ outside the integral. Students often multiply instead of divide, or drop the factor entirely.</p>
+      <div class="fix">✓ Fix: Solve for $dx$ explicitly before substituting. Write it out every time.</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #5 — Choosing the wrong $u$</div>
+      <p style="font-size:0.9rem;">Choosing a $u$ whose derivative doesn't appear in the integrand means you'll have leftover $x$-terms that can't be cancelled. If you get stuck with $x$'s remaining, reconsider your choice of $u$.</p>
+      <div class="fix">✓ Fix: After choosing $u$, ask: "Is $\frac{du}{dx}$ (or a multiple of it) sitting in front of the function I'm integrating?"</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #6 — Power rule error on fractional exponents</div>
+      <p style="font-size:0.9rem;">$\int u^{1/2}\,du = \frac{u^{3/2}}{3/2} = \frac{2}{3}u^{3/2}$, not $\frac{1}{2}u^{-1/2}$ (that's the derivative). Raise the power, divide by it.</p>
+      <div class="fix">✓ Fix: Raise power by 1, then divide by the new power. Double-check with a derivative.</div>
+    </div>
+
+    <div class="error-card">
+      <div class="wrong">✗ Mistake #7 — Sign errors on trig antiderivatives</div>
+      <p style="font-size:0.9rem;">$\int \sin(u)\,du = -\cos(u) + C$ (negative!). Students often write $+\cos(u)$. When back-substituting trig, carefully track the sign.</p>
+      <div class="fix">✓ Fix: Memorize the antiderivative table and verify by differentiating your answer.</div>
+    </div>
+  </div>
+
+  <!-- QUICK QUIZ -->
+  <div id="quiz-section">
+    <div class="section-header">
+      <span class="section-num">08</span>
+      <h2>Quick Quiz</h2>
+    </div>
+    <p style="margin-bottom:1.5rem;font-size:0.9rem;color:var(--muted);">Test yourself. Each question is multiple choice. Instant feedback after each answer.</p>
+
+    <div class="quiz-q" id="q1">
+      <p class="q-text">For $\displaystyle\int (6x)(3x^2+1)^4\,dx$, the best choice of $u$ is:</p>
+      <div class="quiz-options">
+        <div class="quiz-option" onclick="answer(this,'wrong','The outer function is $(...)^4$, but u-sub targets the inner function.')">$u = (3x^2+1)^4$</div>
+        <div class="quiz-option" onclick="answer(this,'correct','Yes! $u = 3x^2+1$ gives $du = 6x\,dx$, which is exactly the $6x$ sitting outside.')">$u = 3x^2+1$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','$u = 6x$ doesn\'t help because its derivative (6) doesn\'t match the remaining structure.')">$u = 6x$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','$u = x^2$ would give $du = 2x\,dx$, leaving a stray factor of 3 and the $+1$ unaccounted for.')">$u = x^2$</div>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-q" id="q2">
+      <p class="q-text">Evaluate $\displaystyle\int_1^2 2x\,e^{x^2}\,dx$.</p>
+      <div class="quiz-options">
+        <div class="quiz-option" onclick="answer(this,'wrong','Check your evaluation. With $u=x^2$, limits become $1$ to $4$, and the integral is $[e^u]_1^4$.')">$e^4$</div>
+        <div class="quiz-option" onclick="answer(this,'correct','Correct! $u=x^2$, $du=2x\,dx$. Limits: $1\\to1$, $2\\to4$. $[e^u]_1^4 = e^4 - e$.')">$e^4 - e$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','Close, but you may have an off-by-one on the limits. Re-convert: $x=1 \\Rightarrow u=1$.')">$e^4 - 1$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','This looks like you evaluated $e^{x^2}$ at $x=1,2$ without substituting.')">$e^2 - e$</div>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-q" id="q3">
+      <p class="q-text">$\displaystyle\int \cos(5x)\,dx = $?</p>
+      <div class="quiz-options">
+        <div class="quiz-option" onclick="answer(this,'wrong','You forgot to divide by 5 from the chain rule compensation.')">$\sin(5x) + C$</div>
+        <div class="quiz-option" onclick="answer(this,'correct','Perfect. $u=5x$, $du=5\,dx$, so $dx = du/5$. Integral $= \\frac{1}{5}\\sin(u) = \\frac{1}{5}\\sin(5x)+C$.')">$\dfrac{1}{5}\sin(5x) + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','The antiderivative of cosine is positive sine, not negative.')">$-\dfrac{1}{5}\sin(5x) + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','The antiderivative of cosine is sine, not cosine.')">$\dfrac{1}{5}\cos(5x) + C$</div>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-q" id="q4">
+      <p class="q-text">$\displaystyle\int \frac{4x^3}{x^4+7}\,dx = $?</p>
+      <div class="quiz-options">
+        <div class="quiz-option" onclick="answer(this,'wrong','Missing the natural log — when the integrand is $1/u$, the antiderivative is $\\ln|u|$.')">$\dfrac{4}{(x^4+7)^2} + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','Off by the constant. $u = x^4+7$, $du = 4x^3\,dx$ — notice $4x^3$ cancels perfectly, leaving $\\ln|u|$.')">$4\ln|x^4+7| + C$</div>
+        <div class="quiz-option" onclick="answer(this,'correct','Yes! $u = x^4+7$, $du = 4x^3\,dx$. Integral becomes $\\int\\frac{1}{u}\\,du = \\ln|u| = \\ln|x^4+7|+C$.')">$\ln|x^4+7| + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','You applied the power rule to a $1/u$ integral — that form gives $\\ln|u|$, not a power.')">$\dfrac{1}{2(x^4+7)^2} + C$</div>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div class="quiz-q" id="q5">
+      <p class="q-text">Which expression equals $\displaystyle\int \sqrt{2x-1}\,dx$?</p>
+      <div class="quiz-options">
+        <div class="quiz-option" onclick="answer(this,'wrong','You forgot to compensate for the $du = 2\,dx$, which brings in a factor of $\\frac{1}{2}$.')">$\dfrac{2}{3}(2x-1)^{3/2} + C$</div>
+        <div class="quiz-option" onclick="answer(this,'correct','Correct. $u=2x-1$, $du=2\,dx$, $dx=du/2$. $\\frac{1}{2}\\int u^{1/2}\\,du = \\frac{1}{2}\\cdot\\frac{2}{3}u^{3/2} = \\frac{1}{3}(2x-1)^{3/2}+C$.')">$\dfrac{1}{3}(2x-1)^{3/2} + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','Applying $\\sqrt{2x-1}$ directly without u-sub — the chain rule factor is missing.')">$\dfrac{2}{3}\sqrt{(2x-1)^3} + C$</div>
+        <div class="quiz-option" onclick="answer(this,'wrong','This is the derivative of $(2x-1)^{1/2}$, not its antiderivative.')">$\dfrac{1}{\sqrt{2x-1}} + C$</div>
+      </div>
+      <div class="quiz-feedback"></div>
+    </div>
+
+    <div id="quiz-score">
+      <h3 id="score-text">Score: —</h3>
+      <p id="score-msg"></p>
+    </div>
+  </div>
+
+  <!-- CHEAT SHEET -->
+  <div id="cheatsheet">
+    <div class="section-header">
+      <span class="section-num">09</span>
+      <h2>Rapid-Reference Cheat Sheet</h2>
+    </div>
+    <button class="print-btn" onclick="window.print()">⎙ Print Cheat Sheet</button>
+
+    <div class="card" style="margin-top:1.25rem;">
+      <h3 style="margin-bottom:1rem;">U-Sub Antiderivatives at a Glance</h3>
+      <div class="cheat-grid">
+        <div class="cheat-cell"><span class="cheat-label">Power</span>$$\int u^n\,du = \frac{u^{n+1}}{n+1}+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">Exponential</span>$$\int e^u\,du = e^u+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">Reciprocal</span>$$\int \frac{1}{u}\,du = \ln|u|+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">sin</span>$$\int \sin u\,du = -\cos u+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">cos</span>$$\int \cos u\,du = \sin u+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">sec²</span>$$\int \sec^2 u\,du = \tan u+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">csc²</span>$$\int \csc^2 u\,du = -\cot u+C$$</div>
+        <div class="cheat-cell"><span class="cheat-label">sec·tan</span>$$\int \sec u\tan u\,du = \sec u+C$$</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;">Quick Checklist Before You Submit</h3>
+      <div id="checklist">
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> Is every $x$ replaced with $u$ in the integral?
+        </label>
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> For definite integrals: did you change the limits?
+        </label>
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> For indefinite integrals: did you back-substitute to get everything in $x$?
+        </label>
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> Did you include $+ C$ on all indefinite integrals?
+        </label>
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> Did you account for the constant factor from $du$?
+        </label>
+        <label class="check-item" style="display:flex;gap:0.6rem;align-items:flex-start;margin-bottom:0.6rem;cursor:pointer;font-size:0.92rem;">
+          <input type="checkbox" style="margin-top:0.2rem;"> Did you verify your answer by differentiating it?
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1rem;">U-Choice Quick Reference</h3>
+      <table class="ref-table">
+        <thead><tr><th>Integrand Structure</th><th>Choose $u =$</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>$(f(x))^n \cdot f'(x)$</td><td>inner function</td><td>$(x^2+1)^3 \cdot 2x$</td></tr>
+          <tr><td>$e^{f(x)} \cdot f'(x)$</td><td>exponent</td><td>$e^{3x} \cdot 3$</td></tr>
+          <tr><td>$\dfrac{f'(x)}{f(x)}$</td><td>denominator</td><td>$\dfrac{2x}{x^2+1}$</td></tr>
+          <tr><td>$\sin(f(x)) \cdot f'(x)$</td><td>trig argument</td><td>$\sin(x^2) \cdot 2x$</td></tr>
+          <tr><td>$\dfrac{1}{\sqrt{x}} \cdot g(\sqrt{x})$</td><td>$\sqrt{x}$</td><td>$\dfrac{\cos\sqrt{x}}{\sqrt{x}}$</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  AB Calculus · Integration by U-Substitution · Study Guide
+</footer>
+
+<script>
+  function toggle(header) {
+    const block = header.parentElement;
+    block.classList.toggle('open');
+  }
+
+  function toggleHint(btn) {
+    const box = btn.nextElementSibling;
+    box.classList.toggle('show');
+    btn.textContent = box.classList.contains('show') ? 'Hide Hint' : 'Show Hint';
+  }
+
+  function toggleSolution(btn) {
+    const box = btn.nextElementSibling.nextElementSibling;
+    box.classList.toggle('show');
+    btn.textContent = box.classList.contains('show') ? 'Hide Solution' : 'Show Solution';
+    // expand parent block
+    btn.closest('.problem-block').classList.add('open');
+  }
+
+  // Quiz logic
+  let quizAnswers = 0;
+  let quizTotal = 0;
+  const totalQs = document.querySelectorAll('.quiz-q').length;
+
+  function answer(el, result, explanation) {
+    const qBlock = el.closest('.quiz-q');
+    if (qBlock.dataset.answered) return;
+    qBlock.dataset.answered = 'true';
+    quizTotal++;
+
+    const options = qBlock.querySelectorAll('.quiz-option');
+    options.forEach(o => o.style.pointerEvents = 'none');
+
+    const fb = qBlock.querySelector('.quiz-feedback');
+    if (result === 'correct') {
+      el.classList.add('correct');
+      fb.className = 'quiz-feedback show right';
+      fb.textContent = '✓ ' + explanation;
+      quizAnswers++;
+    } else {
+      el.classList.add('wrong');
+      fb.className = 'quiz-feedback show wrong-fb';
+      fb.textContent = '✗ ' + explanation;
+      // highlight correct
+      options.forEach(o => {
+        if (o.getAttribute('onclick').includes("'correct'")) {
+          o.classList.add('correct');
+        }
+      });
+    }
+
+    if (quizTotal === totalQs) {
+      const scoreDiv = document.getElementById('quiz-score');
+      scoreDiv.style.display = 'block';
+      const pct = Math.round((quizAnswers / totalQs) * 100);
+      document.getElementById('score-text').textContent = `${quizAnswers} / ${totalQs} — ${pct}%`;
+      const msgs = {
+        100: "Perfect score! You're ready for that 100. 🎯",
+        80: "Almost there — review the ones you missed and you're set.",
+        60: "Good effort. Revisit the Worked Examples and try again.",
+        0: "Don't worry — go through the method steps and examples, then retry."
+      };
+      const threshold = Object.keys(msgs).reverse().find(t => pct >= parseInt(t));
+      document.getElementById('score-msg').textContent = msgs[threshold];
+    }
+  }
+
+  // Nav active state on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('nav a');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(s => {
+      if (window.scrollY >= s.offsetTop - 80) current = s.id;
+    });
+    navLinks.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
