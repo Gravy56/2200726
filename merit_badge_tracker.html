@@ -1,0 +1,323 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.container { padding: 1rem 0; }
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.header h1 { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 1.5rem; }
+.stat-card { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; }
+.stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 4px; }
+.stat-val { font-size: 22px; font-weight: 500; color: var(--color-text-primary); }
+.controls { display: flex; gap: 10px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.controls input { flex: 1; min-width: 160px; padding: 8px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; outline: none; }
+.controls select { padding: 8px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; outline: none; }
+.badge-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; }
+.badge-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 14px 16px; cursor: pointer; transition: border-color 0.15s; }
+.badge-card:hover { border-color: var(--color-border-secondary); }
+.badge-card.earned { border-left: 3px solid #1D9E75; }
+.badge-card.eagle { border-left: 3px solid #378ADD; }
+.badge-top { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.badge-icon { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.badge-icon.earned { background: #E1F5EE; }
+.badge-icon.eagle { background: #E6F1FB; }
+.badge-icon.not-earned { background: var(--color-background-secondary); }
+.badge-name { font-size: 14px; font-weight: 500; color: var(--color-text-primary); }
+.badge-meta { font-size: 12px; color: var(--color-text-secondary); margin-top: 2px; }
+.eagle-pill { display: inline-block; font-size: 10px; padding: 2px 7px; border-radius: 20px; background: #E6F1FB; color: #185FA5; font-weight: 500; margin-left: 6px; }
+.reqs { margin-top: 8px; }
+.req-row { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; border-top: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+.req-row:first-child { border-top: none; }
+.req-check { width: 16px; height: 16px; border: 1.5px solid var(--color-border-secondary); border-radius: 4px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.req-check.done { background: #1D9E75; border-color: #1D9E75; }
+.req-check.done::after { content: ''; display: block; width: 8px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg) translate(1px,-1px); }
+.req-text { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+.req-text.done { color: var(--color-text-tertiary); text-decoration: line-through; }
+.progress-bar { height: 4px; background: var(--color-background-secondary); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: #1D9E75; border-radius: 2px; transition: width 0.3s; }
+.add-btn { padding: 8px 16px; background: var(--color-background-primary); border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); color: var(--color-text-primary); font-size: 14px; cursor: pointer; }
+.add-btn:hover { background: var(--color-background-secondary); }
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 100; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--color-background-primary); border-radius: var(--border-radius-lg); border: 0.5px solid var(--color-border-tertiary); padding: 1.5rem; width: 380px; max-width: 95vw; max-height: 80vh; overflow-y: auto; }
+.modal h2 { font-size: 16px; font-weight: 500; margin-bottom: 1rem; }
+.modal label { display: block; font-size: 13px; color: var(--color-text-secondary); margin-bottom: 4px; margin-top: 12px; }
+.modal input, .modal select, .modal textarea { width: 100%; padding: 8px 10px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); background: var(--color-background-primary); color: var(--color-text-primary); font-size: 14px; outline: none; font-family: var(--font-sans); }
+.modal textarea { resize: vertical; min-height: 70px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 1.5rem; }
+.modal-actions button { flex: 1; padding: 8px; border-radius: var(--border-radius-md); font-size: 14px; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); }
+.modal-actions button.primary { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+.req-add { font-size: 12px; color: var(--color-text-info, #378ADD); cursor: pointer; margin-top: 6px; display: inline-block; }
+.req-input-row { display: flex; gap: 6px; margin-top: 4px; }
+.req-input-row input { flex: 1; font-size: 12px; padding: 4px 8px; }
+.req-input-row button { padding: 4px 10px; font-size: 12px; }
+.delete-btn { font-size: 11px; color: var(--color-text-secondary); cursor: pointer; margin-left: auto; padding: 2px 6px; border: 0.5px solid var(--color-border-tertiary); border-radius: 4px; background: none; }
+.delete-btn:hover { color: var(--color-text-danger, #E24B4A); border-color: var(--color-border-danger, #E24B4A); }
+.section-label { font-size: 11px; font-weight: 500; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin: 1.5rem 0 0.75rem; }
+.empty { text-align: center; color: var(--color-text-secondary); font-size: 14px; padding: 3rem 0; }
+</style>
+
+<div class="container">
+  <div class="header">
+    <h1>Merit badge tracker</h1>
+    <button class="add-btn" onclick="openModal()">+ Add badge</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="controls">
+    <input type="text" id="search" placeholder="Search badges..." oninput="render()">
+    <select id="filter" onchange="render()">
+      <option value="all">All badges</option>
+      <option value="earned">Earned</option>
+      <option value="in-progress">In progress</option>
+      <option value="not-started">Not started</option>
+      <option value="eagle">Eagle-required</option>
+    </select>
+  </div>
+
+  <div id="badge-grid" class="badge-grid"></div>
+</div>
+
+<div class="modal-bg" id="modal-bg" onclick="e => { if(e.target===this) closeModal() }">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2 id="modal-title">Add merit badge</h2>
+    <label>Badge name</label>
+    <input type="text" id="m-name" placeholder="e.g. Swimming">
+    <label>Category</label>
+    <select id="m-cat">
+      <option>Citizenship</option>
+      <option>Communications & Arts</option>
+      <option>Emergency Preparedness</option>
+      <option>Environment & Conservation</option>
+      <option>Family & Community</option>
+      <option>Health & Safety</option>
+      <option>Hobbies & Sports</option>
+      <option>Industry & Business</option>
+      <option>Outdoor Skills</option>
+      <option>STEM</option>
+      <option>Other</option>
+    </select>
+    <label>
+      <input type="checkbox" id="m-eagle" style="width:auto;margin-right:6px;">Eagle-required
+    </label>
+    <label>Date earned (leave blank if in progress)</label>
+    <input type="date" id="m-date">
+    <label>Requirements <span style="font-size:11px;color:var(--color-text-secondary)">(one per line, prefix # for number)</span></label>
+    <div id="req-list"></div>
+    <span class="req-add" onclick="addReqField()">+ add requirement</span>
+    <div class="modal-actions">
+      <button onclick="closeModal()">Cancel</button>
+      <button class="primary" onclick="saveBadge()">Save badge</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const EAGLE_REQUIRED = ['Camping','Citizenship in the Community','Citizenship in the Nation','Citizenship in the World','Citizenship in Society','Communication','Cooking','Emergency Preparedness','Environmental Science','Family Life','First Aid','Lifesaving','Personal Fitness','Personal Management','Swimming','Cycling','Hiking','Rowing','Sustainability'];
+const CATEGORY_EMOJI = {
+  'Citizenship':'🏛','Communications & Arts':'🎨','Emergency Preparedness':'🚨','Environment & Conservation':'🌿','Family & Community':'🏠','Health & Safety':'💊','Hobbies & Sports':'⚽','Industry & Business':'🏭','Outdoor Skills':'🏕','STEM':'🔬','Other':'📋'
+};
+
+let badges = JSON.parse(localStorage.getItem('mb-badges') || 'null') || getDefaults();
+let editingId = null;
+let reqCount = 0;
+
+function getDefaults() {
+  return [
+    {id:1,name:'First Aid',cat:'Health & Safety',eagle:true,date:'2023-06-15',reqs:[
+      {id:'r1',text:'Understand bloodborne pathogens',done:true},
+      {id:'r2',text:'Demonstrate CPR on mannequin',done:true},
+      {id:'r3',text:'Show treatment for shock',done:true},
+      {id:'r4',text:'Demonstrate treatment for burns and scalds',done:true},
+    ]},
+    {id:2,name:'Swimming',cat:'Outdoor Skills',eagle:true,date:'2023-08-20',reqs:[
+      {id:'r5',text:'Show swimming ability — 100 yards continuously',done:true},
+      {id:'r6',text:'Float on back for 1 minute',done:true},
+      {id:'r7',text:'Demonstrate personal water safety',done:true},
+    ]},
+    {id:3,name:'Cooking',cat:'Outdoor Skills',eagle:true,date:'2024-03-10',reqs:[
+      {id:'r8',text:'Food safety and nutrition basics',done:true},
+      {id:'r9',text:'Cook breakfast outdoors',done:true},
+      {id:'r10',text:'Cook a trail meal',done:true},
+    ]},
+    {id:4,name:'Camping',cat:'Outdoor Skills',eagle:true,date:null,reqs:[
+      {id:'r11',text:'Explain the Leave No Trace principles',done:true},
+      {id:'r12',text:'Complete 20 nights camping',done:true},
+      {id:'r13',text:'Show how to use a compass',done:false},
+      {id:'r14',text:'Plan a 72-hour emergency kit',done:false},
+    ]},
+    {id:5,name:'Programming',cat:'STEM',eagle:false,date:'2024-05-01',reqs:[
+      {id:'r15',text:'Discuss software development lifecycle',done:true},
+      {id:'r16',text:'Build an app or website',done:true},
+    ]},
+    {id:6,name:'Electronics',cat:'STEM',eagle:false,date:null,reqs:[
+      {id:'r17',text:'Explain electrical terms',done:true},
+      {id:'r18',text:'Build a circuit with a switch',done:false},
+      {id:'r19',text:'Construct a working AM radio',done:false},
+    ]},
+  ];
+}
+
+function save() { localStorage.setItem('mb-badges', JSON.stringify(badges)); }
+
+function getStatus(b) {
+  if (b.date) return 'earned';
+  const done = b.reqs.filter(r=>r.done).length;
+  if (done === 0) return 'not-started';
+  return 'in-progress';
+}
+
+function render() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const f = document.getElementById('filter').value;
+  let filtered = badges.filter(b => {
+    if (q && !b.name.toLowerCase().includes(q) && !b.cat.toLowerCase().includes(q)) return false;
+    if (f === 'eagle') return b.eagle;
+    if (f === 'earned') return getStatus(b) === 'earned';
+    if (f === 'in-progress') return getStatus(b) === 'in-progress';
+    if (f === 'not-started') return getStatus(b) === 'not-started';
+    return true;
+  });
+
+  const total = badges.length;
+  const earned = badges.filter(b=>getStatus(b)==='earned').length;
+  const eagleEarned = badges.filter(b=>b.eagle&&getStatus(b)==='earned').length;
+  const inProg = badges.filter(b=>getStatus(b)==='in-progress').length;
+  const eagleTotal = EAGLE_REQUIRED.length;
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total tracked</div><div class="stat-val">${total}</div></div>
+    <div class="stat-card"><div class="stat-label">Earned</div><div class="stat-val" style="color:#1D9E75">${earned}</div></div>
+    <div class="stat-card"><div class="stat-label">In progress</div><div class="stat-val" style="color:#BA7517">${inProg}</div></div>
+    <div class="stat-card"><div class="stat-label">Eagle reqs</div><div class="stat-val" style="color:#378ADD">${eagleEarned} / ${eagleTotal}</div></div>
+  `;
+
+  if (!filtered.length) {
+    document.getElementById('badge-grid').innerHTML = '<div class="empty">No badges found.</div>';
+    return;
+  }
+
+  document.getElementById('badge-grid').innerHTML = filtered.map(b => {
+    const status = getStatus(b);
+    const doneReqs = b.reqs.filter(r=>r.done).length;
+    const pct = b.reqs.length ? Math.round(doneReqs/b.reqs.length*100) : 0;
+    const emoji = CATEGORY_EMOJI[b.cat] || '📋';
+    const cardClass = status==='earned' ? 'badge-card earned' : (b.eagle ? 'badge-card eagle' : 'badge-card');
+    const iconClass = status==='earned' ? 'badge-icon earned' : (b.eagle ? 'badge-icon eagle' : 'badge-icon not-earned');
+    return `<div class="${cardClass}">
+      <div class="badge-top">
+        <div class="${iconClass}" style="font-size:16px">${emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div class="badge-name">${b.name}${b.eagle?'<span class="eagle-pill">Eagle req</span>':''}</div>
+          <div class="badge-meta">${b.cat}${b.date?' · Earned '+new Date(b.date+'T12:00').toLocaleDateString('en-US',{month:'short',year:'numeric'}):''}${status==='in-progress'?' · '+doneReqs+'/'+b.reqs.length+' reqs':''}</div>
+        </div>
+        <button class="delete-btn" onclick="deleteBadge(${b.id},event)">remove</button>
+      </div>
+      ${b.reqs.length ? `<div class="reqs">${b.reqs.map(r=>`
+        <div class="req-row" onclick="toggleReq(${b.id},'${r.id}')">
+          <div class="req-check ${r.done?'done':''}"></div>
+          <span class="req-text ${r.done?'done':''}">${r.text}</span>
+        </div>`).join('')}</div>
+        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+      ` : ''}
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <span class="req-add" onclick="openModal(${b.id})">edit</span>
+        ${status!=='earned'?`<span class="req-add" onclick="markEarned(${b.id})">mark earned</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleReq(badgeId, reqId) {
+  const b = badges.find(x=>x.id===badgeId);
+  const r = b.reqs.find(x=>x.id===reqId);
+  r.done = !r.done;
+  save(); render();
+}
+
+function markEarned(id) {
+  const b = badges.find(x=>x.id===id);
+  b.date = new Date().toISOString().slice(0,10);
+  b.reqs.forEach(r=>r.done=true);
+  save(); render();
+}
+
+function deleteBadge(id, e) {
+  e.stopPropagation();
+  if (!confirm('Remove this badge?')) return;
+  badges = badges.filter(x=>x.id!==id);
+  save(); render();
+}
+
+function openModal(id=null) {
+  editingId = id;
+  reqCount = 0;
+  const modal = document.getElementById('modal-bg');
+  if (id) {
+    const b = badges.find(x=>x.id===id);
+    document.getElementById('modal-title').textContent = 'Edit badge';
+    document.getElementById('m-name').value = b.name;
+    document.getElementById('m-cat').value = b.cat;
+    document.getElementById('m-eagle').checked = b.eagle;
+    document.getElementById('m-date').value = b.date || '';
+    document.getElementById('req-list').innerHTML = b.reqs.map((r,i)=>`
+      <div class="req-input-row" id="ri-${i}">
+        <input type="text" value="${r.text}" placeholder="Requirement..." id="rtext-${i}">
+        <button onclick="removeReqField(${i})">x</button>
+      </div>`).join('');
+    reqCount = b.reqs.length;
+  } else {
+    document.getElementById('modal-title').textContent = 'Add merit badge';
+    document.getElementById('m-name').value = '';
+    document.getElementById('m-eagle').checked = false;
+    document.getElementById('m-date').value = '';
+    document.getElementById('req-list').innerHTML = '';
+    const guess = EAGLE_REQUIRED.find(n=>document.getElementById('m-name').value===n);
+    if (guess) document.getElementById('m-eagle').checked = true;
+  }
+  modal.classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); editingId=null; }
+
+function addReqField() {
+  const li = document.createElement('div');
+  li.className = 'req-input-row';
+  li.id = `ri-${reqCount}`;
+  li.innerHTML = `<input type="text" placeholder="Requirement..." id="rtext-${reqCount}"><button onclick="removeReqField(${reqCount})">x</button>`;
+  document.getElementById('req-list').appendChild(li);
+  reqCount++;
+}
+
+function removeReqField(i) {
+  const el = document.getElementById(`ri-${i}`);
+  if (el) el.remove();
+}
+
+function saveBadge() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) { alert('Please enter a badge name.'); return; }
+  const cat = document.getElementById('m-cat').value;
+  const eagle = document.getElementById('m-eagle').checked || EAGLE_REQUIRED.includes(name);
+  const date = document.getElementById('m-date').value || null;
+  const reqs = [];
+  for (let i=0;i<reqCount;i++) {
+    const el = document.getElementById(`rtext-${i}`);
+    if (el && el.value.trim()) reqs.push({id:'r'+Date.now()+i, text:el.value.trim(), done:!!date});
+  }
+  if (editingId) {
+    const b = badges.find(x=>x.id===editingId);
+    const oldReqs = b.reqs;
+    Object.assign(b,{name,cat,eagle,date,reqs: reqs.map((r,i)=>({...r,done:oldReqs[i]?.done||!!date}))});
+  } else {
+    badges.push({id:Date.now(),name,cat,eagle,date,reqs});
+  }
+  save(); render(); closeModal();
+}
+
+document.getElementById('m-name').addEventListener('input', function() {
+  if (EAGLE_REQUIRED.includes(this.value)) document.getElementById('m-eagle').checked = true;
+});
+
+render();
+</script>
