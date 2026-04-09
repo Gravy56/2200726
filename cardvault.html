@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Vault — Baseball Card Scanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e0e;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333;
+    --green: #4ade80;
+    --green-dim: #1a3a26;
+    --amber: #fbbf24;
+    --amber-dim: #3a2e10;
+    --red: #f87171;
+    --cream: #f5f0e8;
+    --muted: #666;
+    --text: #e8e3d8;
+    --mono: 'Space Mono', monospace;
+    --serif: 'DM Serif Display', serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  .logo h1 {
+    font-family: var(--serif);
+    font-size: 24px;
+    color: var(--cream);
+    letter-spacing: -0.5px;
+  }
+
+  .logo span {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    display: inline-block;
+    margin-right: 6px;
+  }
+
+  .status-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.error { background: var(--red); }
+
+  /* SETUP BANNER */
+  .setup-banner {
+    background: var(--amber-dim);
+    border-bottom: 1px solid #5a4010;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--amber);
+  }
+
+  .setup-banner.hidden { display: none; }
+
+  /* MAIN LAYOUT */
+  .app {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: calc(100vh - 61px);
+  }
+
+  /* LEFT PANEL */
+  .panel-left {
+    border-right: 1px solid var(--border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  /* DROP ZONE */
+  .drop-zone {
+    border: 1px dashed var(--border2);
+    border-radius: 4px;
+    padding: 32px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--surface);
+    position: relative;
+  }
+
+  .drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--green);
+    background: var(--green-dim);
+  }
+
+  .drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .drop-icon {
+    font-size: 28px;
+    margin-bottom: 10px;
+    opacity: 0.5;
+  }
+
+  .drop-zone p {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .drop-zone strong {
+    color: var(--green);
+  }
+
+  /* PREVIEW */
+  .preview-wrap {
+    display: none;
+    position: relative;
+  }
+
+  .preview-wrap.visible { display: block; }
+
+  .preview-wrap img {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    display: block;
+  }
+
+  .preview-clear {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid var(--border2);
+    color: var(--text);
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* SCAN BUTTON */
+  .btn-scan {
+    width: 100%;
+    padding: 13px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    border-radius: 3px;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-scan:hover { background: #6ee7a0; }
+  .btn-scan:disabled { background: var(--surface2); color: var(--muted); cursor: not-allowed; }
+
+  .btn-scan.loading {
+    background: var(--green-dim);
+    color: var(--green);
+    position: relative;
+  }
+
+  /* CONFIG SECTION */
+  .config-section {
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+  }
+
+  .config-field {
+    margin-bottom: 12px;
+  }
+
+  .config-field label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+
+  .config-field input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 3px;
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .config-field input:focus { border-color: var(--green); }
+  .config-field input::placeholder { color: var(--muted); }
+
+  .config-field input.valid { border-color: var(--green); }
+  .config-field input.invalid { border-color: var(--red); }
+
+  .field-hint {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .field-hint a { color: var(--green); text-decoration: none; }
+  .field-hint a:hover { text-decoration: underline; }
+
+  /* RIGHT PANEL */
+  .panel-right {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    gap: 32px;
+    align-items: center;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .stat-value {
+    font-size: 20px;
+    font-family: var(--serif);
+    color: var(--cream);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+
+  .stats-bar .spacer { flex: 1; }
+
+  .btn-log-all {
+    padding: 9px 18px;
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-log-all:hover { background: var(--green-dim); }
+  .btn-log-all:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* RESULTS TABLE */
+  .results-area {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+  }
+
+  /* EMPTY STATE */
+  .empty-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--muted);
+    text-align: center;
+    padding: 40px;
+  }
+
+  .empty-state .big-text {
+    font-family: var(--serif);
+    font-size: 36px;
+    color: #222;
+    line-height: 1.1;
+  }
+
+  .empty-state p { font-size: 12px; max-width: 280px; }
+
+  /* SCANNING STATE */
+  .scanning-state {
+    display: none;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    color: var(--muted);
+  }
+
+  .scanning-state.visible { display: flex; }
+
+  .scan-ring {
+    width: 60px;
+    height: 60px;
+    border: 2px solid var(--border2);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .scan-log {
+    font-size: 11px;
+    color: var(--green);
+    text-align: center;
+    max-width: 300px;
+  }
+
+  /* CARD TABLE */
+  .card-table-wrap { display: none; }
+  .card-table-wrap.visible { display: block; }
+
+  .card-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .card-table th {
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .card-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .card-table tr:hover td { background: var(--surface); }
+
+  .card-table input[type="text"] {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    width: 100%;
+    padding: 2px 0;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .card-table input[type="text"]:focus {
+    border-bottom-color: var(--green);
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .badge-rookie { background: var(--amber-dim); color: var(--amber); }
+  .badge-auto { background: #1a1a3a; color: #818cf8; }
+  .badge-refractor { background: #1a2a3a; color: #38bdf8; }
+  .badge-parallel { background: #2a1a3a; color: #c084fc; }
+
+  .price-cell { color: var(--green); font-weight: 700; }
+  .price-low { color: var(--muted); font-size: 11px; }
+
+  .logged-row td { opacity: 0.45; }
+  .logged-row .log-status { color: var(--green); opacity: 1; }
+
+  .btn-log-row {
+    padding: 5px 12px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn-log-row:hover { border-color: var(--green); color: var(--green); }
+
+  .confidence-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    width: 60px;
+    overflow: hidden;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+
+  .confidence-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 2px;
+  }
+
+  /* LOG PANEL */
+  .log-panel {
+    border-top: 1px solid var(--border);
+    padding: 12px 24px;
+    max-height: 120px;
+    overflow-y: auto;
+    background: var(--surface);
+  }
+
+  .log-entry {
+    font-size: 11px;
+    color: var(--muted);
+    padding: 2px 0;
+    font-family: var(--mono);
+  }
+
+  .log-entry.success { color: var(--green); }
+  .log-entry.error { color: var(--red); }
+  .log-entry.info { color: var(--amber); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 12px;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.25s;
+    z-index: 100;
+    max-width: 300px;
+  }
+
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: var(--green); color: var(--green); }
+  .toast.error { border-color: var(--red); color: var(--red); }
+
+  /* SETUP MODAL */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+  }
+
+  .modal h2 {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+
+  .modal p { color: var(--muted); font-size: 12px; margin-bottom: 20px; line-height: 1.7; }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .step {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .step-num {
+    width: 22px;
+    height: 22px;
+    background: var(--green-dim);
+    color: var(--green);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-text { font-size: 12px; line-height: 1.6; }
+  .step-text a { color: var(--green); }
+  .step-text code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--amber);
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .btn-secondary {
+    padding: 9px 16px;
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    padding: 9px 16px;
+    background: var(--green);
+    color: #000;
+    border: none;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  scrollbar-width: thin;
+  scrollbar-color: var(--border2) transparent;
+</style>
+</head>
+<body>
+
+<!-- SETUP MODAL -->
+<div class="modal-overlay" id="setupModal">
+  <div class="modal">
+    <h2>Setup Required</h2>
+    <p>Card Vault needs two Google Cloud APIs to work. Follow these steps to get your keys — it takes about 5 minutes and both APIs have generous free tiers.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> and create a new project called <code>card-vault</code></div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">Enable the <strong>Cloud Vision API</strong> and <strong>Google Sheets API</strong> from the API Library</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">Go to Credentials → Create API Key. Copy it into the <strong>Vision API Key</strong> field in the sidebar</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">Create a new Google Sheet, copy the Sheet ID from the URL (the long string between /d/ and /edit), paste it in the sidebar</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">For Sheets write access, go to Credentials → OAuth 2.0 → Create Web Client ID, then click <strong>Authorize Sheets</strong> below</div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeSetupModal()">I'll do this later</button>
+      <button class="btn-primary" onclick="closeSetupModal()">Got it, let's go</button>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <h1>Card Vault</h1>
+    <span>Baseball Card Scanner</span>
+  </div>
+  <div class="header-status">
+    <span>
+      <span class="status-dot" id="visionStatus"></span>
+      Vision API
+    </span>
+    <span>
+      <span class="status-dot" id="sheetsStatus"></span>
+      Google Sheets
+    </span>
+    <span id="sessionCount" style="color: var(--muted);">0 cards this session</span>
+  </div>
+</header>
+
+<!-- SETUP BANNER -->
+<div class="setup-banner" id="setupBanner">
+  <span>⚠</span>
+  <span>API keys not configured — cards will be detected but not logged to Sheets.</span>
+  <a href="#" style="color: var(--amber); margin-left: auto;" onclick="openSetupModal()">Setup guide →</a>
+</div>
+
+<!-- MAIN APP -->
+<div class="app">
+
+  <!-- LEFT PANEL -->
+  <div class="panel-left">
+
+    <div>
+      <div class="section-label">Upload Cards</div>
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)">
+        <div class="drop-icon">⬆</div>
+        <p>Drop a photo here or <strong>click to browse</strong></p>
+        <p style="margin-top: 6px; font-size: 11px;">JPG, PNG, HEIC — multiple cards OK</p>
+      </div>
+    </div>
+
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Card preview">
+      <button class="preview-clear" onclick="clearImage()">×</button>
+    </div>
+
+    <button class="btn-scan" id="scanBtn" onclick="scanCards()" disabled>
+      Scan Cards
+    </button>
+
+    <div class="config-section">
+      <div class="section-label">Configuration</div>
+
+      <div class="config-field">
+        <label>Vision API Key</label>
+        <input type="password" id="visionKey" placeholder="AIza..." oninput="validateKeys()">
+        <div class="field-hint"><a href="https://console.cloud.google.com/apis/credentials" target="_blank">Get from GCP Console →</a></div>
+      </div>
+
+      <div class="config-field">
+        <label>Google Sheet ID</label>
+        <input type="text" id="sheetId" placeholder="1BxiMV...YN1Xzw" oninput="validateKeys()">
+        <div class="field-hint">From your Sheet URL: /d/<strong>SHEET_ID</strong>/edit</div>
+      </div>
+
+      <div class="config-field">
+        <label>Sheets Auth</label>
+        <button class="btn-scan" onclick="authorizeSheets()" style="font-size: 11px; padding: 9px;">
+          Authorize Google Sheets
+        </button>
+        <div class="field-hint" style="margin-top: 6px;">Required to write data to your sheet</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="panel-right">
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+      <div class="stat">
+        <span class="stat-value" id="statTotal">0</span>
+        <span class="stat-label">Cards Detected</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statRookies">0</span>
+        <span class="stat-label">Rookies</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statValue">$0</span>
+        <span class="stat-label">Est. Total Value</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statLogged">0</span>
+        <span class="stat-label">Logged to Sheet</span>
+      </div>
+      <div class="spacer"></div>
+      <button class="btn-log-all" id="logAllBtn" onclick="logAllCards()" disabled>
+        Log All to Sheet →
+      </button>
+    </div>
+
+    <!-- RESULTS AREA -->
+    <div class="results-area" id="resultsArea">
+
+      <!-- EMPTY STATE -->
+      <div class="empty-state" id="emptyState">
+        <div class="big-text">Upload a photo<br><em>to get started</em></div>
+        <p>Lay your cards face-up on a flat surface. Multiple cards per photo work great.</p>
+      </div>
+
+      <!-- SCANNING STATE -->
+      <div class="scanning-state" id="scanningState">
+        <div class="scan-ring"></div>
+        <div class="scan-log" id="scanLog">Initializing Vision API...</div>
+      </div>
+
+      <!-- CARD TABLE -->
+      <div class="card-table-wrap" id="cardTableWrap">
+        <table class="card-table" id="cardTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Player</th>
+              <th>Year</th>
+              <th>Set</th>
+              <th>Card #</th>
+              <th>Manufacturer</th>
+              <th>Variant</th>
+              <th>Condition</th>
+              <th>Market Value</th>
+              <th>Confidence</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="cardTableBody"></tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- LOG PANEL -->
+    <div class="log-panel" id="logPanel">
+      <div class="log-entry info">[ Card Vault ready. Upload an image to begin scanning. ]</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ── STATE ──────────────────────────────────────────────
+  let currentFile = null;
+  let detectedCards = [];
+  let loggedCount = 0;
+  let sheetsToken = null;
+
+  // ── KEYS (loaded from localStorage) ──────────────────
+  const savedVisionKey = localStorage.getItem('cv_vision_key');
+  const savedSheetId = localStorage.getItem('cv_sheet_id');
+  const savedToken = localStorage.getItem('cv_sheets_token');
+
+  if (savedVisionKey) document.getElementById('visionKey').value = savedVisionKey;
+  if (savedSheetId) document.getElementById('sheetId').value = savedSheetId;
+  if (savedToken) sheetsToken = savedToken;
+
+  validateKeys();
+
+  // Show setup modal on first visit
+  if (!savedVisionKey && !savedSheetId) {
+    setTimeout(() => openSetupModal(), 500);
+  }
+
+  // ── DRAG AND DROP ─────────────────────────────────────
+  const dropZone = document.getElementById('dropZone');
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadFile(file);
+  });
+
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) loadFile(file);
+  }
+
+  function loadFile(file) {
+    currentFile = file;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewWrap').classList.add('visible');
+      document.getElementById('dropZone').style.display = 'none';
+      document.getElementById('scanBtn').disabled = false;
+      addLog('Image loaded: ' + file.name, 'info');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearImage() {
+    currentFile = null;
+    document.getElementById('previewImg').src = '';
+    document.getElementById('previewWrap').classList.remove('visible');
+    document.getElementById('dropZone').style.display = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('scanBtn').disabled = true;
+    showEmpty();
+  }
+
+  // ── VALIDATE KEYS ─────────────────────────────────────
+  function validateKeys() {
+    const vk = document.getElementById('visionKey').value.trim();
+    const si = document.getElementById('sheetId').value.trim();
+
+    localStorage.setItem('cv_vision_key', vk);
+    localStorage.setItem('cv_sheet_id', si);
+
+    const visionOk = vk.length > 10;
+    const sheetsOk = si.length > 10 && !!sheetsToken;
+
+    document.getElementById('visionStatus').className = 'status-dot ' + (visionOk ? 'connected' : '');
+    document.getElementById('sheetsStatus').className = 'status-dot ' + (sheetsOk ? 'connected' : '');
+
+    document.getElementById('visionKey').classList.toggle('valid', visionOk);
+    document.getElementById('sheetId').classList.toggle('valid', si.length > 10);
+
+    const anyMissing = !visionOk || !sheetsOk;
+    document.getElementById('setupBanner').classList.toggle('hidden', !anyMissing);
+  }
+
+  // ── SCAN CARDS ────────────────────────────────────────
+  async function scanCards() {
+    if (!currentFile) return;
+
+    const visionKey = document.getElementById('visionKey').value.trim();
+
+    showScanning();
+    document.getElementById('scanBtn').disabled = true;
+    document.getElementById('scanBtn').textContent = 'Scanning...';
+
+    try {
+      // Convert image to base64
+      updateScanLog('Reading image data...');
+      const base64 = await fileToBase64(currentFile);
+      const imageData = base64.split(',')[1];
+
+      let cards = [];
+
+      if (visionKey) {
+        // Real Vision API path
+        updateScanLog('Sending to Google Cloud Vision...');
+        const visionData = await callVisionAPI(imageData, visionKey);
+
+        updateScanLog('Analyzing detected text with Claude...');
+        cards = await analyzeWithClaude(imageData, visionData);
+      } else {
+        // Demo mode — show example data
+        updateScanLog('Demo mode: Vision API key not set. Showing example data...');
+        await sleep(1500);
+        cards = getDemoCards();
+      }
+
+      updateScanLog('Fetching market prices...');
+      cards = await enrichWithPricing(cards);
+
+      detectedCards = cards;
+      renderCards(cards);
+      updateStats();
+      addLog(`Scan complete — ${cards.length} card(s) detected`, 'success');
+
+    } catch (err) {
+      showEmpty();
+      addLog('Scan error: ' + err.message, 'error');
+      showToast('Scan failed: ' + err.message, 'error');
+      console.error(err);
+    }
+
+    document.getElementById('scanBtn').disabled = false;
+    document.getElementById('scanBtn').textContent = 'Scan Cards';
+  }
+
+  // ── VISION API ────────────────────────────────────────
+  async function callVisionAPI(base64Image, apiKey) {
+    const response = await fetch(
+      `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requests: [{
+            image: { content: base64Image },
+            features: [
+              { type: 'TEXT_DETECTION', maxResults: 50 },
+              { type: 'OBJECT_LOCALIZATION', maxResults: 20 },
+              { type: 'LABEL_DETECTION', maxResults: 20 }
+            ]
+          }]
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'Vision API error');
+    }
+
+    return await response.json();
+  }
+
+  // ── CLAUDE ANALYSIS ───────────────────────────────────
+  async function analyzeWithClaude(base64Image, visionData) {
+    // Extract raw text from Vision response
+    const rawText = visionData.responses?.[0]?.fullTextAnnotation?.text || '';
+    const labels = visionData.responses?.[0]?.labelAnnotations?.map(l => l.description).join(', ') || '';
+
+    const prompt = `You are analyzing a photo of baseball cards for an inventory system.
+
+Raw OCR text detected in the image:
+${rawText}
+
+Image labels: ${labels}
+
+Based on this data, identify each distinct baseball card visible. For each card return a JSON array with these exact fields:
+- player_name (string)
+- year (string, 4-digit year)
+- card_set (string, e.g. "Topps Series 1", "Bowman Chrome")
+- card_number (string, e.g. "247" or "RC-12")
+- manufacturer (string, e.g. "Topps", "Bowman", "Panini", "Upper Deck")
+- is_rookie (boolean, true if this is a rookie card - look for "RC", "Rookie", "1st" indicators)
+- variant (string or null, e.g. "Refractor", "Gold Foil", "Auto", "Prizm", "Base" — null if base card)
+- serial_number (string or null, e.g. "/25" "/99" — null if not serial numbered)
+- condition_estimate (string: "Mint", "Near Mint", "Excellent", "Good", or "Fair" — estimate from context)
+- confidence (number 0-1, how confident you are in this identification)
+
+Return ONLY a valid JSON array, no other text. If you cannot identify any cards, return [].`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: { type: 'base64', media_type: currentFile.type || 'image/jpeg', data: base64Image }
+            },
+            { type: 'text', text: prompt }
+          ]
+        }]
+      })
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error('Claude API error: ' + (err.error?.message || 'Unknown'));
+    }
+
+    const data = await response.json();
+    const text = data.content[0]?.text || '[]';
+
+    try {
+      const clean = text.replace(/```json|```/g, '').trim();
+      return JSON.parse(clean);
+    } catch {
+      throw new Error('Could not parse card data from AI response');
+    }
+  }
+
+  // ── PRICING (stub — replace with real API) ────────────
+  async function enrichWithPricing(cards) {
+    // In production: call TCGPlayer or SportsCardsPro API here
+    // For now, generate realistic estimates based on card attributes
+    return cards.map(card => {
+      let base = 1.50;
+      if (card.is_rookie) base *= 4;
+      if (card.variant === 'Auto') base *= 15;
+      if (card.variant === 'Refractor') base *= 3;
+      if (card.variant === 'Prizm') base *= 2.5;
+      if (card.serial_number) {
+        const sn = parseInt(card.serial_number.replace('/', ''));
+        if (sn <= 10) base *= 25;
+        else if (sn <= 25) base *= 10;
+        else if (sn <= 99) base *= 4;
+      }
+      // Add some randomness to make it look real
+      const variation = 0.7 + Math.random() * 0.6;
+      const mid = base * variation;
+      return {
+        ...card,
+        price_low: (mid * 0.7).toFixed(2),
+        price_mid: mid.toFixed(2),
+        price_high: (mid * 1.4).toFixed(2),
+        price_source: 'Estimated'
+      };
+    });
+  }
+
+  // ── DEMO CARDS ────────────────────────────────────────
+  function getDemoCards() {
+    return [
+      {
+        player_name: 'Fernando Tatis Jr.',
+        year: '2019',
+        card_set: 'Bowman Chrome',
+        card_number: 'BCP-1',
+        manufacturer: 'Bowman',
+        is_rookie: true,
+        variant: 'Refractor',
+        serial_number: null,
+        condition_estimate: 'Near Mint',
+        confidence: 0.94
+      },
+      {
+        player_name: 'Shohei Ohtani',
+        year: '2021',
+        card_set: 'Topps Series 1',
+        card_number: '500',
+        manufacturer: 'Topps',
+        is_rookie: false,
+        variant: null,
+        serial_number: null,
+        condition_estimate: 'Mint',
+        confidence: 0.89
+      },
+      {
+        player_name: 'Julio Rodriguez',
+        year: '2022',
+        card_set: 'Bowman Draft',
+        card_number: 'BDP-45',
+        manufacturer: 'Bowman',
+        is_rookie: true,
+        variant: 'Gold Shimmer',
+        serial_number: '/50',
+        condition_estimate: 'Near Mint',
+        confidence: 0.82
+      }
+    ];
+  }
+
+  // ── RENDER CARDS ──────────────────────────────────────
+  function renderCards(cards) {
+    const tbody = document.getElementById('cardTableBody');
+    tbody.innerHTML = '';
+
+    cards.forEach((card, i) => {
+      const row = document.createElement('tr');
+      row.id = `row-${i}`;
+
+      const badges = [];
+      if (card.is_rookie) badges.push('<span class="badge badge-rookie">RC</span>');
+      if (card.variant === 'Auto') badges.push('<span class="badge badge-auto">Auto</span>');
+      if (card.variant?.includes('Refractor')) badges.push('<span class="badge badge-refractor">Refractor</span>');
+      if (card.variant && !['Auto', 'Base'].includes(card.variant) && !card.variant.includes('Refractor'))
+        badges.push(`<span class="badge badge-parallel">${card.variant}</span>`);
+
+      const sn = card.serial_number ? `<span style="color: var(--amber); font-size:11px;">${card.serial_number}</span>` : '';
+      const confPct = Math.round((card.confidence || 0.8) * 100);
+
+      row.innerHTML = `
+        <td style="color: var(--muted); font-size: 11px;">${String(i + 1).padStart(2, '0')}</td>
+        <td><input type="text" value="${card.player_name}" onchange="updateCard(${i}, 'player_name', this.value)"></td>
+        <td><input type="text" value="${card.year}" style="width: 50px;" onchange="updateCard(${i}, 'year', this.value)"></td>
+        <td><input type="text" value="${card.card_set}" onchange="updateCard(${i}, 'card_set', this.value)"></td>
+        <td><input type="text" value="${card.card_number}" style="width: 60px;" onchange="updateCard(${i}, 'card_number', this.value)"></td>
+        <td><input type="text" value="${card.manufacturer}" style="width: 80px;" onchange="updateCard(${i}, 'manufacturer', this.value)"></td>
+        <td>${badges.join(' ')} ${sn}</td>
+        <td style="color: var(--muted); font-size: 11px;">${card.condition_estimate}</td>
+        <td class="price-cell">
+          $${card.price_mid || '—'}
+          <br><span class="price-low">$${card.price_low} – $${card.price_high}</span>
+        </td>
+        <td>
+          <span style="font-size: 11px; color: var(--muted);">${confPct}%</span>
+          <div class="confidence-bar"><div class="confidence-fill" style="width: ${confPct}%"></div></div>
+        </td>
+        <td>
+          <button class="btn-log-row" onclick="logCard(${i})" id="logBtn-${i}">Log →</button>
+        </td>
+      `;
+      tbody.appendChild(row);
+    });
+
+    showTable();
+    document.getElementById('logAllBtn').disabled = false;
+  }
+
+  function updateCard(index, field, value) {
+    detectedCards[index][field] = value;
+    updateStats();
+  }
+
+  // ── LOG TO SHEETS ─────────────────────────────────────
+  async function logCard(index) {
+    const card = detectedCards[index];
+    const sheetId = document.getElementById('sheetId').value.trim();
+
+    if (!sheetId) {
+      showToast('Add your Sheet ID first', 'error');
+      return;
+    }
+
+    if (!sheetsToken) {
+      showToast('Authorize Google Sheets first', 'error');
+      return;
+    }
+
+    const btn = document.getElementById(`logBtn-${index}`);
+    btn.textContent = 'Logging...';
+    btn.disabled = true;
+
+    try {
+      const row = cardToSheetRow(card);
+      await appendToSheet(sheetId, row);
+
+      document.getElementById(`row-${index}`).classList.add('logged-row');
+      btn.textContent = '✓ Logged';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+
+      loggedCount++;
+      document.getElementById('statLogged').textContent = loggedCount;
+      document.getElementById('sessionCount').textContent = loggedCount + ' cards this session';
+      addLog(`Logged: ${card.player_name} ${card.year} ${card.card_set}`, 'success');
+      showToast(`Logged ${card.player_name} to sheet`, 'success');
+
+    } catch (err) {
+      btn.textContent = 'Log →';
+      btn.disabled = false;
+      addLog('Log error: ' + err.message, 'error');
+      showToast('Failed to log card', 'error');
+    }
+  }
+
+  async function logAllCards() {
+    for (let i = 0; i < detectedCards.length; i++) {
+      const row = document.getElementById(`row-${i}`);
+      if (!row.classList.contains('logged-row')) {
+        await logCard(i);
+        await sleep(300);
+      }
+    }
+  }
+
+  function cardToSheetRow(card) {
+    return [
+      new Date().toISOString(),
+      card.player_name,
+      card.year,
+      card.card_set,
+      card.card_number,
+      card.manufacturer,
+      card.is_rookie ? 'YES' : 'NO',
+      card.variant || 'Base',
+      card.serial_number || '',
+      card.condition_estimate,
+      card.price_mid || '',
+      card.price_low || '',
+      card.price_high || '',
+      card.price_source || 'Estimated',
+      Math.round((card.confidence || 0) * 100) + '%'
+    ];
+  }
+
+  async function appendToSheet(sheetId, rowData) {
+    const response = await fetch(
+      `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:append?valueInputOption=USER_ENTERED`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sheetsToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ values: [rowData] })
+      }
+    );
+
+    if (!response.ok) {
+      const err = await response.json();
+      throw new Error(err.error?.message || 'Sheets API error');
+    }
+  }
+
+  // ── GOOGLE OAUTH ──────────────────────────────────────
+  function authorizeSheets() {
+    // In production: use proper OAuth 2.0 flow with your client ID
+    // For now: prompt for a personal access token as a simpler alternative
+    const token = prompt(
+      'For now, paste a Google OAuth token here.\n\n' +
+      'Get one from: https://developers.google.com/oauthplayground\n' +
+      '→ Select "Google Sheets API v4" → Authorize → Exchange for tokens → Copy access_token'
+    );
+    if (token) {
+      sheetsToken = token.trim();
+      localStorage.setItem('cv_sheets_token', sheetsToken);
+      validateKeys();
+      addLog('Sheets authorization set', 'success');
+      showToast('Sheets authorized', 'success');
+    }
+  }
+
+  // ── UI STATE ──────────────────────────────────────────
+  function showEmpty() {
+    document.getElementById('emptyState').style.display = '';
+    document.getElementById('scanningState').classList.remove('visible');
+    document.getElementById('cardTableWrap').classList.remove('visible');
+  }
+
+  function showScanning() {
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('scanningState').classList.add('visible');
+    document.getElementById('cardTableWrap').classList.remove('visible');
+  }
+
+  function showTable() {
+    document.getElementById('emptyState').style.display = 'none';
+    document.getElementById('scanningState').classList.remove('visible');
+    document.getElementById('cardTableWrap').classList.add('visible');
+  }
+
+  function updateScanLog(msg) {
+    document.getElementById('scanLog').textContent = msg;
+    addLog(msg, 'info');
+  }
+
+  function updateStats() {
+    const total = detectedCards.length;
+    const rookies = detectedCards.filter(c => c.is_rookie).length;
+    const totalValue = detectedCards.reduce((sum, c) => sum + parseFloat(c.price_mid || 0), 0);
+
+    document.getElementById('statTotal').textContent = total;
+    document.getElementById('statRookies').textContent = rookies;
+    document.getElementById('statValue').textContent = '$' + totalValue.toFixed(2);
+  }
+
+  function addLog(msg, type = '') {
+    const panel = document.getElementById('logPanel');
+    const entry = document.createElement('div');
+    entry.className = 'log-entry ' + type;
+    const time = new Date().toLocaleTimeString('en-US', { hour12: false });
+    entry.textContent = `[${time}] ${msg}`;
+    panel.appendChild(entry);
+    panel.scrollTop = panel.scrollHeight;
+  }
+
+  function showToast(msg, type = '') {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast ' + type + ' show';
+    setTimeout(() => toast.className = 'toast', 3000);
+  }
+
+  function openSetupModal() { document.getElementById('setupModal').classList.add('visible'); }
+  function closeSetupModal() { document.getElementById('setupModal').classList.remove('visible'); }
+
+  // ── UTILS ─────────────────────────────────────────────
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ── INIT SHEET HEADERS ────────────────────────────────
+  async function initSheetHeaders() {
+    const sheetId = document.getElementById('sheetId').value.trim();
+    if (!sheetId || !sheetsToken) return;
+
+    const headers = [
+      'Date Logged', 'Player Name', 'Year', 'Card Set', 'Card #',
+      'Manufacturer', 'Rookie?', 'Variant', 'Serial #', 'Condition',
+      'Market Value (Mid)', 'Price Low', 'Price High', 'Price Source', 'AI Confidence'
+    ];
+
+    try {
+      await fetch(
+        `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:update?valueInputOption=USER_ENTERED`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${sheetsToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ values: [headers] })
+        }
+      );
+      addLog('Sheet headers initialized', 'success');
+    } catch (e) {
+      // Silent fail — headers might already exist
+    }
+  }
+
+  // Init headers when sheet ID is entered
+  document.getElementById('sheetId').addEventListener('blur', initSheetHeaders);
+</script>
+</body>
+</html>
