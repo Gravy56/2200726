@@ -1,0 +1,2629 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>APUSH Study Guide — Full Year Review</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@400;600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ===== THEME SYSTEM ===== */
+:root {
+  --p1: #c9a84c; --p2: #7c5cbf; --p3: #3a7cb8; --p4: #4a9b6a;
+  --p5: #b84a3a; --p6: #9b6a2a; --p7: #4a7a9b; --p8: #9b4a7a; --p9: #6a9b4a;
+  --green: #4a9b6a; --red: #b84a3a;
+  --font-scale: 1;
+}
+html { font-size: calc(16px * var(--font-scale)); }
+
+[data-theme="dark"] {
+  --bg: #0d0d0d; --surface: #141414; --card: #1a1a1a; --border: #2a2a2a;
+  --accent: #c9a84c; --accent2: #7c5cbf; --accent3: #3a7cb8; --accent4: #b84a3a;
+  --text: #e8e0d0; --muted: #7a7060; --highlight: rgba(201,168,76,0.12);
+  --shadow: rgba(0,0,0,0.5); --input-bg: #1a1a1a;
+}
+[data-theme="light"] {
+  --bg: #f4efe6; --surface: #ece7da; --card: #ffffff; --border: #d0c9b8;
+  --accent: #8a6818; --accent2: #5a3c9f; --accent3: #1a5898; --accent4: #98321a;
+  --text: #22180a; --muted: #7a6a4a; --highlight: rgba(138,104,24,0.09);
+  --shadow: rgba(0,0,0,0.12); --input-bg: #fff;
+}
+
+/* ===== PROGRESS BAR ===== */
+#reading-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0%;
+  background: var(--accent); z-index: 9999;
+  transition: width 0.1s linear; pointer-events: none;
+}
+
+/* ===== TOOLBAR ===== */
+.toolbar {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 7px 16px; background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 101;
+}
+.tb-sep { width: 1px; height: 22px; background: var(--border); margin: 0 4px; flex-shrink:0; }
+.tb-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 11px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.67rem; text-transform: uppercase; letter-spacing: 0.8px;
+  border: 1px solid var(--border); background: none; color: var(--muted);
+  cursor: pointer; border-radius: 3px; transition: all 0.18s; white-space: nowrap;
+}
+.tb-btn:hover { border-color: var(--accent); color: var(--accent); }
+.font-btn {
+  padding: 4px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem;
+  border: 1px solid var(--border); background: none; color: var(--muted);
+  cursor: pointer; border-radius: 2px; transition: all 0.15s; line-height: 1;
+}
+.font-btn:hover { border-color: var(--accent); color: var(--accent); }
+.timer-wrap { display: flex; align-items: center; gap: 5px; }
+.timer-display {
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.88rem;
+  color: var(--accent); min-width: 48px; text-align: center;
+}
+.timer-display.warn { color: var(--red); animation: blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.tb-spacer { flex: 1; }
+
+/* ===== TOAST NOTIFICATIONS ===== */
+#toast-container {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 3000; display: flex; flex-direction: column; gap: 8px;
+  pointer-events: none; align-items: center;
+}
+.toast {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 4px; padding: 9px 18px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.74rem;
+  color: var(--text); box-shadow: 0 4px 20px var(--shadow);
+  opacity: 0; transform: translateY(8px);
+  transition: all 0.25s; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.success { border-color: var(--green); color: var(--green); }
+.toast.info { border-color: var(--accent); color: var(--accent); }
+
+/* ===== MODAL (keyboard shortcuts) ===== */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+  z-index: 2000; display: flex; align-items: center; justify-content: center;
+  padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  padding: 28px; max-width: 500px; width: 100%; max-height: 80vh; overflow-y: auto;
+  transform: translateY(16px); transition: transform 0.25s;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal h2 {
+  font-family: 'Playfair Display', serif; color: var(--accent);
+  font-size: 1.4rem; margin-bottom: 16px;
+}
+.modal-close {
+  float: right; background: none; border: 1px solid var(--border);
+  color: var(--muted); cursor: pointer; padding: 3px 10px; border-radius: 2px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; transition: all 0.2s;
+}
+.modal-close:hover { border-color: var(--accent); color: var(--accent); }
+.kb-grid {
+  display: grid; grid-template-columns: auto 1fr;
+  gap: 8px 16px; font-size: 0.86rem; margin-top: 8px;
+}
+.kb-grid kbd {
+  font-family: 'IBM Plex Mono', monospace; padding: 2px 7px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 3px; font-size: 0.74rem; white-space: nowrap;
+}
+.kb-grid span { color: var(--muted); align-self: center; font-size: 0.84rem; }
+
+/* ===== SCROLL TO TOP ===== */
+#scroll-top {
+  position: fixed; bottom: 24px; right: 22px;
+  width: 38px; height: 38px; background: var(--accent); color: var(--bg);
+  border: none; border-radius: 50%; cursor: pointer; font-size: 1.1rem;
+  display: none; align-items: center; justify-content: center;
+  z-index: 500; box-shadow: 0 3px 14px var(--shadow); transition: all 0.2s;
+}
+#scroll-top:hover { transform: scale(1.1); }
+#scroll-top.visible { display: flex; }
+
+/* ===== SELECTION ===== */
+::selection { background: rgba(201,168,76,0.25); color: var(--text); }
+
+/* ===== PRINT CLEAN ===== */
+@media print {
+  .toolbar, #scroll-top, #toast-container, .modal-overlay, #reading-progress { display: none !important; }
+  nav { position: static; }
+  .section { display: block !important; }
+  body { background: white; color: black; }
+}
+
+/* ===== TRANSITIONS ===== */
+body, .card, .mcq-card, .term-card, .ce-card, .theme-card, .vocab-card,
+nav, .toolbar, .rubric-box, .tip-box, .example-response, .notice,
+.exam-box, .overview-card, .search-bar, .tl-content, header {
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* HEADER */
+header {
+  position: relative;
+  text-align: center;
+  padding: 80px 20px 60px;
+  background: linear-gradient(180deg, #0a0a0a 0%, var(--bg) 100%);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 39px,
+    rgba(201,168,76,0.04) 39px,
+    rgba(201,168,76,0.04) 40px
+  );
+  pointer-events: none;
+}
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  letter-spacing: -2px;
+  color: var(--accent);
+  text-shadow: 0 0 80px rgba(201,168,76,0.3);
+  position: relative;
+}
+header p {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  position: relative;
+}
+.header-badge {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 6px 18px;
+  border: 1px solid var(--accent);
+  border-radius: 2px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  position: relative;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 44px;
+  z-index: 100;
+  background: var(--bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 20px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+nav::-webkit-scrollbar { height: 2px; background: var(--border); }
+nav::-webkit-scrollbar-thumb { background: var(--accent); }
+.nav-inner {
+  display: inline-flex;
+  gap: 0;
+  min-width: 100%;
+  justify-content: center;
+}
+nav a {
+  display: inline-block;
+  padding: 14px 16px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+nav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* MAIN LAYOUT */
+main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 80px;
+}
+
+/* SECTIONS */
+.section {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+.section-header {
+  padding: 50px 0 30px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
+}
+.section-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--accent);
+  font-weight: 700;
+}
+.section-header p {
+  color: var(--muted);
+  margin-top: 8px;
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+/* PERIOD CARDS */
+.period-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+.period-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.period-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.period-card-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.period-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: 0.9;
+}
+.period-card-header h3 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.period-card-header span {
+  display: block;
+  font-family: 'Source Serif 4', serif;
+  font-size: 1rem;
+  color: var(--text);
+  font-style: italic;
+  margin-top: 2px;
+}
+.period-card-body {
+  padding: 0 20px 20px;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.period-card-body ul { list-style: none; }
+.period-card-body li::before { content: '→ '; color: var(--accent); }
+
+/* EXPANDED PERIOD */
+.period-detail {
+  display: none;
+  margin-top: 20px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.period-detail.open { display: block; }
+.period-detail-header {
+  padding: 24px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+.period-detail-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  color: var(--accent);
+}
+.close-btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+}
+.close-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 12px 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-content { display: none; padding: 24px 28px; }
+.tab-content.active { display: block; }
+
+/* NARRATIVE */
+.narrative {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text);
+  max-width: 750px;
+}
+.narrative p { margin-bottom: 1em; }
+.narrative strong { color: var(--accent); font-weight: 600; }
+.narrative em { color: #b0a090; }
+
+/* KEY TERMS */
+.terms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+.term-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.term-card:hover { border-color: var(--accent); }
+.term-name {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.term-def {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-top: 6px;
+  line-height: 1.5;
+  display: none;
+}
+.term-card.open .term-def { display: block; color: var(--text); }
+.term-card.open { background: var(--highlight); }
+.term-flip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* TIMELINE */
+.timeline {
+  position: relative;
+  padding: 10px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 110px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--border) 100%);
+}
+.tl-item {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  position: relative;
+}
+.tl-year {
+  width: 90px;
+  text-align: right;
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--accent);
+  padding-top: 2px;
+  font-weight: 600;
+}
+.tl-dot {
+  position: absolute;
+  left: 104px;
+  top: 7px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg);
+  z-index: 2;
+  flex-shrink: 0;
+}
+.tl-content {
+  margin-left: 30px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 10px 14px;
+  flex: 1;
+}
+.tl-content strong {
+  font-size: 0.9rem;
+  color: var(--text);
+  font-family: 'Source Serif 4', serif;
+  font-weight: 600;
+}
+.tl-content p {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.5;
+}
+
+/* CAUSE EFFECT */
+.ce-grid {
+  display: grid;
+  gap: 16px;
+}
+.ce-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.ce-card-title {
+  padding: 12px 16px;
+  background: rgba(201,168,76,0.08);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+}
+.ce-body {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0;
+}
+.ce-col {
+  padding: 16px;
+}
+.ce-col h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.ce-col ul {
+  list-style: none;
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+.ce-col.causes ul li::before { content: '⚡ '; }
+.ce-col.effects ul li::before { content: '→ '; color: var(--accent); }
+.ce-arrow {
+  display: flex;
+  align-items: center;
+  padding: 16px 8px;
+  font-size: 1.5rem;
+  color: var(--border);
+}
+
+/* MCQ */
+.mcq-wrapper {
+  max-width: 700px;
+}
+.mcq-progress {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.mcq-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.3s;
+}
+.mcq-dot.correct { background: #4a9b6a; }
+.mcq-dot.wrong { background: var(--accent4); }
+.mcq-dot.current { background: var(--accent); }
+
+.mcq-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.mcq-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.mcq-q {
+  font-size: 1rem;
+  line-height: 1.65;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.mcq-stimulus {
+  background: var(--surface);
+  border-left: 3px solid var(--accent);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 0.88rem;
+  color: #b0a090;
+  font-style: italic;
+  border-radius: 0 3px 3px 0;
+}
+.mcq-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mcq-opt {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+  text-align: left;
+  color: var(--text);
+  font-family: 'Source Serif 4', serif;
+}
+.mcq-opt:hover:not(:disabled) { border-color: var(--accent); background: var(--highlight); }
+.mcq-opt.correct { border-color: #4a9b6a; background: rgba(74,155,106,0.1); color: #7ddfaa; }
+.mcq-opt.wrong { border-color: var(--accent4); background: rgba(184,74,58,0.1); color: #f08070; }
+.mcq-opt:disabled { cursor: default; }
+
+.mcq-explain {
+  display: none;
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 3px;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+.mcq-explain.show { display: block; }
+.mcq-explain strong { color: var(--accent); }
+
+.mcq-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 16px;
+}
+.btn {
+  padding: 10px 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.primary { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 600; }
+.btn.primary:hover { background: #e0b85c; }
+.mcq-score {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-left: auto;
+}
+
+/* WRITING TIPS */
+.writing-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.write-tab {
+  padding: 8px 18px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.2s;
+}
+.write-tab:hover { border-color: var(--accent); color: var(--accent); }
+.write-tab.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.write-content { display: none; }
+.write-content.active { display: block; }
+
+.rubric-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.rubric-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 80px;
+  border-bottom: 1px solid var(--border);
+}
+.rubric-row:last-child { border-bottom: none; }
+.rubric-row > div { padding: 12px 16px; font-size: 0.88rem; }
+.rubric-row > div:not(:last-child) { border-right: 1px solid var(--border); }
+.rubric-header > div {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.rubric-pts { text-align: center; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
+
+.tip-box {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+.tip-box h4 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.tip-box p, .tip-box ul { font-size: 0.9rem; line-height: 1.7; }
+.tip-box ul { list-style: disc; padding-left: 18px; }
+.example-response {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent2);
+  border-radius: 0 4px 4px 0;
+  padding: 16px 20px;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-style: italic;
+  color: #c0b8a8;
+}
+.example-response strong { color: var(--accent2); font-style: normal; }
+
+/* THEMATIC */
+.theme-grid {
+  display: grid;
+  gap: 20px;
+}
+.theme-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.theme-header {
+  padding: 16px 20px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s;
+}
+.theme-header:hover { border-bottom-color: var(--border); }
+.theme-icon {
+  font-size: 1.8rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.theme-header h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  color: var(--accent);
+}
+.theme-header p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.theme-body {
+  display: none;
+  padding: 0 20px 20px;
+}
+.theme-body.open { display: block; }
+.theme-timeline-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 0.88rem;
+  align-items: flex-start;
+}
+.theme-period-tag {
+  flex-shrink: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  background: var(--highlight);
+  border: 1px solid rgba(201,168,76,0.3);
+  border-radius: 2px;
+  padding: 2px 8px;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+/* OVERVIEW */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 40px;
+}
+@media (max-width:700px) { .overview-grid { grid-template-columns: 1fr; } }
+.overview-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+  text-align: center;
+}
+.overview-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  color: var(--accent);
+  font-weight: 900;
+  line-height: 1;
+}
+.overview-card p {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* AP EXAM INFO */
+.exam-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+@media(max-width:600px){ .exam-grid { grid-template-columns:1fr; } }
+.exam-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px;
+}
+.exam-box h3 {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.exam-box ul {
+  list-style: none;
+  font-size: 0.9rem;
+  line-height: 2;
+}
+.exam-box li { border-bottom: 1px solid var(--border); padding: 2px 0; }
+.exam-box li:last-child { border-bottom: none; }
+.exam-box .tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.65rem;
+  background: var(--highlight);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--accent);
+  padding: 1px 6px;
+  border-radius: 2px;
+  margin-left: 6px;
+}
+
+/* PERIOD COLORS */
+.p1 { color: var(--p1); } .p2 { color: var(--p2); } .p3 { color: var(--p3); }
+.p4 { color: var(--p4); } .p5 { color: var(--p5); } .p6 { color: var(--p6); }
+.p7 { color: var(--p7); } .p8 { color: var(--p8); } .p9 { color: var(--p9); }
+.bg1 { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.25); }
+.bg2 { background: rgba(124,92,191,0.08); border-color: rgba(124,92,191,0.25); }
+.bg3 { background: rgba(58,124,184,0.08); border-color: rgba(58,124,184,0.25); }
+.bg4 { background: rgba(74,155,106,0.08); border-color: rgba(74,155,106,0.25); }
+.bg5 { background: rgba(184,74,58,0.08); border-color: rgba(184,74,58,0.25); }
+
+/* VOCAB SEARCH */
+.search-bar {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  outline: none;
+}
+.search-bar:focus { border-color: var(--accent); }
+.search-bar::placeholder { color: var(--muted); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .ce-body { grid-template-columns: 1fr; }
+  .ce-arrow { display: none; }
+  .rubric-row { grid-template-columns: 1fr; }
+  .timeline::before { left: 60px; }
+  .tl-year { width: 50px; font-size: 0.68rem; }
+  .tl-dot { left: 54px; }
+}
+
+.notice {
+  background: rgba(201,168,76,0.06);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 4px;
+  padding: 14px 18px;
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin-bottom: 24px;
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<!-- READING PROGRESS -->
+<div id="reading-progress"></div>
+
+<!-- TOOLBAR -->
+<div class="toolbar">
+  <button class="tb-btn" id="theme-toggle-btn" onclick="toggleColorScheme()" title="Toggle light/dark mode">🌙 Dark</button>
+  <div class="tb-sep"></div>
+  <span style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--muted);">Font:</span>
+  <button class="font-btn" onclick="adjustFont(-0.08)" title="Smaller text">A−</button>
+  <button class="font-btn" onclick="adjustFont(0)" title="Reset font size">A</button>
+  <button class="font-btn" onclick="adjustFont(0.08)" title="Larger text">A+</button>
+  <div class="tb-sep"></div>
+  <div class="timer-wrap">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:0.62rem;color:var(--muted);">Study timer:</span>
+    <div class="timer-display" id="timer-display">25:00</div>
+    <button class="tb-btn" id="timer-btn" onclick="toggleTimer()">▶ Start</button>
+    <button class="tb-btn" onclick="resetTimer()" title="Reset to 25:00">↺</button>
+  </div>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" onclick="exportMastered()" title="Copy mastered terms to clipboard">📋 Export Notes</button>
+  <div class="tb-spacer"></div>
+  <button class="tb-btn" onclick="openModal()" title="Keyboard shortcuts">⌨ Shortcuts</button>
+  <button class="tb-btn" onclick="window.print()" title="Print / save as PDF">🖨 Print</button>
+</div>
+
+<!-- KEYBOARD SHORTCUTS MODAL -->
+<div class="modal-overlay" id="kb-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕ Close</button>
+    <h2>⌨ Keyboard Shortcuts</h2>
+    <div class="kb-grid">
+      <kbd>← →</kbd><span>Navigate MCQ questions</span>
+      <kbd>A B C D</kbd><span>Answer MCQ options</span>
+      <kbd>T</kbd><span>Toggle light / dark theme</span>
+      <kbd>+ −</kbd><span>Increase / decrease font size</span>
+      <kbd>0</kbd><span>Reset font size</span>
+      <kbd>P</kbd><span>Print / save as PDF</span>
+      <kbd>E</kbd><span>Export mastered terms to clipboard</span>
+      <kbd>Esc</kbd><span>Close this modal / clear search</span>
+      <kbd>?</kbd><span>Open this shortcuts panel</span>
+    </div>
+    <p style="margin-top:18px;font-size:0.8rem;color:var(--muted);font-style:italic;">Shortcuts are active when not typing in a search box.</p>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- SCROLL TO TOP -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+
+  <h1>APUSH Full Year Review</h1>
+  <p>AP United States History — Periods 1–9 · 1491–Present</p>
+  <div class="header-badge">Comprehensive Study Guide · 2025 Exam Prep</div>
+</header>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="active" onclick="showSection('overview')">Overview</a>
+    <a href="#" onclick="showSection('periods')">📜 Period Summaries</a>
+    <a href="#" onclick="showSection('vocab')">📚 Key Terms</a>
+    <a href="#" onclick="showSection('timeline')">📅 Timeline</a>
+    <a href="#" onclick="showSection('mcq')">✏️ Practice MCQs</a>
+    <a href="#" onclick="showSection('writing')">🖊 SAQ/LEQ/DBQ</a>
+    <a href="#" onclick="showSection('causeeffect')">⚡ Cause & Effect</a>
+    <a href="#" onclick="showSection('themes')">🔗 Thematic Connections</a>
+  </div>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<div id="overview" class="section active">
+  <div class="section-header">
+    <h2>AP Exam Overview</h2>
+    <p>Everything you need to know before diving into content review</p>
+  </div>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <div class="num">9</div>
+      <p>Historical Periods</p>
+    </div>
+    <div class="overview-card">
+      <div class="num">3</div>
+      <p>Hours 15 Min Exam</p>
+    </div>
+    <div class="overview-card">
+      <div class="num">5</div>
+      <p>Points Possible Scale</p>
+    </div>
+  </div>
+
+  <div class="exam-grid">
+    <div class="exam-box">
+      <h3>Section I — 95 min</h3>
+      <ul>
+        <li>Part A: 55 MCQs <span class="tag">40%</span></li>
+        <li>4 sets of 3–4 questions with stimulus</li>
+        <li>Part B: 3 SAQs <span class="tag">20%</span></li>
+        <li>Required: SAQ 1 & 2 (1600–1877), SAQ 3 or 4</li>
+        <li>No thesis needed for SAQ</li>
+      </ul>
+    </div>
+    <div class="exam-box">
+      <h3>Section II — 100 min</h3>
+      <ul>
+        <li>Part A: DBQ <span class="tag">25%</span></li>
+        <li>7 documents, 60 min suggested</li>
+        <li>Part B: LEQ <span class="tag">15%</span></li>
+        <li>Choose 1 of 3 prompts, 40 min suggested</li>
+        <li>Thesis + argument + evidence</li>
+      </ul>
+    </div>
+    <div class="exam-box">
+      <h3>Historical Thinking Skills</h3>
+      <ul>
+        <li>Causation — causes & effects</li>
+        <li>Continuity & Change Over Time</li>
+        <li>Comparison — across groups/periods</li>
+        <li>Contextualization — broader context</li>
+        <li>Argumentation — thesis-driven claims</li>
+      </ul>
+    </div>
+    <div class="exam-box">
+      <h3>APUSH Themes (NACPRISE)</h3>
+      <ul>
+        <li>NAT — National Identity</li>
+        <li>ARC — American & Regional Culture</li>
+        <li>CUL — Cultural Developments</li>
+        <li>POL — Politics & Power</li>
+        <li>REL — America in the World</li>
+        <li>SIO — Social Structures</li>
+        <li>ENV — Geography & Environment</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <h4>⚡ Top 5 AP Exam Strategies</h4>
+    <ul>
+      <li><strong>MCQ:</strong> Always identify the stimulus's time period first — 90% of questions are answerable from context + knowledge combined.</li>
+      <li><strong>SAQ:</strong> Use A-B-C structure: Answer the prompt directly, Back it up with specific evidence, Connect to broader context.</li>
+      <li><strong>DBQ:</strong> Categorize docs before writing. Aim to use all 7. Find the complexity angle (corroboration or tension between docs).</li>
+      <li><strong>LEQ:</strong> Write a defensible thesis in the first paragraph — don't warm up slowly. Make a claim, not just a restatement.</li>
+      <li><strong>Time:</strong> Never spend more than 65 seconds per MCQ. Skip and return. The SAQ/LEQ/DBQ is where points multiply.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- PERIOD SUMMARIES -->
+<div id="periods" class="section">
+  <div class="section-header">
+    <h2>Period Summaries</h2>
+    <p>Click any period for a full narrative breakdown, key terms, timeline, and cause-effect chart</p>
+  </div>
+
+  <div class="period-grid">
+    <div class="period-card bg1" onclick="openPeriod(1)">
+      <div class="period-card-header">
+        <div class="period-num p1">1</div>
+        <div>
+          <h3 class="p1">Period 1</h3>
+          <span>1491–1607</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Pre-Columbian Native societies</li>
+          <li>European exploration motives</li>
+          <li>Columbian Exchange</li>
+          <li>Spanish colonial system</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card bg2" onclick="openPeriod(2)">
+      <div class="period-card-header">
+        <div class="period-num p2">2</div>
+        <div>
+          <h3 class="p2">Period 2</h3>
+          <span>1607–1754</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>British colonial regions</li>
+          <li>Transatlantic trade & slavery</li>
+          <li>European-Indian interactions</li>
+          <li>Colonial culture & society</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card bg3" onclick="openPeriod(3)">
+      <div class="period-card-header">
+        <div class="period-num p3">3</div>
+        <div>
+          <h3 class="p3">Period 3</h3>
+          <span>1754–1800</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>French & Indian War</li>
+          <li>Road to Revolution</li>
+          <li>American Revolution</li>
+          <li>Constitution & new republic</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card bg4" onclick="openPeriod(4)">
+      <div class="period-card-header">
+        <div class="period-num p4">4</div>
+        <div>
+          <h3 class="p4">Period 4</h3>
+          <span>1800–1848</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Market Revolution</li>
+          <li>Jacksonian democracy</li>
+          <li>Reform movements</li>
+          <li>Slavery expands South</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card bg5" onclick="openPeriod(5)">
+      <div class="period-card-header">
+        <div class="period-num p5">5</div>
+        <div>
+          <h3 class="p5">Period 5</h3>
+          <span>1844–1877</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Manifest Destiny & Mexican War</li>
+          <li>Sectional conflict & Civil War</li>
+          <li>Emancipation & Union victory</li>
+          <li>Reconstruction & its failure</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card" style="border-color:#6a7a9b" onclick="openPeriod(6)">
+      <div class="period-card-header">
+        <div class="period-num p7">6</div>
+        <div>
+          <h3 class="p7">Period 6</h3>
+          <span>1865–1898</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Gilded Age industrialization</li>
+          <li>Westward expansion & Native dispossession</li>
+          <li>Labor movement</li>
+          <li>Populism & Jim Crow</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card" style="border-color:#7a6a9b" onclick="openPeriod(7)">
+      <div class="period-card-header">
+        <div class="period-num p8">7</div>
+        <div>
+          <h3 class="p8">Period 7</h3>
+          <span>1890–1945</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Imperialism & Spanish-American War</li>
+          <li>Progressive Era reforms</li>
+          <li>WWI & interwar era</li>
+          <li>New Deal & WWII</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card" style="border-color:#6a9b7a" onclick="openPeriod(8)">
+      <div class="period-card-header">
+        <div class="period-num p9">8</div>
+        <div>
+          <h3 class="p9">Period 8</h3>
+          <span>1945–1980</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Cold War & containment</li>
+          <li>Civil Rights Movement</li>
+          <li>Vietnam & Great Society</li>
+          <li>Nixon, détente, and backlash</li>
+        </ul>
+      </div>
+    </div>
+    <div class="period-card" style="border-color:#9b7a4a" onclick="openPeriod(9)">
+      <div class="period-card-header">
+        <div class="period-num p6">9</div>
+        <div>
+          <h3 class="p6">Period 9</h3>
+          <span>1980–Present</span>
+        </div>
+      </div>
+      <div class="period-card-body">
+        <ul>
+          <li>Reagan Revolution</li>
+          <li>End of Cold War</li>
+          <li>Globalization & culture wars</li>
+          <li>Post-9/11 era</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERIOD DETAIL PANELS -->
+  <div id="period-detail" class="period-detail open" style="display:none">
+    <div class="period-detail-header">
+      <h3 id="detail-title">Period Title</h3>
+      <div class="close-btn" onclick="closePeriod()">✕ Close</div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showTab(this,'tab-narrative')">Narrative</button>
+      <button class="tab-btn" onclick="showTab(this,'tab-terms')">Key Terms</button>
+      <button class="tab-btn" onclick="showTab(this,'tab-lo')">Learning Objectives</button>
+      <button class="tab-btn" onclick="showTab(this,'tab-ce')">Cause & Effect</button>
+    </div>
+    <div id="tab-narrative" class="tab-content active">
+      <div class="narrative" id="detail-narrative"></div>
+    </div>
+    <div id="tab-terms" class="tab-content">
+      <div class="terms-grid" id="detail-terms"></div>
+    </div>
+    <div id="tab-lo" class="tab-content">
+      <div id="detail-lo"></div>
+    </div>
+    <div id="tab-ce" class="tab-content">
+      <div class="ce-grid" id="detail-ce"></div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY TERMS / VOCAB -->
+<div id="vocab" class="section">
+  <div class="section-header">
+    <h2>Key Terms & IAETSO Vocab</h2>
+    <p>Click any card to reveal the definition — all terms from your teacher's lists</p>
+  </div>
+  <input class="search-bar" type="text" placeholder="Search terms..." oninput="filterTerms(this.value)" id="vocab-search">
+  <div class="terms-grid" id="vocab-grid"></div>
+</div>
+
+<!-- TIMELINE -->
+<div id="timeline" class="section">
+  <div class="section-header">
+    <h2>Master Timeline</h2>
+    <p>All key events across all 9 periods, chronologically</p>
+  </div>
+  <div class="timeline" id="master-timeline"></div>
+</div>
+
+<!-- MCQ -->
+<div id="mcq" class="section">
+  <div class="section-header">
+    <h2>Practice MCQs</h2>
+    <p>AP-style stimulus-based multiple choice questions — all periods covered</p>
+  </div>
+  <div class="mcq-wrapper">
+    <div class="mcq-progress" id="mcq-progress"></div>
+    <div id="mcq-container"></div>
+    <div class="mcq-nav">
+      <button class="btn" onclick="prevQ()">← Prev</button>
+      <button class="btn primary" onclick="nextQ()">Next →</button>
+      <div class="mcq-score" id="mcq-score">Score: 0/0</div>
+    </div>
+  </div>
+</div>
+
+<!-- WRITING -->
+<div id="writing" class="section">
+  <div class="section-header">
+    <h2>SAQ / LEQ / DBQ Guide</h2>
+    <p>Rubrics, strategies, sentence starters, and model responses</p>
+  </div>
+
+  <div class="writing-tabs">
+    <button class="write-tab active" onclick="showWriteTab(this,'wt-saq')">SAQ</button>
+    <button class="write-tab" onclick="showWriteTab(this,'wt-leq')">LEQ</button>
+    <button class="write-tab" onclick="showWriteTab(this,'wt-dbq')">DBQ</button>
+    <button class="write-tab" onclick="showWriteTab(this,'wt-thesis')">Thesis Writing</button>
+    <button class="write-tab" onclick="showWriteTab(this,'wt-context')">Contextualization</button>
+  </div>
+
+  <!-- SAQ -->
+  <div id="wt-saq" class="write-content active">
+    <div class="tip-box">
+      <h4>SAQ — Short Answer Question</h4>
+      <ul>
+        <li>3 parts (a, b, c) — each worth 1 point = <strong>3 points total</strong></li>
+        <li>No thesis required — just direct, specific answers</li>
+        <li>Aim for 3–6 sentences per part</li>
+        <li>Always name specific people, events, acts, or dates</li>
+        <li>Use the A-B-C formula: <strong>Answer → Back up → Connect</strong></li>
+      </ul>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif; color:var(--accent); margin-bottom:16px;">SAQ Rubric</h3>
+    <div class="rubric-box">
+      <div class="rubric-row rubric-header">
+        <div>Task</div><div>What earns the point</div><div>Points</div>
+      </div>
+      <div class="rubric-row">
+        <div>Part (a)</div>
+        <div>Respond to the specific prompt with a historically accurate claim + specific evidence</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Part (b)</div>
+        <div>Same — a different historically accurate claim with evidence</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Part (c)</div>
+        <div>Explains, evaluates, or makes a comparison based on the prompt</div>
+        <div class="rubric-pts">1</div>
+      </div>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif; color:var(--accent); margin:20px 0 12px;">Sample SAQ Prompt</h3>
+    <div class="notice">
+      "Use the following image and your knowledge of United States history to answer (a), (b), and (c). Briefly explain ONE cause of sectional tensions in the 1850s. Briefly explain ONE effect of the Kansas-Nebraska Act. Briefly evaluate ONE way the Republican Party emerged from this crisis."
+    </div>
+    <h4 style="font-family:'IBM Plex Mono',monospace; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:10px;">Model Response (Part a)</h4>
+    <div class="example-response">
+      <strong>Answer:</strong> One cause of sectional tensions in the 1850s was the debate over whether slavery would expand into territories acquired from Mexico after the Mexican-American War. <strong>Evidence:</strong> The Compromise of 1850, including the controversial Fugitive Slave Act, temporarily resolved this dispute but deepened Northern resentment by requiring Northerners to assist in the capture of escaped enslaved people. <strong>Connection:</strong> This forced Northern complicity in slavery's enforcement radicalized moderates and made compromise increasingly impossible by the mid-1850s.
+    </div>
+    <div class="tip-box">
+      <h4>🚫 SAQ Common Mistakes</h4>
+      <ul>
+        <li>Writing a vague answer without a specific name or event</li>
+        <li>Answering a different part than what was asked</li>
+        <li>Writing an intro paragraph — just answer directly</li>
+        <li>Repeating the same evidence across multiple parts</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- LEQ -->
+  <div id="wt-leq" class="write-content">
+    <div class="tip-box">
+      <h4>LEQ — Long Essay Question</h4>
+      <ul>
+        <li>6 points possible — 40 minutes suggested</li>
+        <li>Choose 1 of 3 prompts (different time periods)</li>
+        <li>Must have: thesis, contextualization, evidence, complexity</li>
+        <li>Think of it as: intro + 2–3 body paragraphs + conclusion (optional)</li>
+      </ul>
+    </div>
+    <div class="rubric-box">
+      <div class="rubric-row rubric-header">
+        <div>Category</div><div>Requirement</div><div>Points</div>
+      </div>
+      <div class="rubric-row">
+        <div>Thesis</div>
+        <div>Makes a historically defensible claim that responds to the prompt and establishes a line of reasoning</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Contextualization</div>
+        <div>Describes a broader historical context that is relevant to the prompt (before, during, or after)</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Evidence (Specific)</div>
+        <div>Provides specific examples relevant to the topic of the prompt</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Evidence (Support)</div>
+        <div>Uses specific evidence to support the argument in the thesis</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Analysis & Reasoning</div>
+        <div>Uses historical reasoning skill (causation, comparison, or CCOT) to frame the argument</div>
+        <div class="rubric-pts">1</div>
+      </div>
+      <div class="rubric-row">
+        <div>Complexity</div>
+        <div>Demonstrates a complex understanding — corroboration, contradiction, both continuity AND change, cause AND effect across time</div>
+        <div class="rubric-pts">1</div>
+      </div>
+    </div>
+    <div class="tip-box">
+      <h4>💡 Thesis Formula for LEQ</h4>
+      <p>A strong LEQ thesis = <strong>Claim + Categories of Analysis</strong></p>
+      <br>
+      <p><em>Example prompt:</em> "Evaluate the extent to which the Civil War transformed American society from 1865 to 1877."</p>
+      <br>
+      <div class="example-response">
+        <strong>Strong thesis:</strong> "Although the Civil War brought significant legal transformations through the Reconstruction Amendments, its impact on American society was ultimately limited by persistent racial violence, the failure of land redistribution, and the political compromise of 1877, which restored white supremacist control throughout the South."
+      </div>
+      <p>Notice: Makes a clear claim (limited transformation), gives 3 categories (violence, land, politics), and sets up a line of reasoning for the entire essay.</p>
+    </div>
+  </div>
+
+  <!-- DBQ -->
+  <div id="wt-dbq" class="write-content">
+    <div class="tip-box">
+      <h4>DBQ — Document Based Question</h4>
+      <ul>
+        <li>7 points possible — 60 minutes suggested (15 reading + 45 writing)</li>
+        <li>Must use at least 3 documents for evidence point, all 7 for top score</li>
+        <li>HAPP analysis: Historical situation, Audience, Purpose, Point of view</li>
+        <li>Source line = author + date + type of document = context clues</li>
+      </ul>
+    </div>
+    <div class="rubric-box">
+      <div class="rubric-row rubric-header">
+        <div>Category</div><div>Requirement</div><div>Points</div>
+      </div>
+      <div class="rubric-row"><div>Thesis</div><div>Defensible claim with line of reasoning</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Contextualization</div><div>Broader context described and connected to argument</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Content (3 docs)</div><div>Accurately describes content of at least 3 documents</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Content (support)</div><div>Uses content of at least 6 documents to support argument</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Sourcing (3 docs)</div><div>Explains sourcing for at least 3 documents (HAPP)</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Outside Evidence</div><div>Uses historically accurate evidence not in the documents</div><div class="rubric-pts">1</div></div>
+      <div class="rubric-row"><div>Complexity</div><div>Complex understanding demonstrated through the argument</div><div class="rubric-pts">1</div></div>
+    </div>
+    <div class="tip-box">
+      <h4>📄 HAPP Sourcing — How to Write It</h4>
+      <ul>
+        <li><strong>Historical Situation:</strong> "Written during the height of industrialization, [author]'s perspective reflects the anxieties of urban workers facing displacement..."</li>
+        <li><strong>Audience:</strong> "Because this speech was directed at a Southern audience, [author] likely downplayed the brutality of slavery to maintain credibility..."</li>
+        <li><strong>Purpose:</strong> "As a piece of abolitionist propaganda intended to build Northern opposition, this document likely overstates..."</li>
+        <li><strong>Point of View:</strong> "As a formerly enslaved person, [author] had direct personal experience that makes her account more credible than that of a planter..."</li>
+      </ul>
+    </div>
+    <div class="tip-box">
+      <h4>🗂 Doc Categorization Strategy (15-minute reading period)</h4>
+      <ul>
+        <li>Read each source line before the document itself</li>
+        <li>Sort docs into 2–3 thematic groups (Pro/Con, Economic/Social/Political, etc.)</li>
+        <li>Star 3 docs you'll use for HAPP sourcing</li>
+        <li>Identify the "outlier" doc that complicates your argument — use it for complexity</li>
+        <li>Sketch a 3-sentence thesis before writing a word of the essay</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- THESIS -->
+  <div id="wt-thesis" class="write-content">
+    <div class="tip-box">
+      <h4>What Makes a Thesis "Defensible"?</h4>
+      <ul>
+        <li>It makes a <strong>specific historical argument</strong> — not just a restatement of the prompt</li>
+        <li>It can be <strong>disagreed with</strong> — a good thesis is debatable, not a fact</li>
+        <li>It sets up <strong>categories of analysis</strong> that your body paragraphs will prove</li>
+        <li>It appears in the <strong>intro or conclusion</strong> (not buried in the middle)</li>
+      </ul>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif;color:var(--accent);margin:20px 0 12px;">Thesis Comparison</h3>
+    <div class="rubric-box">
+      <div class="rubric-row rubric-header">
+        <div>Type</div><div>Example</div><div>Score</div>
+      </div>
+      <div class="rubric-row">
+        <div style="color:#f08070">❌ Weak</div>
+        <div style="color:var(--muted); font-style:italic;">"The American Revolution had many causes and effects that changed the country."</div>
+        <div class="rubric-pts" style="color:#f08070">0</div>
+      </div>
+      <div class="rubric-row">
+        <div style="color:#ffd080">⚠️ Acceptable</div>
+        <div style="color:var(--muted); font-style:italic;">"The American Revolution was caused by British taxation policies and colonial opposition to parliamentary authority."</div>
+        <div class="rubric-pts" style="color:#ffd080">1</div>
+      </div>
+      <div class="rubric-row">
+        <div style="color:#7ddfaa">✅ Strong</div>
+        <div style="color:var(--text); font-style:italic;">"Although British taxation policies directly sparked colonial resistance, the American Revolution was fundamentally driven by a broader ideological transformation rooted in Enlightenment ideas about natural rights, self-governance, and the illegitimacy of taxation without representation — a transformation that made armed revolt not just possible, but inevitable."</div>
+        <div class="rubric-pts" style="color:#7ddfaa">1+</div>
+      </div>
+    </div>
+    <div class="tip-box" style="margin-top:20px;">
+      <h4>Sentence Starters for Thesis</h4>
+      <ul>
+        <li>"Although [concession], [your argument] because [categories]..."</li>
+        <li>"While [one factor] contributed to [event], [bigger factor] was ultimately more significant due to [reasons]..."</li>
+        <li>"[Event] fundamentally transformed [subject] by [category 1], [category 2], and [category 3], even as [continuity] persisted..."</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CONTEXTUALIZATION -->
+  <div id="wt-context" class="write-content">
+    <div class="tip-box">
+      <h4>Contextualization — The Point Most Students Miss</h4>
+      <ul>
+        <li>Must be a <strong>broader historical development</strong> that predates or surrounds the prompt's topic</li>
+        <li>Must be <strong>described in detail</strong> (2–4 sentences minimum)</li>
+        <li>Must be <strong>explicitly connected</strong> to the argument — don't just describe it and move on</li>
+        <li>It is NOT just mentioning a related event — it must set the <strong>stage</strong> for your argument</li>
+      </ul>
+    </div>
+    <h3 style="font-family:'Playfair Display',serif;color:var(--accent);margin:20px 0 12px;">Examples by Era</h3>
+    <div class="ce-grid">
+      <div class="ce-card">
+        <div class="ce-card-title">Prompt about Civil War / Sectional Conflict</div>
+        <div style="padding:16px;">
+          <div class="example-response">"In the decades following the Missouri Compromise of 1820, the question of slavery's expansion into new territories became the defining fault line in American politics. The Market Revolution of the 1820s–1840s deepened economic divergence between the industrializing North and the cotton-dependent South, creating two societies with fundamentally incompatible labor systems and political interests. This structural tension meant that any territorial acquisition — such as those gained in the Mexican-American War — would reignite the slavery question with intensifying ferocity, ultimately making compromise impossible by the 1850s."</div>
+        </div>
+      </div>
+      <div class="ce-card">
+        <div class="ce-card-title">Prompt about Progressive Era</div>
+        <div style="padding:16px;">
+          <div class="example-response">"The rapid industrialization of the Gilded Age (1870s–1890s) transformed the United States into the world's largest industrial economy, but at enormous social cost. The concentration of wealth in the hands of industrial titans like Carnegie and Rockefeller, combined with brutal working conditions, widespread urban poverty documented by muckrakers like Jacob Riis, and the political corruption of the spoils system, created widespread public demand for reform. This Gilded Age context of inequality and corporate power directly fueled the Progressive movement's push for government intervention."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAUSE & EFFECT -->
+<div id="causeeffect" class="section">
+  <div class="section-header">
+    <h2>Cause & Effect Charts</h2>
+    <p>The relationships that drive APUSH essay questions</p>
+  </div>
+  <div class="ce-grid" id="ce-main"></div>
+</div>
+
+<!-- THEMATIC CONNECTIONS -->
+<div id="themes" class="section">
+  <div class="section-header">
+    <h2>Thematic Connections</h2>
+    <p>How the AP themes run across all 9 periods — essential for high-scoring LEQ and DBQ</p>
+  </div>
+  <div class="notice">These connections are the backbone of complexity points on the exam. Show that you can trace a theme across multiple periods.</div>
+  <div class="theme-grid" id="theme-grid"></div>
+</div>
+
+</main>
+
+<script>
+// ==================== DATA ====================
+
+const periodData = {
+  1: {
+    title: "Period 1: 1491–1607 — Contact & Conquest",
+    color: "var(--p1)",
+    narrative: `<p>Before European contact, the Americas were home to diverse, sophisticated civilizations — from the agricultural Puebloans of the Southwest to the confederacies of the Iroquois League in the Northeast, the mound-building Mississippian culture along the Mississippi River, and the nomadic societies of the Great Plains. These societies developed complex systems of trade, governance, and culture shaped by their geographic environments.</p>
+    <p>European arrival fundamentally disrupted these worlds. <strong>Columbus's 1492 voyage</strong> initiated sustained contact between hemispheres, motivated by the European drive for trade routes to Asia, national competition (Spain, Portugal, England, France), and missionary zeal to spread Christianity. Spain moved first and most aggressively, building an empire across Mesoamerica and the Caribbean within decades.</p>
+    <p>The <strong>Columbian Exchange</strong> was arguably the most consequential ecological event in human history. Europe gained maize, potatoes, tomatoes, and tobacco — foods that would fuel European population growth. The Americas received horses, cattle, and European diseases. <em>Smallpox, measles, and typhus killed up to 90% of some indigenous populations</em> — a demographic catastrophe that reshaped the entire continent.</p>
+    <p>Spain's colonial system institutionalized exploitation through the <strong>encomienda</strong> system, in which conquistadors received grants of indigenous labor. As native populations collapsed, the Spanish increasingly turned to enslaved Africans, laying the early foundations of the transatlantic slave trade. Bartolomé de las Casas documented Spanish abuses and advocated for Native rights, but the system persisted.</p>`,
+    terms: [
+      {name:"Columbian Exchange", def:"The transfer of plants, animals, diseases, and peoples between the Americas and Afro-Eurasia following Columbus's 1492 voyage. Diseases like smallpox devastated Native populations."},
+      {name:"Encomienda", def:"Spanish colonial labor system granting conquistadors the right to demand labor from Native peoples; effectively enslaved indigenous populations."},
+      {name:"Bartolomé de las Casas", def:"Spanish friar who documented indigenous suffering under Spanish colonialism and advocated for Native rights; his writings influenced the 'Black Legend.'"},
+      {name:"Columbian Exchange", def:"Transfer of goods, diseases, plants, and people between hemispheres after 1492."},
+      {name:"Three Sisters Agriculture", def:"Native farming method growing corn, beans, and squash together — a sustainable, complementary agricultural system practiced by many eastern tribes."},
+      {name:"Treaty of Tordesillas (1494)", def:"Agreement between Spain and Portugal dividing the New World along a meridian, giving Spain most of the Americas and Portugal Brazil and Africa."},
+    ],
+    lo: [
+      {code:"1.2", text:"Explain how various native populations interacted with the natural environment before European contact."},
+      {code:"1.3", text:"Explain the causes of exploration and conquest by various European nations."},
+      {code:"1.4", text:"Explain causes of the Columbian Exchange and its effects on Europe and the Americas after 1492."},
+      {code:"1.5", text:"Explain how the Spanish Empire shaped social and economic structures over time."},
+      {code:"1.6", text:"Explain how European and Native American perspectives of each other developed and changed."},
+      {code:"1.7", text:"Explain the effects of transatlantic voyages from 1491 to 1607."},
+    ],
+    ce: [
+      {title:"Columbian Exchange",causes:["Columbus's 1492 voyage","Spanish colonization of Caribbean","Trade routes connecting hemispheres"],effects:["~90% indigenous population collapse from disease","Introduction of horse transforms Plains societies","European foods (potato, corn) fuel population growth","Foundation of Atlantic slave trade"]},
+      {title:"Spanish Encomienda System",causes:["Labor demands of colonial mining & agriculture","Decline of Native populations","Pope Alexander VI's authority over New World"],effects:["Forced Native labor and cultural destruction","Catholic missionary activity across Americas","Bartolomé de las Casas's critiques","Shift toward African slave labor as Natives die"]},
+    ]
+  },
+  2: {
+    title: "Period 2: 1607–1754 — Colonial America",
+    color: "var(--p2)",
+    narrative: `<p>By 1607, three distinct European powers were planting permanent colonies in North America: England, France, and the Netherlands. The English colonies, which would prove most consequential, were themselves profoundly diverse — shaped by geography, religion, and economic motivation into three distinct regional cultures.</p>
+    <p>The <strong>New England colonies</strong> (Massachusetts, Connecticut, Rhode Island) were founded primarily by Puritan dissenters seeking religious community. Town meetings fostered participatory governance; fishing, shipbuilding, and trade drove the economy. The <strong>Middle Colonies</strong> (New York, Pennsylvania, New Jersey) were the most ethnically and religiously diverse, home to Quakers, Dutch Reformed, and waves of German and Scots-Irish immigrants. Pennsylvania's fertile farmland made it the "breadbasket of America." The <strong>Southern Colonies</strong> (Virginia, Maryland, Carolinas, Georgia) built plantation economies dependent first on indentured servants, then increasingly on enslaved African labor.</p>
+    <p>Slavery's expansion was the defining transformation of this period. Virginia's <strong>headright system</strong> initially brought indentured servants; after <strong>Bacon's Rebellion (1676)</strong> — when poor whites and enslaved Black people joined a violent uprising against the planter elite — colonial leaders deliberately expanded racial slavery to divide the laboring poor along racial lines. By 1700, the slave codes rigidly defined Black people as property for life.</p>
+    <p>Transatlantic trade connected the colonies through the <strong>Triangular Trade</strong>: manufactured goods flowed from England to Africa, enslaved people from Africa to the Americas, and raw materials from the colonies back to England. The <strong>Great Awakening</strong> of the 1730s–40s challenged established religious authority, promoted emotional evangelical Christianity, and paradoxically reinforced both democratic impulses and anti-slavery sentiment among some colonists.</p>`,
+    terms: [
+      {name:"Bacon's Rebellion (1676)", def:"Armed uprising in Virginia led by Nathaniel Bacon against Governor Berkeley. Its multiracial alliance of poor whites and enslaved people frightened planters into expanding racial slavery."},
+      {name:"Headright System", def:"Virginia policy granting 50 acres per person whose passage was paid — initially attracted indentured servants, concentrated land in elite hands."},
+      {name:"Great Awakening", def:"Religious revival of the 1730s–40s featuring emotional preaching. Challenged established clergy, democratized religion, and promoted individual spiritual equality."},
+      {name:"Triangular Trade", def:"Atlantic trading system: manufactured goods → Africa → enslaved people → Americas → raw materials → England."},
+      {name:"House of Burgesses", def:"First elected representative assembly in colonial America, established in Virginia in 1619 — precedent for self-governance."},
+      {name:"Salutary Neglect", def:"Informal British policy of loosely enforcing trade laws in the colonies, allowing colonial self-governance to flourish (until 1763)."},
+      {name:"Halfway Covenant (1662)", def:"Puritan compromise allowing partial church membership for the children of baptized non-converts — a sign of declining religious intensity in New England."},
+      {name:"Stono Rebellion (1739)", def:"Largest slave rebellion in colonial America, near Charleston, SC — led to harsher slave codes and restrictions on enslaved people's movement."},
+    ],
+    lo: [
+      {code:"2.2", text:"Explain how and why various European colonies developed and expanded from 1607 to 1754."},
+      {code:"2.3", text:"Explain how environmental and other factors shaped the development of British colonies."},
+      {code:"2.4", text:"Explain causes and effects of transatlantic trade over time."},
+      {code:"2.5", text:"Explain how interactions between European nations and American Indians changed over time."},
+      {code:"2.6", text:"Explain the causes and effects of slavery in the various British colonial regions."},
+      {code:"2.7", text:"Explain how the movement of people and ideas across the Atlantic contributed to American culture."},
+    ],
+    ce: [
+      {title:"Bacon's Rebellion → Racial Slavery Expansion",causes:["Economic inequality between planters and poor whites","Anger at Governor Berkeley's Native American policy","Alliance between poor whites and enslaved people"],effects:["Planter class alarmed by cross-racial unity","Shift from indentured servitude to racial slavery","Virginia slave codes formalized Black people as property","Racial divide used to prevent future class alliances"]},
+      {title:"Great Awakening (1730s–40s)",causes:["Declining religious fervor in established churches","Ministers like Jonathan Edwards and George Whitefield","Social anxieties of rapidly changing colonial society"],effects:["Challenged authority of established clergy","New democratic, emotional style of worship","New denominations (Baptists, Methodists) grow","Laid groundwork for questioning ALL authority — including British"]},
+    ]
+  },
+  3: {
+    title: "Period 3: 1754–1800 — Revolution & New Republic",
+    color: "var(--p3)",
+    narrative: `<p>The <strong>French and Indian War (1754–1763)</strong> — the American theater of the global Seven Years' War — transformed the relationship between Britain and its colonies. Britain triumphed, expelling France from North America, but emerged deeply in debt. To pay for colonial defense, Parliament began taxing the colonies for the first time: the <strong>Stamp Act (1765)</strong>, <strong>Townshend Acts (1767)</strong>, and eventually the Intolerable Acts (1774). Colonists responded with the rallying cry of <em>"taxation without representation"</em> — arguing that Parliament had no right to tax those without seats in it.</p>
+    <p>Enlightenment philosophy — especially <strong>John Locke's</strong> ideas about natural rights, consent of the governed, and the right to revolt against tyranny — provided the intellectual foundation for revolution. <strong>Thomas Paine's Common Sense (1776)</strong> made these ideas accessible to ordinary colonists. The <strong>Declaration of Independence</strong>, drafted by Jefferson, enshrined these Lockean principles as American founding ideals, even as they coexisted uncomfortably with slavery.</p>
+    <p>The Revolutionary War itself (1775–1783) required both military strategy and international alliances. The <strong>Battle of Saratoga (1777)</strong> was the turning point, convincing France to formally ally with the Americans. Washington's persistence through Valley Forge, the professionalism of Continental Army regulars, and British overextension ultimately produced the American victory at <strong>Yorktown (1781)</strong>.</p>
+    <p>The <strong>Articles of Confederation</strong> (1781–1789) created a weak national government — no power to tax, no executive, no federal court. <strong>Shays' Rebellion (1786)</strong> — a farmers' uprising in Massachusetts — exposed its fatal weaknesses. The Constitutional Convention (1787) replaced it with the Constitution, a carefully negotiated document balancing federal power with state sovereignty, large states with small (Great Compromise), and slaveholding South with the North (3/5 Clause, Slave Trade Clause). The Federalist Papers defended ratification; Anti-Federalists demanded a Bill of Rights, which was added in 1791.</p>`,
+    terms: [
+      {name:"Royal Proclamation of 1763", def:"British order forbidding colonists from settling west of the Appalachians — angered colonists who felt entitled to western lands after helping win the French & Indian War."},
+      {name:"Stamp Act (1765)", def:"First direct tax on colonists — required stamps on all printed materials. Colonists' furious response ('no taxation without representation') led to its repeal but established the precedent debate."},
+      {name:"Sons of Liberty", def:"Colonial protest organization (led by Samuel Adams in Boston) that organized resistance, boycotts, and sometimes violent action against British taxes."},
+      {name:"Common Sense (1776)", def:"Thomas Paine's pamphlet arguing for immediate independence using plain language. Sold 500,000 copies and shifted public opinion decisively toward independence."},
+      {name:"Battle of Saratoga (1777)", def:"American victory that convinced France to formally ally with the colonies — the war's turning point."},
+      {name:"Shays' Rebellion (1786)", def:"Massachusetts farmers' uprising against debt and taxes; exposed the Articles of Confederation's inability to maintain order and accelerated calls for a stronger federal government."},
+      {name:"Great Compromise (1787)", def:"Constitutional Convention agreement creating a bicameral legislature: Senate (equal state representation) + House (proportional representation)."},
+      {name:"3/5 Clause", def:"Constitutional provision counting enslaved people as 3/5 of a person for representation and taxation — gave Southern states disproportionate political power."},
+      {name:"Marbury v. Madison (1803)", def:"Supreme Court case establishing judicial review — the power of the Court to declare laws unconstitutional. Foundation of the modern federal judiciary."},
+      {name:"Northwest Ordinance (1787)", def:"Created a framework for admitting new states from the Northwest Territory; banned slavery north of the Ohio River — first federal restriction on slavery's expansion."},
+    ],
+    lo: [
+      {code:"3.2", text:"Explain the causes and effects of the Seven Years' War (French and Indian War)."},
+      {code:"3.3", text:"Explain how British colonial policies led to the Revolutionary War."},
+      {code:"3.4", text:"Explain how colonial attitudes about government changed leading to the Revolution."},
+      {code:"3.5", text:"Explain how various factors contributed to the American victory in the Revolution."},
+      {code:"3.6", text:"Explain the various ways the American Revolution affected society."},
+      {code:"3.7", text:"Explain how different forms of government developed as a result of the Revolutionary period."},
+      {code:"3.8", text:"Explain differing ideological positions on federal government structure."},
+      {code:"3.9", text:"Explain continuities and changes in government with the Constitution's ratification."},
+    ],
+    ce: [
+      {title:"French & Indian War → American Revolution",causes:["Britain's massive war debt","Quartering of British troops in colonies","Britain's assertion of authority over colonies","End of Salutary Neglect"],effects:["New taxes: Stamp, Townshend, Tea Acts","Colonial unity forged in resistance","Sons of Liberty and committees of correspondence","Ideological shift toward independence"]},
+      {title:"Shays' Rebellion → Constitutional Convention",causes:["Farmers crushed by debt in post-war depression","Massachusetts taxes payable only in hard currency","Articles of Confederation unable to respond"],effects:["Delegates alarmed about national stability","Constitutional Convention called (1787)","Replaced Articles with stronger federal government","Federalists vs. Anti-Federalists debate erupts"]},
+    ]
+  },
+  4: {
+    title: "Period 4: 1800–1848 — Democracy, Expansion & Reform",
+    color: "var(--p4)",
+    narrative: `<p>The early 19th century transformed the United States politically, economically, and culturally. The <strong>"Revolution of 1800"</strong> peacefully transferred power from Federalists to Democratic-Republicans under Jefferson — establishing the precedent of peaceful transitions. Jefferson doubled U.S. territory with the <strong>Louisiana Purchase (1803)</strong>, and his rival <em>John Marshall</em> used the Supreme Court to entrench federal power through landmark rulings like Marbury v. Madison.</p>
+    <p>The <strong>Market Revolution</strong> rewired American society. New technologies — the cotton gin (1793), steam engine, canal systems (especially the <strong>Erie Canal, 1825</strong>), and railroads — connected regional markets into a national economy. The North industrialized; the <strong>Lowell Mill Girls</strong> represented a new industrial working class. The South doubled down on cotton and slavery; the cotton gin made slavery <em>more</em> profitable, entrenching the "Peculiar Institution" just as abolitionist pressure increased.</p>
+    <p>Jacksonian democracy (1820s–1840s) expanded voting rights to almost all white men, but simultaneously removed Native Americans. The <strong>Indian Removal Act (1830)</strong> and the resulting <strong>Trail of Tears</strong> forcibly displaced the Five Civilized Tribes from the Southeast to Oklahoma — over 15,000 deaths. Jackson also waged war on the <strong>Second Bank of the United States</strong>, which he viewed as an elite institution, dismantling it in his "Bank War."</p>
+    <p>The <strong>Second Great Awakening</strong> sparked an explosion of reform movements: abolitionism (William Lloyd Garrison's <em>The Liberator</em>, Frederick Douglass's speeches), women's rights (Seneca Falls Convention, 1848, Declaration of Sentiments), temperance, prison and asylum reform (Dorothea Dix), and utopian communities. These reform movements were deeply connected to evangelical Protestant belief in human perfectibility.</p>`,
+    terms: [
+      {name:"Louisiana Purchase (1803)", def:"Jefferson's purchase of 828,000 sq miles from France for $15 million — doubled U.S. territory but raised constitutional questions about federal power."},
+      {name:"Erie Canal (1825)", def:"363-mile artificial waterway connecting NYC to the Great Lakes; slashed shipping costs and made NYC the dominant commercial city. Symbol of the Market Revolution."},
+      {name:"Indian Removal Act (1830)", def:"Jackson's legislation authorizing the forced removal of the Five Civilized Tribes from the Southeast to Indian Territory (Oklahoma)."},
+      {name:"Trail of Tears", def:"Forced displacement of Cherokee and other tribes (1838–39); approximately 4,000–15,000 died from disease, exposure, and starvation."},
+      {name:"Missouri Compromise (1820)", def:"Admitted Missouri as slave state, Maine as free; banned slavery north of 36°30' latitude in Louisiana Purchase territory. Temporarily resolved sectional tensions."},
+      {name:"Nullification Crisis (1832)", def:"South Carolina declared the 'Tariff of Abominations' null and void within its borders; Jackson threatened military force. Foreshadowed secession."},
+      {name:"Second Great Awakening", def:"Protestant religious revival early 19th century; emphasized individual salvation, human perfectibility, and moral reform — direct catalyst for abolitionism and other reform movements."},
+      {name:"Seneca Falls Convention (1848)", def:"First women's rights convention; produced the Declaration of Sentiments modeled on the Declaration of Independence, demanding women's suffrage and equal rights."},
+      {name:"Frederick Douglass", def:"Formerly enslaved abolitionist, author, and orator; his Narrative (1845) was the most powerful firsthand account of slavery. Advisor to Lincoln."},
+      {name:"Manifest Destiny", def:"Belief that American expansion across the continent was divinely ordained and inevitable; justified westward expansion, Native removal, and later war with Mexico."},
+    ],
+    lo: [
+      {code:"4.2", text:"Explain the causes and effects of policy debates in the early republic."},
+      {code:"4.3", text:"Explain how different regional interests affected debates about the federal government."},
+      {code:"4.5", text:"Explain the causes and effects of innovations in technology, agriculture, and commerce."},
+      {code:"4.7", text:"Explain the causes and effects of the expansion of participatory democracy from 1800 to 1848."},
+      {code:"4.8", text:"Explain the causes and effects of continuing policy debates about federal power."},
+      {code:"4.10", text:"Explain the causes of the Second Great Awakening."},
+      {code:"4.11", text:"Explain how various reform movements developed and expanded from 1800 to 1848."},
+    ],
+    ce: [
+      {title:"Cotton Gin → Expansion of Slavery",causes:["Eli Whitney's cotton gin (1793) made cotton processing efficient","Southern soil ideal for short-staple cotton","European textile demand for American cotton"],effects:["Slavery became MORE profitable, not less","'Cotton Kingdom' spread across the Deep South","Slave population doubled 1800–1830","Planter class's political power grew; defended slavery as 'positive good'"]},
+      {title:"Market Revolution → Social Change",causes:["Erie Canal, railroads connect national market","Industrial factories emerge in New England","Crop specialization replaces subsistence farming"],effects:["Lowell Mill Girls — new female workforce","'Cult of Domesticity' defines middle-class women's role","Growing middle class, new consumer culture","Separate North (industrial) and South (plantation) economies deepen"]},
+    ]
+  },
+  5: {
+    title: "Period 5: 1844–1877 — Sectional Conflict, Civil War & Reconstruction",
+    color: "var(--p5)",
+    narrative: `<p>The 1840s–50s were defined by the existential question: would slavery expand into new territories? <strong>Manifest Destiny</strong> drove the U.S. to war with Mexico (1846–48); the <strong>Treaty of Guadalupe Hidalgo</strong> delivered an enormous land cession — but immediately reignited the slavery debate. <strong>The Compromise of 1850</strong> (including the hated <strong>Fugitive Slave Act</strong>) only temporarily delayed the crisis. The <strong>Kansas-Nebraska Act (1854)</strong> repealed the Missouri Compromise, allowing "popular sovereignty" to decide slavery in territories — producing <strong>Bleeding Kansas</strong>, a preview of civil war. The <strong>Dred Scott decision (1857)</strong> declared that Black people had no citizenship rights and that Congress could not ban slavery anywhere.</p>
+    <p>The Republican Party emerged in 1854, built on free labor ideology and opposition to slavery's expansion (not abolition). <strong>Lincoln's election in 1860</strong> — on a platform explicitly opposed to slavery's expansion — triggered Southern secession before he took office. By February 1861, seven states had seceded and formed the Confederacy. <strong>Fort Sumter (April 1861)</strong> began the war.</p>
+    <p>The Civil War transformed into a war of emancipation. Early Union strategy (the Anaconda Plan) aimed to strangle the Confederacy economically. After early Confederate successes, the <strong>Battle of Antietam (1862)</strong> gave Lincoln the military victory he needed to issue the <strong>Emancipation Proclamation</strong> — redefining the war's purpose. <strong>Gettysburg and Vicksburg (1863)</strong> were the turning points. <strong>Sherman's March to the Sea</strong> and Grant's relentless pressure ended the war in April 1865.</p>
+    <p><strong>Reconstruction (1865–1877)</strong> was a contested, ultimately failed attempt to reintegrate the South and protect Black civil rights. The <strong>13th, 14th, and 15th Amendments</strong> abolished slavery, granted citizenship, and gave Black men the vote. <strong>Radical Republicans</strong> in Congress pushed for genuine transformation; the Freedmen's Bureau provided education and economic assistance. But <strong>Black Codes</strong>, Klan violence, sharecropping, and the <strong>Compromise of 1877</strong> (which withdrew federal troops in exchange for Hayes's presidency) ended Reconstruction and restored white supremacist control across the South.</p>`,
+    terms: [
+      {name:"Compromise of 1850", def:"Five-part compromise: admitted California as free state, gave new territories popular sovereignty on slavery, abolished slave trade in DC, strengthened Fugitive Slave Act."},
+      {name:"Fugitive Slave Act (1850)", def:"Required Northerners to assist in capturing and returning escaped enslaved people; outraged the North and radicalized moderates."},
+      {name:"Kansas-Nebraska Act (1854)", def:"Repealed the Missouri Compromise; allowed Kansas and Nebraska to decide slavery by popular sovereignty, producing Bleeding Kansas."},
+      {name:"Dred Scott v. Sanford (1857)", def:"Supreme Court ruling that Black people were not citizens, had no right to sue, and Congress could not ban slavery in territories — effectively destroyed compromise."},
+      {name:"Anaconda Plan", def:"Union war strategy to blockade Southern ports, control the Mississippi River, and strangle the Confederacy economically."},
+      {name:"Emancipation Proclamation (1863)", def:"Lincoln's executive order freeing enslaved people in Confederate states; transformed the war into a moral crusade for freedom and prevented European recognition of the Confederacy."},
+      {name:"54th Massachusetts Infantry", def:"One of the first Black Union Army regiments; their valor at Fort Wagner (1863) transformed Northern opinion on Black military service."},
+      {name:"13th Amendment (1865)", def:"Abolished slavery throughout the United States — the culmination of emancipation."},
+      {name:"14th Amendment (1868)", def:"Granted citizenship to all born or naturalized in the U.S.; equal protection and due process — foundation of modern civil rights law."},
+      {name:"15th Amendment (1870)", def:"Granted Black men the right to vote; immediately undermined by poll taxes, literacy tests, and grandfather clauses."},
+      {name:"Freedmen's Bureau", def:"Federal agency (1865–72) providing food, education, legal assistance, and labor contract oversight to formerly enslaved people. Significantly underfunded."},
+      {name:"Black Codes", def:"Southern state laws immediately after the Civil War severely restricting Black people's rights, movement, and economic freedom — effectively re-enslaving them through legal mechanisms."},
+      {name:"Sharecropping", def:"Labor system in post-war South where formerly enslaved people farmed landowners' fields for a share of crops; chronic debt kept sharecroppers in a cycle of poverty akin to slavery."},
+      {name:"Compromise of 1877", def:"Deal ending the disputed 1876 election: Hayes became president; federal troops withdrew from the South. Effectively ended Reconstruction."},
+      {name:"Radical Republicans", def:"Congressional faction pushing for harsh Reconstruction terms, Black voting rights, and military occupation of the South."},
+      {name:"Free Soil Party", def:"1848 political party opposing slavery's expansion into new territories; 'Free Soil, Free Speech, Free Labor, Free Men.' Predecessor to the Republican Party."},
+      {name:"Bleeding Kansas", def:"Period of violent conflict (1854–59) in Kansas Territory between pro-slavery and anti-slavery settlers following Kansas-Nebraska Act."},
+    ],
+    lo: [
+      {code:"5.2", text:"Explain the causes and effects of westward expansion from 1844 to 1877."},
+      {code:"5.3", text:"Explain the causes and effects of the Mexican-American War."},
+      {code:"5.5", text:"Explain how regional differences related to slavery caused tension leading to the Civil War."},
+      {code:"5.6", text:"Explain the political causes of the Civil War."},
+      {code:"5.8", text:"Explain the various factors that contributed to the Union victory in the Civil War."},
+      {code:"5.9", text:"Explain how Lincoln's leadership impacted American ideals during the war."},
+      {code:"5.10", text:"Explain the effects of government policy during Reconstruction on society."},
+      {code:"5.11", text:"Explain how Reconstruction resulted in continuity and change in regional and national identity."},
+    ],
+    ce: [
+      {title:"Kansas-Nebraska Act (1854) → Republican Party + Civil War",causes:["Repeal of Missouri Compromise","Popular sovereignty debate in territories","Pro-slavery violence in Kansas (Border Ruffians)"],effects:["Free Soil Democrats, Whigs, abolitionists unite as Republicans","Bleeding Kansas radicalizes both sides","Lincoln-Douglas debates nationalize slavery debate","Election of 1860 triggers secession"]},
+      {title:"Emancipation Proclamation (1863)",causes:["Battle of Antietam gives Lincoln political cover","Britain and France considering Confederate recognition","Need to undercut Confederacy's labor supply"],effects:["War redefined as fight for human freedom","Prevents European recognition of Confederacy","180,000+ Black men join Union Army","Transformation of war's moral stakes permanently"]},
+      {title:"Failure of Reconstruction",causes:["Andrew Johnson's vetoes of Reconstruction legislation","Southern violence and Ku Klux Klan terrorism","Northern war exhaustion and economic panic","Compromise of 1877 withdraws federal troops"],effects:["Black Codes and sharecropping re-enslave Black workers economically","Redeemers dismantle Black political power","Jim Crow era begins — 'separate but equal'","Reconstruction Amendments gutted by court interpretations"]},
+    ]
+  },
+  6: {
+    title: "Period 6: 1865–1898 — Gilded Age & Industrialization",
+    color: "var(--p7)",
+    narrative: `<p>The decades following the Civil War saw the United States transform into the world's largest industrial economy — a transformation with profound social costs. <strong>Vertical integration</strong> (controlling every stage of production, as Carnegie did with steel) and <strong>horizontal integration</strong> (monopolizing an entire industry, as Rockefeller did with Standard Oil) concentrated unprecedented wealth in the hands of a few "Captains of Industry" — or "Robber Barons," depending on your perspective. <strong>Social Darwinism</strong> provided ideological justification: the wealthy deserved their wealth; the poor deserved their poverty.</p>
+    <p>Western expansion completed the continent but destroyed Native American societies. The completion of the <strong>Transcontinental Railroad (1869)</strong> opened the West to mass settlement, killed the buffalo herds, and made Native resistance militarily untenable. Chief Joseph's brilliant guerrilla campaign and ultimate surrender (1877), the massacre at Wounded Knee (1890), and the <strong>Dawes Act (1887)</strong> — which broke up tribal lands and forced assimilation — marked the final dispossession of Indigenous peoples.</p>
+    <p>Industrial workers formed the era's most significant resistance. The <strong>Knights of Labor</strong> organized across race and gender lines; the <strong>AFL</strong> (Samuel Gompers) focused on skilled workers and bread-and-butter economic demands. Major strikes — the <strong>Great Railroad Strike (1877)</strong>, <strong>Haymarket Affair (1886)</strong>, <strong>Pullman Strike (1894)</strong> — were all broken by government force, demonstrating that the state sided with capital.</p>
+    <p><strong>Plessy v. Ferguson (1896)</strong> constitutionally enshrined "separate but equal," legalizing Jim Crow. <strong>Booker T. Washington</strong> counseled economic accommodation; <strong>Ida B. Wells</strong> documented lynching and demanded federal anti-lynching legislation. The <strong>Populist movement</strong> united struggling farmers against railroads, banks, and the gold standard — demanding free silver, railroad regulation, and direct democracy.</p>`,
+    terms: [
+      {name:"Vertical Integration", def:"Business strategy of controlling all stages of production (Carnegie: owned mines, railroads, steel mills). Eliminated competition and maximized profits."},
+      {name:"Social Darwinism", def:"Application of Darwin's 'survival of the fittest' to human society; used to justify wealth inequality and oppose government aid to the poor."},
+      {name:"Dawes Act (1887)", def:"Divided tribal land into individual allotments to force assimilation; resulted in loss of 2/3 of Native land within decades."},
+      {name:"Plessy v. Ferguson (1896)", def:"Supreme Court case upholding racial segregation ('separate but equal'); not overturned until Brown v. Board (1954)."},
+      {name:"Booker T. Washington", def:"Black leader who advocated vocational training and economic self-improvement over political agitation ('Atlanta Compromise'); criticized by W.E.B. Du Bois."},
+      {name:"Ida B. Wells", def:"Black journalist and activist who documented lynching statistics and demanded federal anti-lynching legislation; co-founded NAACP."},
+      {name:"Samuel Gompers", def:"Founded AFL (American Federation of Labor); focused on skilled workers, higher wages, and shorter hours — 'pure and simple unionism.'"},
+      {name:"Haymarket Affair (1886)", def:"Bombing at Chicago labor rally killed police officers; blamed on anarchists even without evidence. Severely damaged labor movement's public image."},
+      {name:"Pullman Strike (1894)", def:"National railroad strike led by Eugene V. Debs; Cleveland sent federal troops to break it. Demonstrated federal government's alignment with corporate power."},
+      {name:"William Jennings Bryan", def:"Populist Democratic candidate; his 'Cross of Gold' speech (1896) demanded free silver coinage. Election of 1896 is considered the first modern presidential campaign."},
+    ],
+    lo: [],
+    ce: [
+      {title:"Industrialization → Labor Movement",causes:["12-hour workdays, unsafe conditions","Child labor widespread","Wages declining in economic panics","Workers have no political power"],effects:["Knights of Labor (1869) — inclusive movement","AFL (1886) — skilled workers organize","Major strikes: Great Railroad Strike, Haymarket, Pullman","Government breaks all major strikes — workers turn to Populism"]},
+      {title:"Western Expansion → Native Dispossession",causes:["Transcontinental Railroad completed (1869)","Buffalo slaughter destroys Plains economy","Government's reservation policy","Gold and silver discoveries on Native land"],effects:["Indian Wars: Battle of Little Bighorn, Wounded Knee","Chief Joseph's surrender (1877)","Dawes Act (1887) breaks up tribal lands","Native population reaches historic low (~250,000 by 1890)"]},
+    ]
+  },
+  7: {
+    title: "Period 7: 1890–1945 — Imperialism, Progressivism, WWI & WWII",
+    color: "var(--p8)",
+    narrative: `<p>By the 1890s, the United States had an industrial economy that needed markets and raw materials beyond its borders. <strong>Alfred Thayer Mahan's</strong> naval power theory, Social Darwinism applied to nations, and missionary zeal combined into an imperialist impulse. The <strong>Spanish-American War (1898)</strong> — fueled by <strong>yellow journalism</strong> and the explosion of the USS Maine — gave the U.S. Cuba (as a protectorate via the <strong>Platt Amendment</strong>), Puerto Rico, Guam, and the Philippines. Anti-imperialists argued the Philippines conquest contradicted American democracy; imperialists invoked the "White Man's Burden."</p>
+    <p>The <strong>Progressive Era (1890s–1920)</strong> was a response to Gilded Age excess. Muckraking journalists (Upton Sinclair's <em>The Jungle</em>, Ida Tarbell on Standard Oil, Jacob Riis on tenements) built public pressure for reform. Theodore Roosevelt used federal power as a "trustbuster," passed the <strong>Pure Food and Drug Act (1906)</strong>, and created the national park system. Woodrow Wilson's <strong>New Freedom</strong> brought the Federal Reserve, income tax (16th Amendment), and direct election of senators (17th Amendment). Women won suffrage with the <strong>19th Amendment (1920)</strong>.</p>
+    <p><strong>World War I (1914–1918)</strong>: The U.S. stayed neutral until German unrestricted submarine warfare and the Zimmermann Telegram forced Wilson's hand in 1917. The war transformed the home front: the <strong>Espionage and Sedition Acts</strong> suppressed dissent; the <strong>Great Migration</strong> began as Black Americans moved North for war industry jobs. Wilson's <strong>Fourteen Points</strong> and League of Nations vision were rejected by a Senate unwilling to cede sovereignty.</p>
+    <p>The <strong>1920s</strong> brought prosperity (for some) and the automobile age, but also the Red Scare, Harlem Renaissance, and Prohibition. The <strong>Great Depression</strong> (1929) shattered the economy; <strong>FDR's New Deal</strong> used unprecedented federal power to provide relief, recovery, and reform — permanently expanding government's role. <strong>World War II</strong> ended the Depression, but also brought Japanese-American internment and the atomic bomb — the most morally complex decision in U.S. history.</p>`,
+    terms: [
+      {name:"Yellow Journalism", def:"Sensationalist, exaggerated reporting (Hearst, Pulitzer) that inflamed public opinion toward war with Spain in 1898."},
+      {name:"Platt Amendment (1901)", def:"Gave the U.S. the right to intervene in Cuban affairs and maintain naval bases (Guantanamo); made Cuba a de facto protectorate."},
+      {name:"Muckrakers", def:"Progressive Era investigative journalists exposing corruption, unsafe conditions, and social injustice: Sinclair, Riis, Tarbell, Steffens."},
+      {name:"Espionage & Sedition Acts (1917–18)", def:"Criminalized criticism of the war, military, or government. Eugene Debs imprisoned for an anti-war speech. Represented severe civil liberties violations."},
+      {name:"Great Migration", def:"Movement of ~6 million Black Americans from the South to Northern cities (1910–1970); escape from Jim Crow and movement toward industrial jobs."},
+      {name:"New Deal", def:"FDR's series of programs (1933–39): CCC, PWA, Social Security, FDIC, SEC — fundamental expansion of federal government's role in economic life."},
+      {name:"Japanese-American Internment", def:"Executive Order 9066 (1942) forcibly removed ~120,000 Japanese Americans to detention camps — upheld in Korematsu v. US (1944), now recognized as a civil rights atrocity."},
+      {name:"Zimmermann Telegram (1917)", def:"German proposal to Mexico offering Texas, Arizona, New Mexico if Mexico joined Germany against the U.S.; intercepted by Britain; helped push U.S. into WWI."},
+    ],
+    lo: [],
+    ce: [
+      {title:"Spanish-American War (1898) → American Empire",causes:["Cuban rebellion against Spain","USS Maine explosion in Havana harbor","Yellow journalism inflames public opinion","Business interests in Cuba and Pacific trade routes"],effects:["U.S. acquires Philippines, Guam, Puerto Rico","Platt Amendment makes Cuba a protectorate","Anti-imperialist movement (Mark Twain) emerges","U.S. becomes a Pacific power — conflict with Japan begins here"]},
+      {title:"Great Depression → New Deal",causes:["Stock market crash (October 1929)","Over-speculation and weak banking regulations","Dust Bowl devastates agricultural regions","Global economic contraction"],effects:["FDR's New Deal expands federal role permanently","Social Security, FDIC, SEC created","Labor unions gain legal protection (Wagner Act)","Shifted Democratic coalition: working class, Black Americans, unions"]},
+    ]
+  },
+  8: {
+    title: "Period 8: 1945–1980 — Cold War, Civil Rights & Social Change",
+    color: "var(--p9)",
+    narrative: `<p>The United States emerged from WWII as a superpower facing a new ideological conflict with the Soviet Union. <strong>Containment</strong>, articulated by George Kennan, became U.S. Cold War strategy — preventing Soviet expansion without direct war. The <strong>Truman Doctrine (1947)</strong>, <strong>Marshall Plan</strong>, and <strong>NATO</strong> operationalized containment in Europe. The Korean War (1950–53) was containment in Asia. McCarthyism and the Red Scare created an atmosphere of domestic paranoia.</p>
+    <p>The Civil Rights Movement challenged the contradiction between American Cold War democracy rhetoric and domestic racial apartheid. <strong>Brown v. Board (1954)</strong> overturned Plessy. The <strong>Montgomery Bus Boycott (1955–56)</strong>, sit-ins, Freedom Rides, and <strong>March on Washington (1963)</strong> built unstoppable pressure. The <strong>Civil Rights Act (1964)</strong> and <strong>Voting Rights Act (1965)</strong> — signed by LBJ under pressure from the movement — were the legislative culmination. But the movement's limitations became clear as the <strong>Black Power</strong> movement and urban uprisings revealed that formal equality did not equal economic justice.</p>
+    <p>LBJ's <strong>Great Society</strong> (Medicare, Medicaid, federal education funding, War on Poverty) expanded the New Deal state further. But Vietnam destroyed his presidency. The <strong>Gulf of Tonkin Resolution (1964)</strong> gave LBJ broad war powers; escalation brought 500,000 troops to Vietnam by 1968. The <strong>Tet Offensive (1968)</strong> shattered public confidence; the anti-war movement exploded. Nixon's "Vietnamization" and secret bombing campaigns dragged the war until 1975.</p>
+    <p><strong>Nixon's</strong> presidency combined Cold War pragmatism (détente, opening China) with domestic scandal (<strong>Watergate</strong>). The 1970s brought stagflation, the energy crisis, and a cultural backlash against 1960s liberalism. <strong>Second-wave feminism</strong>, the <strong>Roe v. Wade</strong> decision (1973), and the <strong>AIM</strong> (American Indian Movement) extended rights movements — but also provoked conservative backlash that would fuel the Reagan Revolution.</p>`,
+    terms: [
+      {name:"Containment", def:"U.S. Cold War strategy (George Kennan) of preventing Soviet expansion through military alliances, economic aid, and proxy wars — without direct US-Soviet military conflict."},
+      {name:"Marshall Plan (1948)", def:"U.S. program providing $13 billion to rebuild Western European economies after WWII; prevented Communist political gains in war-devastated countries."},
+      {name:"Brown v. Board of Education (1954)", def:"Supreme Court unanimously overturned Plessy v. Ferguson; declared school segregation inherently unequal. Sparked massive resistance in the South."},
+      {name:"Montgomery Bus Boycott (1955–56)", def:"381-day boycott of city buses by Black Montgomerians; successfully desegregated bus system. Launched MLK's national leadership."},
+      {name:"Civil Rights Act (1964)", def:"Banned discrimination based on race, color, religion, sex, or national origin in employment and public accommodations. Most significant civil rights legislation since Reconstruction."},
+      {name:"Gulf of Tonkin Resolution (1964)", def:"Congressional authorization for LBJ to escalate U.S. military involvement in Vietnam — based on disputed reports of attacks on U.S. ships. Controversial; later revealed as exaggerated."},
+      {name:"Tet Offensive (1968)", def:"Massive coordinated North Vietnamese/Viet Cong attacks on South Vietnamese cities; militarily repelled but shattered American public confidence in the war."},
+      {name:"Watergate", def:"Nixon's 1972 break-in at Democratic headquarters and subsequent cover-up; Nixon resigned August 1974 — first presidential resignation in U.S. history."},
+      {name:"Great Society", def:"LBJ's legislative program creating Medicare, Medicaid, federal education funding, Voting Rights Act, Immigration Act; largest expansion of federal programs since New Deal."},
+    ],
+    lo: [],
+    ce: [
+      {title:"Cold War → Korean & Vietnam Wars",causes:["Soviet atomic bomb (1949)","Communist China (1949)","Domino Theory — fear of Communist expansion","U.S. commitment to containment globally"],effects:["Korean War (1950–53) — 37,000 American deaths, stalemate","Vietnam War — 58,000 deaths, no clear victory","Military-industrial complex grows permanently","Anti-war movement divides American society"]},
+      {title:"Civil Rights Movement → Great Society",causes:["Brown v. Board (1954) establishes legal precedent","Montgomery boycott builds movement infrastructure","March on Washington (1963) generates national pressure","Kennedy assassination creates political window"],effects:["Civil Rights Act (1964), Voting Rights Act (1965)","24th Amendment (poll tax abolished)","Great Society programs: Medicare, Medicaid","Black Power movement and urban uprisings reveal limits of formal equality"]},
+    ]
+  },
+  9: {
+    title: "Period 9: 1980–Present — Conservative Revolution & Globalization",
+    color: "var(--p6)",
+    narrative: `<p><strong>Ronald Reagan's</strong> 1980 election launched the modern conservative era. Reaganomics (supply-side economics, tax cuts, deregulation, cutting social programs) reversed the New Deal political order. Reagan also aggressively escalated the Cold War, expanding military spending and supporting anti-Communist movements globally. The Cold War ended on his and George H.W. Bush's watch — the <strong>Berlin Wall fell (1989)</strong>, the Soviet Union dissolved (1991).</p>
+    <p>The post-Cold War era brought both optimism and new challenges. Bill Clinton's "Third Way" triangulation embraced free trade (NAFTA), welfare reform, and fiscal discipline while maintaining core social programs. But globalization accelerated economic inequality; manufacturing jobs left; the culture wars intensified.</p>
+    <p><strong>9/11 (2001)</strong> transformed American foreign policy. The Bush Doctrine — preemptive war, unilateralism, regime change — led to wars in Afghanistan (2001) and Iraq (2003). The <strong>Patriot Act</strong> expanded domestic surveillance; Abu Ghraib and Guantanamo raised questions about American values. The 2008 <strong>financial crisis</strong> triggered the worst recession since the Depression; Obama's election represented both historic breakthrough and unfinished racial reckoning.</p>
+    <p>The contemporary period is defined by intensifying polarization, social media's transformation of political discourse, the Black Lives Matter movement, climate change debates, and continuing struggles over immigration, healthcare, and economic inequality. The AP exam typically ends around 2000, but contextualization of this period is critical.</p>`,
+    terms: [
+      {name:"Reaganomics", def:"Supply-side economic theory: cut taxes (especially for wealthy), deregulate industry, reduce social spending. Promised prosperity would 'trickle down.' Sharply increased inequality and deficit."},
+      {name:"Berlin Wall (1989)", def:"Fall of the Wall symbolized the end of the Cold War; German reunification followed in 1990; Soviet Union dissolved 1991."},
+      {name:"NAFTA (1994)", def:"North American Free Trade Agreement eliminating trade barriers between U.S., Canada, and Mexico; accelerated manufacturing job losses in U.S. while lowering consumer prices."},
+      {name:"Bush Doctrine", def:"Post-9/11 foreign policy: U.S. right to preemptive military action against perceived threats, support democracy promotion globally, unilateralism over international consensus."},
+      {name:"USA PATRIOT Act (2001)", def:"Expanded government surveillance powers post-9/11; critics argued it violated 4th Amendment civil liberties in the name of national security."},
+    ],
+    lo: [],
+    ce: [
+      {title:"Reagan Revolution",causes:["1970s stagflation and energy crisis","Backlash against 1960s social change","Conservative media and think tanks","Evangelical Christian political mobilization"],effects:["Tax cuts, deregulation, reduced social spending","Growing income inequality","Cold War escalation then end","Permanent shift in Republican Party ideology"]},
+      {title:"9/11 → War on Terror",causes:["Al-Qaeda's jihadist ideology","U.S. Cold War support of mujahideen in Afghanistan","U.S. military presence in Saudi Arabia","Osama bin Laden's network"],effects:["Afghanistan War (2001–2021) — longest U.S. war","Iraq War (2003) — no WMDs found","PATRIOT Act and mass surveillance","Massive increase in defense spending and national security state"]},
+    ]
+  }
+};
+
+// ALL VOCAB TERMS (from teacher's IAETSO lists + period terms)
+const allTerms = [
+  // From Iaetso.pdf (Period 3 list)
+  {name:"Royal Proclamation of 1763", def:"British order forbidding settlement west of Appalachians; angered colonists after French & Indian War.", period:3},
+  {name:"Sugar Act (1764)", def:"British tax on molasses and sugar; first revenue-raising tax on colonies (not just trade regulation).", period:3},
+  {name:"Stamp Act (1765)", def:"First direct tax on colonists requiring stamps on printed materials; sparked 'taxation without representation' protests.", period:3},
+  {name:"Sons of Liberty", def:"Colonial resistance organization (Samuel Adams) that organized boycotts and protests against British taxes.", period:3},
+  {name:"Townshend Acts (1767)", def:"Taxed paper, glass, and tea; revenue used to pay British officials — made them independent of colonial assemblies.", period:3},
+  {name:"Boston Massacre (1770)", def:"British soldiers killed 5 colonists during a confrontation; Paul Revere's engraving made it a propaganda tool.", period:3},
+  {name:"Boston Tea Party (1773)", def:"Sons of Liberty dumped 342 chests of tea into Boston Harbor to protest the Tea Act's favoritism of East India Company.", period:3},
+  {name:"Intolerable Acts (1774)", def:"Britain's punitive response to Boston Tea Party: closed Boston port, restricted Massachusetts self-governance.", period:3},
+  {name:"Common Sense (1776)", def:"Paine's pamphlet arguing for immediate independence using plain language; sold 500,000 copies.", period:3},
+  {name:"Battle of Saratoga (1777)", def:"American victory convincing France to formally ally with the colonies — the war's turning point.", period:3},
+  {name:"Shays' Rebellion (1786)", def:"Massachusetts farmers' armed uprising against debt; exposed Articles of Confederation's weakness.", period:3},
+  {name:"Northwest Ordinance (1787)", def:"Framework for admitting new states; banned slavery north of Ohio River — first federal slavery restriction.", period:3},
+  {name:"Virginia Plan", def:"Constitutional Convention proposal for representation based on population (favored large states).", period:3},
+  {name:"New Jersey Plan", def:"Equal representation for all states regardless of population (favored small states).", period:3},
+  {name:"Great Compromise", def:"Created bicameral Congress: Senate (equal) + House (proportional). Resolved large vs. small state conflict.", period:3},
+  {name:"Federalist Papers", def:"Essays by Hamilton, Madison, Jay arguing for ratification of the Constitution; especially Federalist #10 and #51.", period:3},
+  {name:"Bill of Rights (1791)", def:"First 10 Amendments protecting individual liberties: speech, religion, press, arms, due process, etc.", period:3},
+  {name:"3/5 Clause", def:"Counted enslaved people as 3/5 of a person for representation — gave South disproportionate congressional power.", period:3},
+  {name:"Marbury v. Madison (1803)", def:"Established judicial review — Supreme Court's power to strike down unconstitutional laws.", period:3},
+  {name:"Louisiana Purchase (1803)", def:"Jefferson doubled U.S. territory by purchasing 828,000 sq mi from France for $15M.", period:4},
+  {name:"Hartford Convention (1814)", def:"New England Federalists met to discuss grievances during War of 1812; their secessionist talk destroyed the Federalist Party.", period:4},
+  {name:"Erie Canal (1825)", def:"363-mile waterway connecting NYC to Great Lakes; slashed shipping costs, made NYC dominant commercial center.", period:4},
+  {name:"Cotton Kingdom", def:"The plantation economy of the antebellum South, built on enslaved labor and cotton exports to British textile mills.", period:4},
+  {name:"Lowell Mill Girls", def:"Young New England women who worked in Lowell, MA textile factories; first major female industrial workforce.", period:4},
+  {name:"Manifest Destiny", def:"Belief that U.S. expansion across the continent was divinely ordained. Justified westward expansion and Native removal.", period:4},
+  {name:"Missouri Compromise (1820)", def:"Admitted Missouri (slave) and Maine (free); banned slavery north of 36°30'. Temporarily resolved sectional tension.", period:4},
+  {name:"Nullification Crisis (1832)", def:"SC declared federal tariff null and void; Jackson threatened military force. Foreshadowed secession.", period:4},
+  {name:"Indian Removal Act (1830)", def:"Jackson's law authorizing forced removal of Five Civilized Tribes from Southeast.", period:4},
+  {name:"Trail of Tears", def:"Forced displacement of Cherokee and others (1838–39); up to 15,000 died.", period:4},
+  {name:"Second Bank of the US", def:"Federal bank that Jackson destroyed in the 'Bank War' (1832), viewing it as corrupt elite institution.", period:4},
+  {name:"Panic of 1837", def:"Economic depression following Jackson's destruction of the Second Bank; one of worst 19th-century depressions.", period:4},
+  {name:"Frederick Douglass", def:"Escaped enslaved man who became the era's most powerful abolitionist orator and author (Narrative, 1845).", period:4},
+  {name:"Underground Railroad", def:"Network of safe houses and routes helping enslaved people escape to freedom in the North and Canada.", period:4},
+  {name:"Declaration of Sentiments (1848)", def:"Seneca Falls document modeled on Declaration of Independence; demanded women's equal rights and suffrage.", period:4},
+  {name:"Transcendentalists", def:"Intellectual movement (Emerson, Thoreau) emphasizing individual conscience over social convention; influenced reform movements.", period:4},
+  // Period 5 IAETSO terms
+  {name:"Free Soil Party", def:"1848 party opposing slavery's expansion into new territories. Predecessor to Republican Party.", period:5},
+  {name:"Fugitive Slave Act (1850)", def:"Required Northerners to help capture escaped enslaved people; outraged moderate Northerners.", period:5},
+  {name:"Know-Nothing Party", def:"Anti-immigrant nativist party of the 1850s; opposed Catholic immigrants (esp. Irish and German). Collapsed by 1856.", period:5},
+  {name:"Bleeding Kansas", def:"Violence between pro-slavery and anti-slavery settlers in Kansas (1854–59) following Kansas-Nebraska Act.", period:5},
+  {name:"Caning of Charles Sumner (1856)", def:"Rep. Preston Brooks beat Senator Sumner with a cane on Senate floor after anti-slavery speech — galvanized Northern opinion.", period:5},
+  {name:"Harpers Ferry (1859)", def:"John Brown's raid on federal arsenal hoping to spark slave rebellion; failed but made Brown a martyr to abolitionists.", period:5},
+  {name:"Fort Sumter (1861)", def:"Confederate attack on federal fort in South Carolina; officially began the Civil War.", period:5},
+  {name:"Anaconda Plan", def:"Union strategy to blockade Southern ports and control the Mississippi River to strangle Confederate economy.", period:5},
+  {name:"Battle of Antietam (1862)", def:"Bloodiest single day in American history (~23,000 casualties); gave Lincoln political cover for Emancipation Proclamation.", period:5},
+  {name:"Emancipation Proclamation (1863)", def:"Lincoln executive order freeing enslaved people in Confederate states; transformed war into fight for freedom.", period:5},
+  {name:"54th Massachusetts Infantry", def:"Famous Black Union regiment; their courage at Fort Wagner (1863) transformed Northern opinion on Black service.", period:5},
+  {name:"Gettysburg Address (1863)", def:"Lincoln's 272-word speech reframing the war as a test of democratic government and fight for human equality.", period:5},
+  {name:"Transcontinental Railroad (1869)", def:"Connected East to West; facilitated western settlement, destroyed buffalo herds, and displaced Native Americans.", period:5},
+  {name:"13th Amendment (1865)", def:"Abolished slavery throughout the United States.", period:5},
+  {name:"14th Amendment (1868)", def:"Citizenship to all born in U.S.; equal protection and due process clauses.", period:5},
+  {name:"15th Amendment (1870)", def:"Black men's right to vote; immediately undermined by poll taxes, literacy tests, grandfather clauses.", period:5},
+  {name:"Radical Republicans", def:"Congressional faction pushing for harsh Reconstruction, Black voting rights, military occupation of South.", period:5},
+  {name:"Black Codes", def:"Southern laws severely restricting Black rights after Civil War — vagrancy laws, labor contracts, movement restrictions.", period:5},
+  {name:"Freedmen's Bureau", def:"Federal agency (1865–72) providing food, education, legal aid to formerly enslaved people. Underfunded and short-lived.", period:5},
+  {name:"Sharecropping", def:"Post-war labor system keeping formerly enslaved people in debt cycles — effectively re-enslaving through economic means.", period:5},
+  {name:"Carpetbaggers", def:"Northerners who moved South after the Civil War; often involved in Republican Reconstruction governments.", period:5},
+  {name:"Scalawags", def:"White Southerners who supported Republican Reconstruction governments — viewed as traitors by other white Southerners.", period:5},
+  {name:"Redeemers", def:"White Southern Democrats who 'redeemed' states from Reconstruction by disenfranchising Black voters and restoring white supremacy.", period:5},
+  {name:"Compromise of 1877", def:"Deal making Hayes president; withdrew federal troops from South. Ended Reconstruction, abandoned Black civil rights.", period:5},
+  // Period 6 terms from IAETSO
+  {name:"Vertical Integration", def:"Controlling all stages of production (Carnegie). Eliminated middle men, maximized profits, crushed competition.", period:6},
+  {name:"Captains of Industry", def:"Term for Gilded Age industrialists (Carnegie, Rockefeller, Morgan) — either celebrated as wealth creators or condemned as Robber Barons.", period:6},
+  {name:"Jacob Riis", def:"Muckraking journalist whose 'How the Other Half Lives' (1890) exposed tenement conditions in NYC — sparked Progressive reform.", period:6},
+  {name:"Frederick Jackson Turner", def:"Historian whose 'Frontier Thesis' (1893) argued the frontier experience defined American democracy and character.", period:6},
+  {name:"Chief Joseph", def:"Nez Perce leader who led brilliant 1,170-mile retreat (1877) before surrendering — 'I will fight no more forever.'", period:6},
+  {name:"Dawes Act (1887)", def:"Broke up tribal lands into individual allotments to force Native assimilation; resulted in loss of 2/3 of Native land.", period:6},
+  {name:"Social Darwinism", def:"Application of Darwin's evolutionary ideas to human society; justified wealth inequality and opposed government aid.", period:6},
+  {name:"Great Railroad Strike (1877)", def:"First major national labor strike; sparked by wage cuts. Hayes sent federal troops — set precedent of government union-breaking.", period:6},
+  {name:"Knights of Labor", def:"First major national labor union (1869); accepted workers of all races and genders; demanded 8-hour day.", period:6},
+  {name:"Social Gospel", def:"Protestant movement applying Christian ethics to social problems (poverty, child labor, inequality). Fueled Progressive Era.", period:6},
+  {name:"Haymarket Affair (1886)", def:"Bombing at Chicago labor rally blamed on anarchists; devastated labor movement's public image.", period:6},
+  {name:"Pullman Strike (1894)", def:"Railroad strike led by Eugene Debs; broken by federal troops. Demonstrated government's alignment with corporate power.", period:6},
+  {name:"William Jennings Bryan", def:"Populist 'Cross of Gold' speech (1896) demanded silver coinage. 1896 election loss ended Populism.", period:6},
+  {name:"Ida B. Wells", def:"Black journalist who documented lynching and demanded federal anti-lynching laws; co-founded NAACP.", period:6},
+  {name:"Plessy v. Ferguson (1896)", def:"Upheld 'separate but equal' racial segregation. Constitutional basis for Jim Crow until Brown v. Board (1954).", period:6},
+  {name:"Booker T. Washington", def:"Advocated vocational training and economic self-help over political agitation ('Atlanta Compromise').", period:6},
+  {name:"Samuel Gompers", def:"AFL founder; 'pure and simple unionism' — focused on wages, hours, conditions for skilled workers.", period:6},
+  {name:"Women's Christian Temperance Union", def:"Led by Frances Willard; largest women's organization of the era; fought alcohol and also advocated for women's suffrage.", period:6},
+  // Period 7 IAETSO terms
+  {name:"\"Splendid Little War\"", def:"John Hay's description of the Spanish-American War (1898); quick American victory gained an overseas empire.", period:7},
+  {name:"Rough Riders", def:"Theodore Roosevelt's volunteer cavalry unit; their charge at San Juan Hill made Roosevelt a national hero.", period:7},
+  {name:"Yellow Journalism", def:"Sensationalist reporting by Hearst/Pulitzer papers inflaming public support for war with Spain.", period:7},
+  {name:"Platt Amendment (1901)", def:"Gave U.S. right to intervene in Cuba and maintain Guantanamo — made Cuba a de facto protectorate.", period:7},
+  {name:"Emilio Aguinaldo", def:"Filipino independence leader who fought the Spanish and then the Americans; led Philippine-American War (1899–1902).", period:7},
+  {name:"\"White Man's Burden\"", def:"Kipling's poem used to justify imperialism as a civilizing mission — paternalistic racism disguised as altruism.", period:7},
+];
+
+// TIMELINE DATA
+const timelineEvents = [
+  {year:1492, event:"Columbus reaches Caribbean", desc:"Initiated sustained European contact with Americas", period:1},
+  {year:1607, event:"Jamestown founded", desc:"First permanent English settlement in North America", period:2},
+  {year:1619, event:"First Africans in Virginia + House of Burgesses", desc:"Dual founding moment: slavery and representative government begin together", period:2},
+  {year:1676, event:"Bacon's Rebellion", desc:"Multiracial uprising accelerated shift to racial slavery in Virginia", period:2},
+  {year:1692, event:"Salem Witch Trials", desc:"Mass hysteria in Puritan Massachusetts; 20 executed", period:2},
+  {year:1754, event:"French & Indian War begins", desc:"Seven Years' War in North America; transformed British-colonial relations", period:3},
+  {year:1763, event:"Royal Proclamation of 1763", desc:"Britain forbids westward settlement; angers colonists", period:3},
+  {year:1765, event:"Stamp Act", desc:"First direct tax on colonists; 'no taxation without representation'", period:3},
+  {year:1770, event:"Boston Massacre", desc:"5 colonists killed; inflamed anti-British sentiment", period:3},
+  {year:1773, event:"Boston Tea Party", desc:"Sons of Liberty protest Tea Act; Britain responds with Intolerable Acts", period:3},
+  {year:1776, event:"Declaration of Independence", desc:"Formally declared independence; enshrined Enlightenment natural rights", period:3},
+  {year:1777, event:"Battle of Saratoga", desc:"American victory; France enters war as ally — turning point", period:3},
+  {year:1781, event:"Battle of Yorktown", desc:"Final major battle; British surrender — Revolution effectively over", period:3},
+  {year:1786, event:"Shays' Rebellion", desc:"Exposed Articles of Confederation's weakness; accelerated Constitutional Convention", period:3},
+  {year:1787, event:"Constitutional Convention", desc:"Replaced Articles of Confederation with stronger federal government", period:3},
+  {year:1791, event:"Bill of Rights ratified", desc:"First 10 Amendments protecting individual liberties", period:3},
+  {year:1800, event:"'Revolution of 1800'", desc:"Jefferson peacefully succeeded Adams; established precedent for peaceful transfer of power", period:4},
+  {year:1803, event:"Louisiana Purchase + Marbury v. Madison", desc:"Doubled U.S. territory; judicial review established", period:4},
+  {year:1820, event:"Missouri Compromise", desc:"Temporarily resolved slavery debate in territories", period:4},
+  {year:1825, event:"Erie Canal completed", desc:"Market Revolution accelerates; NYC becomes commercial capital", period:4},
+  {year:1830, event:"Indian Removal Act", desc:"Forced removal of Five Civilized Tribes begins", period:4},
+  {year:1831, event:"Nat Turner's Rebellion", desc:"Largest slave revolt in U.S. history; South responds with harsher slave codes", period:4},
+  {year:1845, event:"Manifest Destiny & Texas annexation", desc:"Texas joins U.S.; escalates conflict with Mexico", period:5},
+  {year:1848, event:"Treaty of Guadalupe Hidalgo + Seneca Falls", desc:"Mexican War ends; women's rights convention; gold discovered in California", period:5},
+  {year:1850, event:"Compromise of 1850", desc:"California free; Fugitive Slave Act enrages North", period:5},
+  {year:1854, event:"Kansas-Nebraska Act", desc:"Popular sovereignty repeals Missouri Compromise; Republican Party born", period:5},
+  {year:1857, event:"Dred Scott Decision", desc:"Supreme Court rules Black people have no citizenship rights; no slavery ban anywhere", period:5},
+  {year:1860, event:"Lincoln elected; South secedes", desc:"7 Southern states secede before Lincoln takes office", period:5},
+  {year:1863, event:"Emancipation Proclamation + Gettysburg", desc:"War becomes fight for freedom; Union turns tide", period:5},
+  {year:1865, event:"Civil War ends + 13th Amendment", desc:"Slavery abolished; Reconstruction begins", period:5},
+  {year:1868, event:"14th Amendment", desc:"Citizenship and equal protection for all born in U.S.", period:5},
+  {year:1877, event:"Compromise of 1877 ends Reconstruction", desc:"Federal troops leave South; Jim Crow era begins", period:5},
+  {year:1886, event:"Haymarket Affair", desc:"Labor movement setback; anarchists blamed", period:6},
+  {year:1887, event:"Dawes Act", desc:"Native lands broken up; forced assimilation policy", period:6},
+  {year:1896, event:"Plessy v. Ferguson", desc:"'Separate but equal' — Jim Crow constitutionalized", period:6},
+  {year:1898, event:"Spanish-American War", desc:"U.S. becomes imperial power; acquires Philippines, Puerto Rico, Guam", period:7},
+  {year:1906, event:"Pure Food and Drug Act + Upton Sinclair's The Jungle", desc:"Progressive Era federal regulation begins", period:7},
+  {year:1913, event:"16th, 17th Amendments + Federal Reserve", desc:"Income tax, direct Senate elections, central banking — Progressive reforms", period:7},
+  {year:1917, event:"U.S. enters WWI", desc:"Zimmermann Telegram + German submarine warfare force Wilson's hand", period:7},
+  {year:1920, event:"19th Amendment", desc:"Women's suffrage nationwide", period:7},
+  {year:1929, event:"Stock market crash — Great Depression begins", desc:"Decade of economic devastation; 25% unemployment", period:7},
+  {year:1933, event:"FDR's New Deal begins", desc:"Unprecedented federal role in economic relief and recovery", period:7},
+  {year:1941, event:"Pearl Harbor — U.S. enters WWII", desc:"Japanese attack; U.S. joins Allied powers", period:7},
+  {year:1945, event:"WWII ends + Atomic bombs", desc:"Japan surrenders after Hiroshima/Nagasaki — Cold War era begins", period:7},
+  {year:1947, event:"Truman Doctrine + Marshall Plan", desc:"Containment strategy articulated; $13B to rebuild Western Europe", period:8},
+  {year:1954, event:"Brown v. Board of Education", desc:"Supreme Court overturns Plessy — school segregation unconstitutional", period:8},
+  {year:1955, event:"Montgomery Bus Boycott", desc:"381 days; desegregated buses; launched MLK's leadership", period:8},
+  {year:1963, event:"March on Washington", desc:"250,000 attend; MLK's 'I Have a Dream' speech", period:8},
+  {year:1964, event:"Civil Rights Act + Gulf of Tonkin", desc:"Ban on discrimination; Vietnam escalation authorization", period:8},
+  {year:1965, event:"Voting Rights Act + Great Society peak", desc:"Banned voting discrimination; Medicare/Medicaid created", period:8},
+  {year:1968, event:"Tet Offensive + King/RFK assassinations + Nixon elected", desc:"Year of crisis; conservative backlash begins", period:8},
+  {year:1972, event:"Nixon visits China + Watergate break-in", desc:"Détente with China; Nixon's downfall begins", period:8},
+  {year:1973, event:"Roe v. Wade + Vietnam ceasefire", desc:"Abortion rights; U.S. withdraws from Vietnam", period:8},
+  {year:1980, event:"Reagan elected — Conservative Revolution", desc:"Reaganomics, tax cuts, Cold War escalation", period:9},
+  {year:1989, event:"Berlin Wall falls", desc:"Cold War effectively ends; Soviet Union dissolves 1991", period:9},
+  {year:2001, event:"9/11 + War on Terror begins", desc:"Bush Doctrine; Afghanistan War; PATRIOT Act", period:9},
+];
+
+// PRACTICE MCQs
+const mcqs = [
+  {
+    period: "Period 1–2",
+    question: "The passage of the Intolerable Acts in 1774 most directly resulted in which of the following?",
+    options: ["A) The immediate outbreak of armed conflict between colonial militias and British forces","B) Colonial unity through the formation of the First Continental Congress","C) The signing of the Declaration of Independence by colonial delegates","D) Britain's decision to repeal all existing colonial tax legislation"],
+    correct: 1,
+    explain: "The Intolerable Acts (closing Boston port, restricting Massachusetts self-governance) united the colonies in opposition, leading directly to the First Continental Congress (1774) where delegates coordinated a unified colonial response. Armed conflict (Lexington/Concord) came in April 1775 — a year later."
+  },
+  {
+    period: "Period 3",
+    stimulus: "\"If there must be trouble, let it be in my day, that my child may have peace.\" — Thomas Paine, The American Crisis (1776)",
+    question: "Paine's sentiment expressed in the passage above most closely reflects which of the following ideological currents of the Revolutionary era?",
+    options: ["A) Loyalist arguments that British rule provided order and protection","B) Enlightenment beliefs in civic virtue and sacrifice for future generations","C) Puritan theology emphasizing divine punishment for moral failures","D) Federalist arguments for a strong central government to ensure stability"],
+    correct: 1,
+    explain: "Paine's willingness to sacrifice in the present for future peace reflects Enlightenment civic republicanism — the idea that citizens bear obligations to the common good and to future generations. This is distinct from religious (Puritan) or government-structure (Federalist) arguments."
+  },
+  {
+    period: "Period 4",
+    question: "The nullification crisis of 1832 most directly demonstrated which of the following ongoing tensions in early American political development?",
+    options: ["A) Conflicts between slaveholders and abolitionists over the future of slavery","B) Debates over the proper balance of power between the federal government and states","C) Disputes between commercial and agrarian interests over international trade policy","D) Disagreements between Whigs and Democrats over internal improvements funding"],
+    correct: 1,
+    explain: "The Nullification Crisis — South Carolina declaring the federal tariff void within its borders — was fundamentally about states' rights vs. federal authority. Jackson's threat of military force asserted federal supremacy, while Calhoun's doctrine of nullification reasserted state sovereignty. This tension would resurface in secession (1861)."
+  },
+  {
+    period: "Period 4–5",
+    stimulus: "\"The peculiar institution of the South — that agitation has produced nothing whatever... We of the South will not, cannot, surrender our institutions.\" — John C. Calhoun, 1837",
+    question: "Which of the following best describes the historical significance of Calhoun's argument as represented in the passage?",
+    options: ["A) It reflected Southern planters' economic anxiety about Northern industrial competition","B) It marked a shift from defending slavery as a necessary evil to defending it as a positive good","C) It demonstrated Southern support for gradual emancipation combined with colonization","D) It showed growing Southern support for the abolitionist movement's moral arguments"],
+    correct: 1,
+    explain: "By the 1830s, Southern leaders like Calhoun shifted from the earlier 'necessary evil' defense of slavery (Washington, Jefferson) to asserting it was a 'positive good' for both enslaved and enslaver. This hardened Southern resistance to any compromise and directly fueled sectional conflict."
+  },
+  {
+    period: "Period 5",
+    question: "The Emancipation Proclamation (1863) was primarily significant because it",
+    options: ["A) immediately freed all enslaved people throughout the United States","B) granted formerly enslaved people full citizenship rights and legal equality","C) transformed the Civil War from a conflict over union into a war for human freedom","D) gained the immediate support of both Northern Democrats and border state politicians"],
+    correct: 2,
+    explain: "The Proclamation only freed enslaved people in Confederate states (not border states or Union-held Confederate territory), so it didn't immediately free everyone. Its primary significance was moral and diplomatic — it redefined the war's purpose as a fight for human freedom, preventing European recognition of the Confederacy and enabling Black enlistment in the Union Army."
+  },
+  {
+    period: "Period 5",
+    question: "The Compromise of 1877 most directly resulted in which of the following?",
+    options: ["A) Congressional passage of new civil rights protections for formerly enslaved people","B) The abandonment of federal efforts to protect Black civil rights in the South","C) The strengthening of Radical Republican power in Southern state governments","D) A renewed commitment to enforcing the Reconstruction Amendments"],
+    correct: 1,
+    explain: "The Compromise of 1877 withdrew federal troops from the South, effectively ending Reconstruction. Without federal protection, Redeemer Democrats systematically disenfranchised Black voters through violence, poll taxes, and literacy tests, ushering in the Jim Crow era."
+  },
+  {
+    period: "Period 6",
+    stimulus: "\"The accumulation of wealth by one man is simply the survival of the fittest... It is merely the working out of a law of nature.\" — Andrew Carnegie (paraphrased)",
+    question: "Carnegie's argument as expressed above most directly reflects which of the following intellectual currents of the Gilded Age?",
+    options: ["A) The Social Gospel movement's call for government intervention on behalf of the poor","B) Social Darwinism's application of evolutionary theory to justify economic inequality","C) Populist ideology demanding government regulation of industrial corporations","D) Progressive Era muckraking critiques of concentrated corporate power"],
+    correct: 1,
+    explain: "Social Darwinism applied Darwin's 'survival of the fittest' to human society — arguing that the wealthy deserved their wealth (natural superiority) and the poor deserved their poverty (natural inferiority). It provided ideological justification for opposing labor unions, social welfare programs, and government regulation."
+  },
+  {
+    period: "Period 6–7",
+    question: "The Spanish-American War of 1898 most directly reflected which of the following shifts in American foreign policy?",
+    options: ["A) A return to the isolationist principles of Washington's Farewell Address","B) A transition from continental expansion to overseas imperial ambitions","C) The Wilsonian principle of making the world safe for democracy","D) American commitment to Cuban independence as a moral obligation"],
+    correct: 1,
+    explain: "The Spanish-American War marked the U.S.'s entry into overseas imperialism. Unlike earlier westward continental expansion (Manifest Destiny), acquiring the Philippines, Guam, and Puerto Rico represented projection of American power across oceans — driven by Mahan's naval theory, economic interests in Pacific trade, and Social Darwinism applied to nations."
+  },
+  {
+    period: "Period 7",
+    question: "The Great Migration of the early 20th century most directly resulted from which combination of factors?",
+    options: ["A) Federal government relocation programs and the expansion of Northern welfare benefits","B) Push factors of Jim Crow violence and economic limitations in the South + pull factors of Northern industrial jobs","C) The collapse of the sharecropping system due to declining cotton prices and Populist political pressure","D) The passage of the Voting Rights Act enabling Black political participation in Northern cities"],
+    correct: 1,
+    explain: "The Great Migration (1910–1970) was driven by both push factors (Jim Crow laws, lynching, sharecropping poverty, boll weevil destroying cotton crops) and pull factors (WWI industrial jobs in Northern cities, relatively higher wages, less formalized racial oppression). It fundamentally transformed Northern cities' demographics and Black political power."
+  },
+  {
+    period: "Period 8",
+    question: "The Cold War policy of containment, as articulated in the Truman Doctrine (1947), most directly built upon which earlier American foreign policy tradition?",
+    options: ["A) Wilson's Fourteen Points and the idealism of collective security through international organizations","B) The Monroe Doctrine's assertion of American authority over the Western Hemisphere","C) Roosevelt's New Deal programs applying domestic intervention principles to global affairs","D) Washington's Farewell Address warning against entangling alliances"],
+    correct: 1,
+    explain: "The Monroe Doctrine (1823) established the principle that the U.S. would resist external powers extending their influence in the Americas. The Truman Doctrine globalized this concept — the U.S. would resist Soviet/Communist expansion anywhere in the world. Both reflect American assertion of a sphere of influence, though the scale dramatically expanded from hemisphere to globe."
+  },
+  {
+    period: "Period 8",
+    stimulus: "\"I have a dream that my four little children will one day live in a nation where they will not be judged by the color of their skin but by the content of their character.\" — MLK, 1963",
+    question: "The Civil Rights Movement's goals expressed in this speech were most directly challenged by which of the following developments?",
+    options: ["A) The Supreme Court's ruling in Brown v. Board of Education (1954)","B) The passage of the Civil Rights Act (1964) banning discrimination","C) The rise of the Black Power movement and urban uprisings revealing limits of formal equality","D) The Vietnam War diverting federal attention and resources from domestic reform"],
+    correct: 2,
+    explain: "MLK's 'I Have a Dream' vision represented the liberal integrationist wing of the Civil Rights Movement. The rise of Black Power (Stokely Carmichael, Malcolm X) and the urban uprisings in Watts (1965), Detroit (1967), and elsewhere challenged this vision — arguing that formal legal equality (Civil Rights Act) had not produced economic equality or ended police violence. This tension revealed the limits of legislative civil rights reform."
+  },
+  {
+    period: "All Periods — CCOT",
+    question: "Which of the following best illustrates a continuity in the tension between liberty and order throughout American history from 1776 to 1945?",
+    options: ["A) The federal government consistently supported labor unions as essential to democratic liberty","B) The expansion of civil liberties during wartime as the government mobilized public support","C) The suppression of dissent during periods of perceived national emergency (Alien & Sedition Acts, Espionage Act, Japanese internment)","D) The gradual elimination of racial discrimination through federal legislation in each major war"],
+    correct: 2,
+    explain: "A recurring pattern across American history is that wartime emergency consistently led to civil liberties restrictions: Alien & Sedition Acts (1798), Lincoln's suspension of habeas corpus (1861), Espionage/Sedition Acts (1917–18), and Japanese-American internment (1942). This represents a continuity — national security concerns repeatedly override civil liberties — that appears across multiple periods and is ideal for CCOT analysis."
+  },
+];
+
+// THEMATIC DATA
+const themes = [
+  {
+    icon:"⚖️",
+    title:"Liberty vs. Order / Government Power",
+    desc:"How Americans have continuously debated the proper balance between individual freedom and government authority",
+    connections:[
+      {period:"P3", text:"Articles of Confederation (too weak) → Constitution debate (Federalists vs. Anti-Federalists); Bill of Rights as compromise"},
+      {period:"P3", text:"Alien & Sedition Acts (1798): crisis of civil liberties vs. national security — pattern repeats across centuries"},
+      {period:"P4", text:"Nullification Crisis: states' rights vs. federal supremacy — Jackson asserts federal power"},
+      {period:"P7", text:"Espionage & Sedition Acts (WWI): civil liberties suppressed during wartime — Eugene Debs imprisoned"},
+      {period:"P7", text:"Japanese-American internment (WWII): national security vs. civil liberties — 120,000 detained"},
+      {period:"P8", text:"PATRIOT Act (2001): same tension, new technology — surveillance vs. privacy rights"},
+    ]
+  },
+  {
+    icon:"🏛️",
+    title:"Continuity of Racial Inequality",
+    desc:"How racial hierarchy persisted through changing legal frameworks across American history",
+    connections:[
+      {period:"P1", text:"Spanish caste system: racial hierarchy codified in colonial law — Indigenous and African people at bottom"},
+      {period:"P2", text:"Bacon's Rebellion → racial slavery: race used deliberately to divide working class"},
+      {period:"P4", text:"'Positive Good' defense: slavery defended as beneficial, not merely necessary — hardening of racial ideology"},
+      {period:"P5", text:"Black Codes + sharecropping: legal abolition (13th Amendment) doesn't end racial oppression — new mechanisms replace old"},
+      {period:"P6", text:"Plessy v. Ferguson (1896): 'separate but equal' — state-enforced segregation for 60 years"},
+      {period:"P8", text:"Civil Rights Act (1964): formal legal equality achieved; Black Power movement reveals economic inequality persists"},
+      {period:"P8-9", text:"Mass incarceration, persistent wealth gap: racial inequality adapts to new institutional forms"},
+    ]
+  },
+  {
+    icon:"🔄",
+    title:"Reform vs. Reaction (Cyclical Pattern)",
+    desc:"American history oscillates between periods of progressive reform and conservative backlash",
+    connections:[
+      {period:"P3", text:"Revolution: radical democratic ideals → Constitution: conservative stabilization of elite power"},
+      {period:"P5", text:"Radical Reconstruction: Black political power → Redemption: violent conservative counter-revolution"},
+      {period:"P6", text:"Gilded Age excess → Progressive Era reforms (antitrust, labor, suffrage)"},
+      {period:"P7", text:"Progressive Era → 1920s Conservative reaction (Red Scare, restriction of immigration, Prohibition)"},
+      {period:"P7", text:"New Deal expansion → Post-WWII anti-communist reaction (McCarthyism)"},
+      {period:"P8", text:"Great Society liberalism → Nixon's 'Silent Majority' and Southern Strategy"},
+      {period:"P9", text:"Reagan Revolution: explicit backlash against 1960s–70s liberal reforms"},
+    ]
+  },
+  {
+    icon:"🌍",
+    title:"America's Role in the World",
+    desc:"The evolution from isolationism to global superpower, and the tensions each stage created",
+    connections:[
+      {period:"P3", text:"Washington's Farewell Address (1796): warned against permanent alliances — founding isolationist principle"},
+      {period:"P4", text:"Monroe Doctrine (1823): Western Hemisphere as American sphere of influence — 'hands off' to Europeans"},
+      {period:"P7", text:"Spanish-American War (1898): first major overseas empire; debates over imperialism and American values"},
+      {period:"P7", text:"WWI (1917): reluctant entry; Wilsonian idealism (League of Nations) rejected by Senate"},
+      {period:"P7", text:"WWII + atomic bomb: U.S. becomes undisputed superpower; isolationism permanently dead"},
+      {period:"P8", text:"Cold War containment: global military commitments; Korea and Vietnam as costs"},
+      {period:"P9", text:"Post-9/11 Bush Doctrine: preemptive war, unilateralism — abandonment of multilateral restraint"},
+    ]
+  },
+  {
+    icon:"💰",
+    title:"Economic Transformations & Inequality",
+    desc:"How major economic shifts reshaped social hierarchies and political alignments",
+    connections:[
+      {period:"P2", text:"Triangular Trade & slavery: colonial economy built on enslaved labor — racial capitalism's foundations"},
+      {period:"P4", text:"Market Revolution: industrial North vs. plantation South — economic divergence fuels sectional conflict"},
+      {period:"P6", text:"Gilded Age: industrial capitalism concentrates wealth; workers organize in response"},
+      {period:"P7", text:"New Deal: first permanent federal role in economic management — Social Security, FDIC, labor rights"},
+      {period:"P8", text:"Post-WWII prosperity: middle class expands; GI Bill subsidizes white suburban homeownership"},
+      {period:"P9", text:"Reaganomics + globalization: deindustrialization, growing inequality, decline of union power"},
+    ]
+  },
+  {
+    icon:"🚺",
+    title:"Expansion of Democratic Participation",
+    desc:"The long, contested struggle to make American democracy more inclusive",
+    connections:[
+      {period:"P3", text:"Revolution creates ideals of equality — but only propertied white men vote initially"},
+      {period:"P4", text:"Jacksonian democracy: voting rights for nearly all white men; simultaneously removes Native Americans"},
+      {period:"P4", text:"Seneca Falls (1848): Declaration of Sentiments — women's suffrage movement begins formally"},
+      {period:"P5", text:"13th–15th Amendments: formally extend citizenship and voting rights to Black men"},
+      {period:"P7", text:"19th Amendment (1920): women's suffrage after 72 years of organizing"},
+      {period:"P8", text:"Civil Rights Act + Voting Rights Act: federal enforcement of 14th/15th Amendment rights"},
+      {period:"P8", text:"26th Amendment (1971): 18-year-olds gain vote — Vietnam protests drive this"},
+    ]
+  },
+];
+
+// ==================== FUNCTIONS ====================
+
+let currentQ = 0;
+let answers = {};
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function openPeriod(num) {
+  const p = periodData[num];
+  if (!p) return;
+  document.getElementById('detail-title').textContent = p.title;
+  document.getElementById('period-detail').style.setProperty('border-color', p.color);
+
+  // Narrative
+  document.getElementById('detail-narrative').innerHTML = p.narrative;
+
+  // Terms
+  const tg = document.getElementById('detail-terms');
+  tg.innerHTML = p.terms.map(t => `
+    <div class="term-card" onclick="this.classList.toggle('open')">
+      <div class="term-name">${t.name}</div>
+      <div class="term-flip">Click to reveal</div>
+      <div class="term-def">${t.def}</div>
+    </div>
+  `).join('');
+
+  // LOs
+  const lo = document.getElementById('detail-lo');
+  lo.innerHTML = p.lo.map(l => `
+    <div style="margin-bottom:14px; padding:14px 16px; background:var(--card); border:1px solid var(--border); border-radius:3px;">
+      <div style="font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;">LO ${l.code}</div>
+      <div style="font-size:0.92rem; line-height:1.65;">${l.text}</div>
+    </div>
+  `).join('') || '<p style="color:var(--muted); font-style:italic;">See Period 9 content for this period\'s learning objectives.</p>';
+
+  // Cause & Effect
+  const ce = document.getElementById('detail-ce');
+  ce.innerHTML = p.ce.map(c => buildCECard(c)).join('');
+
+  // Show detail, reset tabs
+  const detail = document.getElementById('period-detail');
+  detail.style.display = 'block';
+  detail.scrollIntoView({behavior:'smooth', block:'start'});
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.querySelectorAll('.tab-content').forEach((c,i) => c.classList.toggle('active', i===0));
+}
+
+function closePeriod() {
+  document.getElementById('period-detail').style.display = 'none';
+}
+
+function showTab(btn, tabId) {
+  const container = btn.closest('.period-detail');
+  container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+function showWriteTab(btn, id) {
+  document.querySelectorAll('.write-tab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.write-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function buildCECard(c) {
+  return `
+    <div class="ce-card">
+      <div class="ce-card-title">${c.title}</div>
+      <div class="ce-body">
+        <div class="ce-col causes">
+          <h4>Causes</h4>
+          <ul>${c.causes.map(x=>`<li>${x}</li>`).join('')}</ul>
+        </div>
+        <div class="ce-arrow">→</div>
+        <div class="ce-col effects">
+          <h4>Effects</h4>
+          <ul>${c.effects.map(x=>`<li>${x}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Build vocab grid
+function buildVocab() {
+  const grid = document.getElementById('vocab-grid');
+  grid.innerHTML = allTerms.map(t => `
+    <div class="term-card" onclick="this.classList.toggle('open')" data-name="${t.name.toLowerCase()}" data-period="${t.period}">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="term-name">${t.name}</div>
+        <span style="font-family:'IBM Plex Mono',monospace; font-size:0.65rem; color:var(--muted); padding:2px 6px; border:1px solid var(--border); border-radius:2px; flex-shrink:0; margin-left:8px;">P${t.period}</span>
+      </div>
+      <div class="term-flip">Click to reveal definition</div>
+      <div class="term-def">${t.def}</div>
+    </div>
+  `).join('');
+}
+
+function filterTerms(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#vocab-grid .term-card').forEach(card => {
+    const name = card.getAttribute('data-name');
+    const def = card.querySelector('.term-def').textContent.toLowerCase();
+    card.style.display = (name.includes(q) || def.includes(q)) ? 'block' : 'none';
+  });
+}
+
+// Build timeline
+function buildTimeline() {
+  const container = document.getElementById('master-timeline');
+  container.innerHTML = timelineEvents.map(e => `
+    <div class="tl-item">
+      <div class="tl-year">${e.year}</div>
+      <div class="tl-dot" style="background:var(--p${e.period})"></div>
+      <div class="tl-content">
+        <strong>${e.event}</strong>
+        <p>${e.desc}</p>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Build cause & effect main
+function buildCE() {
+  const allCE = [];
+  Object.values(periodData).forEach(p => p.ce.forEach(c => allCE.push(c)));
+  document.getElementById('ce-main').innerHTML = allCE.map(c => buildCECard(c)).join('');
+}
+
+// Build themes
+function buildThemes() {
+  document.getElementById('theme-grid').innerHTML = themes.map((t,i) => `
+    <div class="theme-card">
+      <div class="theme-header" onclick="toggleTheme(this)">
+        <div class="theme-icon">${t.icon}</div>
+        <div>
+          <h3>${t.title}</h3>
+          <p>${t.desc}</p>
+        </div>
+        <div style="margin-left:auto; font-family:'IBM Plex Mono',monospace; font-size:0.75rem; color:var(--muted); flex-shrink:0; padding-left:12px;">▼</div>
+      </div>
+      <div class="theme-body" id="theme-${i}">
+        ${t.connections.map(c => `
+          <div class="theme-timeline-row">
+            <span class="theme-period-tag">${c.period}</span>
+            <span>${c.text}</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleTheme(header) {
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// MCQ system
+function buildMCQ() {
+  renderQuestion();
+  updateProgress();
+}
+
+function renderQuestion() {
+  const q = mcqs[currentQ];
+  const container = document.getElementById('mcq-container');
+  const answered = answers[currentQ];
+  
+  container.innerHTML = `
+    <div class="mcq-card">
+      <div class="mcq-meta">Question ${currentQ + 1} of ${mcqs.length} · ${q.period}</div>
+      ${q.stimulus ? `<div class="mcq-stimulus">"${q.stimulus}"</div>` : ''}
+      <div class="mcq-q">${q.question}</div>
+      <div class="mcq-options">
+        ${q.options.map((opt, i) => `
+          <button class="mcq-opt ${answered !== undefined ? (i === q.correct ? 'correct' : (i === answered ? 'wrong' : '')) : ''}"
+            onclick="answerQ(${i})"
+            ${answered !== undefined ? 'disabled' : ''}>
+            ${opt}
+          </button>
+        `).join('')}
+      </div>
+      <div class="mcq-explain ${answered !== undefined ? 'show' : ''}">
+        <strong>${answered === q.correct ? '✅ Correct!' : `❌ Incorrect. The answer is ${String.fromCharCode(65+q.correct)}.`}</strong><br><br>
+        ${q.explain}
+      </div>
+    </div>
+  `;
+  updateScore();
+}
+
+function answerQ(idx) {
+  if (answers[currentQ] !== undefined) return;
+  answers[currentQ] = idx;
+  renderQuestion();
+  updateProgress();
+}
+
+function nextQ() {
+  if (currentQ < mcqs.length - 1) { currentQ++; renderQuestion(); updateProgress(); }
+}
+function prevQ() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); updateProgress(); }
+}
+
+function updateProgress() {
+  const prog = document.getElementById('mcq-progress');
+  prog.innerHTML = mcqs.map((q,i) => {
+    let cls = '';
+    if (i === currentQ) cls = 'current';
+    else if (answers[i] !== undefined) cls = answers[i] === q.correct ? 'correct' : 'wrong';
+    return `<div class="mcq-dot ${cls}" onclick="currentQ=${i};renderQuestion();updateProgress();"></div>`;
+  }).join('');
+}
+
+function updateScore() {
+  const answered = Object.keys(answers).length;
+  const correct = Object.entries(answers).filter(([i,a]) => a === mcqs[i].correct).length;
+  document.getElementById('mcq-score').textContent = `Score: ${correct}/${answered}`;
+}
+
+// INIT
+buildVocab();
+buildTimeline();
+buildCE();
+buildThemes();
+buildMCQ();
+
+// =============================================
+// QoL FEATURES
+// =============================================
+
+// ---- THEME ----
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('apush-theme', theme);
+  const btn = document.getElementById('theme-toggle-btn');
+  btn.textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
+}
+function toggleColorScheme() {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+  showToast(next === 'light' ? '☀️ Light mode on' : '🌙 Dark mode on', 'info');
+}
+// Load saved theme
+applyTheme(localStorage.getItem('apush-theme') || 'dark');
+
+// ---- FONT SIZE ----
+let fontScale = parseFloat(localStorage.getItem('apush-font') || '1');
+function applyFont(scale) {
+  if (scale === 0) { fontScale = 1; }
+  else { fontScale = Math.max(0.78, Math.min(1.3, fontScale + scale)); }
+  document.documentElement.style.setProperty('--font-scale', fontScale);
+  localStorage.setItem('apush-font', fontScale);
+}
+applyFont(0); // apply saved scale on load
+
+// ---- READING PROGRESS BAR ----
+window.addEventListener('scroll', () => {
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = docH > 0 ? (window.scrollY / docH) * 100 : 0;
+  document.getElementById('reading-progress').style.width = pct + '%';
+  document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 380);
+});
+
+// ---- STUDY TIMER ----
+let timerSeconds = 25 * 60;
+let timerRunning = false;
+let timerInterval = null;
+
+function renderTimer() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  const el = document.getElementById('timer-display');
+  el.textContent = `${m}:${s.toString().padStart(2,'0')}`;
+  el.classList.toggle('warn', timerSeconds <= 120 && timerRunning);
+}
+function toggleTimer() {
+  if (timerRunning) {
+    clearInterval(timerInterval);
+    timerRunning = false;
+    document.getElementById('timer-btn').textContent = '▶ Start';
+  } else {
+    timerRunning = true;
+    document.getElementById('timer-btn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      if (timerSeconds <= 0) {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timer-btn').textContent = '▶ Start';
+        showToast('⏰ Study session complete! Take a 5-min break.', 'info');
+        return;
+      }
+      timerSeconds--;
+      renderTimer();
+    }, 1000);
+  }
+}
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 25 * 60;
+  document.getElementById('timer-btn').textContent = '▶ Start';
+  renderTimer();
+}
+renderTimer();
+
+// ---- TOAST NOTIFICATIONS ----
+function showToast(msg, type = '') {
+  const wrap = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  requestAnimationFrame(() => { requestAnimationFrame(() => el.classList.add('show')); });
+  setTimeout(() => {
+    el.classList.remove('show');
+    setTimeout(() => el.remove(), 300);
+  }, 2600);
+}
+
+// ---- MODAL ----
+function openModal() { document.getElementById('kb-modal').classList.add('open'); }
+function closeModal() { document.getElementById('kb-modal').classList.remove('open'); }
+
+// ---- MASTERED TERMS TRACKING ----
+// Patch buildVocab to support mastering
+let masteredTerms = new Set(JSON.parse(localStorage.getItem('apush-mastered') || '[]'));
+
+function saveMastered() {
+  localStorage.setItem('apush-mastered', JSON.stringify([...masteredTerms]));
+}
+
+// Override the term-card click to also allow marking mastered
+document.addEventListener('click', function(e) {
+  // Mastered button
+  if (e.target.closest('.master-btn')) {
+    e.stopPropagation();
+    const card = e.target.closest('.term-card');
+    const name = card.getAttribute('data-name');
+    if (masteredTerms.has(name)) {
+      masteredTerms.delete(name);
+      card.classList.remove('mastered');
+      showToast(`Unmarked: ${name}`);
+    } else {
+      masteredTerms.add(name);
+      card.classList.add('mastered');
+      showToast(`✓ Mastered: ${name}`, 'success');
+    }
+    saveMastered();
+    return;
+  }
+});
+
+// Add mastered styles and buttons to vocab cards after buildVocab runs
+(function patchVocabForMastered() {
+  // Re-patch buildVocab to inject mastered state
+  const origBuild = window.buildVocab;
+  // Add CSS for mastered cards
+  const style = document.createElement('style');
+  style.textContent = `
+    .term-card.mastered { border-color: #4a9b6a !important; background: rgba(74,155,106,0.07) !important; }
+    .term-card.mastered::after { content:'✓'; position:absolute; top:8px; right:10px; color:#4a9b6a; font-size:0.78rem; }
+    .term-card { position:relative; }
+    .master-btn {
+      margin-top:8px; padding:3px 9px; font-family:'IBM Plex Mono',monospace;
+      font-size:0.62rem; border:1px solid var(--border); background:none;
+      color:var(--muted); cursor:pointer; border-radius:2px;
+      transition:all 0.15s; display:none;
+    }
+    .term-card.open .master-btn { display:inline-block; }
+    .master-btn:hover { border-color:#4a9b6a; color:#4a9b6a; }
+  `;
+  document.head.appendChild(style);
+
+  // Patch term cards after DOM is ready — add master buttons and restore state
+  setTimeout(() => {
+    document.querySelectorAll('.term-card').forEach(card => {
+      const name = card.getAttribute('data-name');
+      if (!card.querySelector('.master-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'master-btn';
+        btn.textContent = '✓ Mark Mastered';
+        card.appendChild(btn);
+      }
+      if (masteredTerms.has(name)) card.classList.add('mastered');
+    });
+  }, 100);
+})();
+
+// ---- EXPORT MASTERED TERMS ----
+function exportMastered() {
+  if (masteredTerms.size === 0) {
+    showToast('No terms mastered yet! Click terms to expand, then mark as mastered.', 'info');
+    return;
+  }
+  // Find term definitions
+  const allT = [];
+  document.querySelectorAll('.term-card').forEach(card => {
+    const name = card.getAttribute('data-name');
+    if (masteredTerms.has(name)) {
+      const def = card.querySelector('.term-def')?.textContent || '';
+      allT.push(`${name}: ${def}`);
+    }
+  });
+  const text = `APUSH Mastered Terms (${allT.length})\n${'='.repeat(40)}\n\n` + allT.join('\n\n');
+  navigator.clipboard.writeText(text).then(() => {
+    showToast(`✓ Copied ${allT.length} mastered terms to clipboard!`, 'success');
+  }).catch(() => {
+    showToast('Could not copy — try a different browser', '');
+  });
+}
+
+// ---- KEYBOARD SHORTCUTS ----
+document.addEventListener('keydown', function(e) {
+  const tag = document.activeElement.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (document.getElementById('kb-modal').classList.contains('open')) {
+    if (e.key === 'Escape') closeModal();
+    return;
+  }
+  switch(e.key) {
+    case 'ArrowRight': case 'ArrowLeft':
+      e.preventDefault();
+      if (e.key === 'ArrowRight') nextQ(); else prevQ();
+      break;
+    case 'a': case 'A': answerQ(0); break;
+    case 'b': case 'B': answerQ(1); break;
+    case 'c': case 'C': answerQ(2); break;
+    case 'd': case 'D': answerQ(3); break;
+    case 't': case 'T': toggleColorScheme(); break;
+    case '+': case '=': applyFont(0.08); break;
+    case '-': case '_': applyFont(-0.08); break;
+    case '0': applyFont(0); break;
+    case 'p': case 'P': window.print(); break;
+    case 'e': case 'E': exportMastered(); break;
+    case '?': openModal(); break;
+    case 'Escape':
+      const sb = document.querySelector('.search-bar');
+      if (sb) { sb.value = ''; filterTerms(''); }
+      break;
+  }
+});
+</script>
+</body>
+</html>
