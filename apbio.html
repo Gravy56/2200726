@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Biology Master Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@400;600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,600&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#060d12;--sf:#0c161d;--cd:#101c24;--br:#1a2e3a;--ac:#00e5a0;--a2:#4db8ff;--a3:#ff6b6b;--a4:#ffd166;--tx:#d4eef7;--mt:#4a7a8a;--hl:rgba(0,229,160,0.08);--sh:rgba(0,0,0,.6);--ib:#0c161d;--gn:#00e5a0;--rd:#ff6b6b;}
+[data-theme="light"]{--bg:#f0f9f6;--sf:#e4f4ee;--cd:#ffffff;--br:#b8ddd0;--ac:#007a55;--a2:#1a5c8a;--a3:#c0392b;--a4:#b8860b;--tx:#0a2218;--mt:#3a6a55;--hl:rgba(0,122,85,0.08);--sh:rgba(0,0,0,.12);--ib:#fff;--gn:#007a55;--rd:#c0392b;}
+:root{--fs:1;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;font-size:calc(15px*var(--fs));}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tx);overflow-x:hidden;transition:background .3s,color .3s;}
+[data-theme="dark"] body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,229,160,0.03)1px,transparent 1px),linear-gradient(90deg,rgba(0,229,160,0.03)1px,transparent 1px);background-size:40px 40px;}
+header,main,nav,.tb2,.db{position:relative;z-index:1;}
+#rpb{position:fixed;top:0;left:0;height:3px;background:var(--ac);z-index:9999;width:0%;pointer-events:none;}
+header{text-align:center;padding:50px 20px 34px;border-bottom:1px solid var(--br);background:var(--sf);}
+h1{font-family:'DM Serif Display',serif;font-size:clamp(2rem,5vw,3.6rem);color:var(--ac);letter-spacing:-1px;line-height:1.1;}
+h1 em{font-style:italic;color:var(--a2);}
+.hsub{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--mt);margin-top:9px;letter-spacing:2px;text-transform:uppercase;}
+.tod{display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:7px 16px;border:1px solid var(--br);border-radius:40px;font-size:.79rem;color:var(--mt);cursor:pointer;background:var(--cd);transition:border-color .2s;}
+.tod:hover{border-color:var(--ac);}
+.tod strong{color:var(--ac);}
+.tb2{display:flex;align-items:center;gap:5px;flex-wrap:wrap;padding:6px 13px;background:var(--sf);border-bottom:1px solid var(--br);position:sticky;top:0;z-index:101;}
+.sep{width:1px;height:20px;background:var(--br);margin:0 2px;flex-shrink:0;}
+.tb{display:inline-flex;align-items:center;gap:4px;padding:5px 9px;font-family:'JetBrains Mono',monospace;font-size:.63rem;text-transform:uppercase;letter-spacing:.7px;border:1px solid var(--br);background:none;color:var(--mt);cursor:pointer;border-radius:3px;transition:all .17s;white-space:nowrap;}
+.tb:hover{border-color:var(--ac);color:var(--ac);}
+.fb{padding:3px 7px;font-family:'JetBrains Mono',monospace;font-size:.72rem;border:1px solid var(--br);background:none;color:var(--mt);cursor:pointer;border-radius:2px;transition:all .15s;}
+.fb:hover{border-color:var(--ac);color:var(--ac);}
+.td3{font-family:'JetBrains Mono',monospace;font-size:.85rem;color:var(--ac);min-width:44px;text-align:center;}
+.td3.warn{color:var(--rd);animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sp{flex:1;}
+.db{display:flex;gap:12px;align-items:center;padding:6px 16px;background:var(--sf);border-bottom:1px solid var(--br);flex-wrap:wrap;}
+.ds{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--mt);}
+.ds strong{color:var(--ac);}
+.dpw{flex:1;min-width:70px;max-width:150px;display:flex;align-items:center;gap:5px;}
+.dpb{flex:1;height:4px;background:var(--br);border-radius:2px;overflow:hidden;}
+.dpf{height:100%;background:var(--ac);border-radius:2px;transition:width .5s;}
+.dpp{font-family:'JetBrains Mono',monospace;font-size:.59rem;color:var(--mt);}
+nav{background:var(--bg);border-bottom:1px solid var(--br);overflow-x:auto;position:sticky;top:42px;z-index:100;}
+nav::-webkit-scrollbar{height:2px;}
+nav::-webkit-scrollbar-thumb{background:var(--ac);}
+.ni{display:flex;min-width:max-content;padding:0 5px;}
+nav a{display:inline-flex;align-items:center;gap:4px;padding:9px 11px;font-family:'JetBrains Mono',monospace;font-size:.61rem;color:var(--mt);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .2s;cursor:pointer;white-space:nowrap;}
+nav a:hover,nav a.active{color:var(--ac);}
+nav a.active{border-bottom-color:var(--ac);}
+main{max-width:1100px;margin:0 auto;padding:0 18px 80px;}
+.sec{display:none;animation:fu .22s ease;}
+.sec.active{display:block;}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.sh{padding:32px 0 19px;border-bottom:1px solid var(--br);margin-bottom:24px;}
+.sh h2{font-family:'DM Serif Display',serif;font-size:clamp(1.4rem,3vw,2.2rem);color:var(--ac);}
+.sh p{color:var(--mt);margin-top:5px;font-size:.89rem;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+@media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+.card{background:var(--cd);border:1px solid var(--br);border-radius:4px;padding:14px;}
+.card h3{font-family:'JetBrains Mono',monospace;font-size:.67rem;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:8px;}
+.card ul{list-style:none;font-size:.83rem;line-height:2.05;}
+.card li{border-bottom:1px solid var(--br);padding:1px 0;}
+.card li:last-child{border:none;}
+.tipb{background:rgba(0,229,160,0.05);border:1px solid rgba(0,229,160,0.18);border-radius:4px;padding:12px 15px;margin-bottom:12px;}
+.tipb h4{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--ac);margin-bottom:6px;}
+.tipb p,.tipb ul{font-size:.85rem;line-height:1.72;}
+.tipb ul{list-style:disc;padding-left:15px;}
+.btn{padding:7px 14px;font-family:'JetBrains Mono',monospace;font-size:.69rem;text-transform:uppercase;letter-spacing:1px;border:1px solid var(--br);background:none;color:var(--tx);cursor:pointer;border-radius:2px;transition:all .2s;}
+.btn:hover{border-color:var(--ac);color:var(--ac);}
+.btnp{background:var(--ac);color:var(--bg);border-color:var(--ac);font-weight:600;}
+.btnp:hover{opacity:.9;}
+.btns{background:var(--gn);color:#fff;border-color:var(--gn);}
+.btnd{background:var(--rd);color:#fff;border-color:var(--rd);}
+.ntc{background:var(--hl);border:1px solid rgba(0,229,160,0.18);border-radius:4px;padding:10px 13px;font-size:.83rem;color:var(--mt);margin-bottom:14px;font-style:italic;}
+.sb{width:100%;padding:9px 12px;background:var(--ib);border:1px solid var(--br);border-radius:3px;color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:.81rem;margin-bottom:12px;outline:none;transition:border-color .2s;}
+.sb:focus{border-color:var(--ac);box-shadow:0 0 0 2px rgba(0,229,160,0.1);}
+.sb::placeholder{color:var(--mt);}
+.tr2{display:flex;gap:0;border-bottom:1px solid var(--br);overflow-x:auto;margin-bottom:0;}
+.tp{padding:8px 13px;font-family:'JetBrains Mono',monospace;font-size:.61rem;text-transform:uppercase;letter-spacing:.6px;color:var(--mt);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tp:hover{color:var(--tx);}
+.tp.active{color:var(--ac);border-bottom-color:var(--ac);}
+.tpn{display:none;padding:18px 0 0;}
+.tpn.active{display:block;}
+select.st{padding:6px 10px;background:var(--ib);border:1px solid var(--br);border-radius:3px;color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:.71rem;outline:none;}
+select.st:focus{border-color:var(--ac);}
+.tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.57rem;background:var(--hl);border:1px solid rgba(0,229,160,0.3);color:var(--ac);padding:1px 5px;border-radius:2px;margin-left:4px;}
+.ug{display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));gap:10px;margin-bottom:22px;}
+.uc{background:var(--cd);border:1px solid var(--br);border-radius:4px;overflow:hidden;cursor:pointer;transition:all .2s;}
+.uc:hover{transform:translateY(-2px);box-shadow:0 6px 22px var(--sh);}
+.ucb{height:4px;}
+.uci{padding:12px 14px;}
+.uci h3{font-family:'DM Serif Display',serif;font-size:.98rem;margin-bottom:3px;}
+.uci p{font-size:.77rem;color:var(--mt);line-height:1.5;}
+.ucf{padding:6px 14px;border-top:1px solid var(--br);font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--mt);display:flex;justify-content:space-between;}
+.un{font-family:'JetBrains Mono',monospace;font-size:.57rem;color:var(--mt);margin-bottom:2px;text-transform:uppercase;letter-spacing:1px;}
+.tg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:7px;}
+.tc{background:var(--sf);border:1px solid var(--br);border-radius:3px;padding:10px 11px;cursor:pointer;transition:all .15s;position:relative;}
+.tc:hover{border-color:var(--ac);}
+.tc.mastered{border-color:var(--gn)!important;background:rgba(0,229,160,0.06);}
+.tc.mastered::after{content:'\2713';position:absolute;top:7px;right:8px;color:var(--gn);font-size:.71rem;}
+.tc.flagged{border-color:var(--rd)!important;}
+.tn{font-family:'JetBrains Mono',monospace;font-size:.69rem;color:var(--ac);padding-right:18px;}
+.td4{font-size:.81rem;color:var(--tx);margin-top:6px;line-height:1.52;display:none;}
+.tc.open .td4{display:block;}
+.tc.open{background:var(--hl);border-color:var(--ac);}
+.ta{display:none;margin-top:6px;gap:4px;flex-wrap:wrap;}
+.tc.open .ta{display:flex;}
+.tbt{padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:.56rem;border:1px solid var(--br);background:none;color:var(--mt);cursor:pointer;border-radius:2px;transition:all .13s;}
+.tbt.mb:hover{border-color:var(--gn);color:var(--gn);}
+.tbt.fb3:hover{border-color:var(--rd);color:var(--rd);}
+.fcw{max-width:530px;margin:0 auto;}
+.fcc{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
+.fcp{font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--mt);margin-left:auto;}
+.fc{perspective:1000px;cursor:pointer;margin-bottom:12px;height:225px;}
+.fci{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .42s cubic-bezier(.4,0,.2,1);}
+.fci.fl{transform:rotateY(180deg);}
+.fcf,.fcb{position:absolute;inset:0;border-radius:5px;padding:22px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid;}
+.fcf{background:var(--cd);border-color:var(--ac);}
+.fcb{background:var(--cd);border-color:var(--a2);transform:rotateY(180deg);}
+.fcul{font-family:'JetBrains Mono',monospace;font-size:.57rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:8px;}
+.fct{font-family:'DM Serif Display',serif;font-size:1.4rem;line-height:1.2;}
+.fch{font-size:.67rem;color:var(--mt);margin-top:8px;font-style:italic;}
+.fcd{font-size:.87rem;color:var(--tx);line-height:1.57;}
+.fcr{display:flex;gap:6px;justify-content:center;margin-top:8px;}
+.fbar{display:flex;gap:2px;margin-bottom:10px;}
+.fdot{flex:1;height:4px;border-radius:2px;background:var(--br);}
+.fdot.kn{background:var(--gn);}
+.fdot.dk{background:var(--rd);}
+.fdot.cu{background:var(--ac);}
+.fsum{text-align:center;padding:22px;}
+.fsum h3{font-family:'DM Serif Display',serif;font-size:1.55rem;color:var(--ac);}
+.mds{display:flex;gap:4px;margin-bottom:13px;flex-wrap:wrap;}
+.md{width:10px;height:10px;border-radius:50%;background:var(--br);cursor:pointer;transition:all .2s;}
+.md.correct{background:var(--gn);}
+.md.wrong{background:var(--rd);}
+.md.flagged{box-shadow:0 0 0 2px var(--a4);}
+.md.current{background:var(--ac);transform:scale(1.35);}
+.mcard{background:var(--cd);border:1px solid var(--br);border-radius:4px;padding:17px;}
+.mmeta{font-family:'JetBrains Mono',monospace;font-size:.59rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:7px;display:flex;justify-content:space-between;}
+.mstim{background:var(--sf);border-left:3px solid var(--a2);padding:8px 11px;margin-bottom:10px;font-size:.82rem;color:var(--mt);font-style:italic;border-radius:0 3px 3px 0;}
+.mq{font-size:.91rem;line-height:1.62;margin-bottom:12px;}
+.mopts{display:flex;flex-direction:column;gap:5px;}
+.mo{padding:8px 11px;background:var(--sf);border:1px solid var(--br);border-radius:3px;cursor:pointer;font-size:.83rem;transition:all .13s;text-align:left;color:var(--tx);font-family:'DM Sans',sans-serif;}
+.mo:hover:not(:disabled){border-color:var(--ac);background:var(--hl);}
+.mo.correct{border-color:var(--gn);background:rgba(0,229,160,0.07);}
+.mo.wrong{border-color:var(--rd);background:rgba(255,107,107,0.07);}
+.mo:disabled{cursor:default;}
+.mexp{display:none;margin-top:9px;padding:9px 12px;background:var(--hl);border:1px solid rgba(0,229,160,0.18);border-radius:3px;font-size:.82rem;line-height:1.62;}
+.mexp.show{display:block;}
+.mexp strong{color:var(--ac);}
+.mfb{padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:.57rem;border:1px solid var(--br);background:none;color:var(--mt);cursor:pointer;border-radius:2px;transition:all .13s;}
+.mfb.flagged{border-color:var(--a4);color:var(--a4);}
+.mnav{display:flex;gap:7px;align-items:center;margin-top:9px;flex-wrap:wrap;}
+.dg{display:grid;grid-template-columns:repeat(auto-fill,minmax(285px,1fr));gap:13px;margin-bottom:16px;}
+.dc{background:var(--cd);border:1px solid var(--br);border-radius:4px;overflow:hidden;}
+.dc h3{font-family:'JetBrains Mono',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--ac);padding:9px 12px 8px;border-bottom:1px solid var(--br);}
+.dc svg{display:block;width:100%;height:auto;}
+.ct{width:100%;border-collapse:collapse;margin-bottom:17px;font-size:.81rem;}
+.ct th{padding:7px 10px;font-family:'JetBrains Mono',monospace;font-size:.61rem;text-transform:uppercase;letter-spacing:1px;border:1px solid var(--br);background:var(--sf);}
+.ct td{padding:7px 10px;border:1px solid var(--br);line-height:1.48;vertical-align:top;}
+.ct td:first-child{font-family:'JetBrains Mono',monospace;font-size:.65rem;color:var(--mt);background:var(--sf);}
+.ct tr:hover td{filter:brightness(1.04);}
+.lc{background:var(--cd);border:1px solid var(--br);border-radius:4px;padding:12px 14px;margin-bottom:7px;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;}
+.ln{font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:600;line-height:1;padding-top:2px;}
+.lb h4{font-size:.87rem;font-weight:600;margin-bottom:3px;}
+.lb p{font-size:.79rem;color:var(--mt);line-height:1.52;}
+.ltag{font-family:'JetBrains Mono',monospace;font-size:.57rem;margin-top:5px;padding:2px 6px;border-radius:2px;display:inline-block;}
+.mc2{background:rgba(255,107,107,0.05);border:1px solid rgba(255,107,107,0.18);border-radius:4px;padding:12px 14px;margin-bottom:7px;}
+.mc2 h4{font-family:'JetBrains Mono',monospace;font-size:.64rem;text-transform:uppercase;letter-spacing:1px;color:var(--rd);margin-bottom:4px;}
+.mc2 p{font-size:.83rem;line-height:1.62;}
+.mfix{margin-top:6px;padding:7px 10px;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.2);border-radius:3px;font-size:.8rem;color:var(--gn);}
+.mfix::before{content:'Fix: ';font-weight:600;}
+.bic{border:1px solid var(--br);border-radius:4px;overflow:hidden;margin-bottom:10px;}
+.bih{padding:11px 14px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:background .2s;}
+.bih:hover{background:var(--hl);}
+.bin{font-family:'DM Serif Display',serif;font-size:1.02rem;}
+.bitg{font-family:'JetBrains Mono',monospace;font-size:.59rem;padding:2px 6px;border-radius:2px;border:1px solid;}
+.bib{display:none;padding:12px 14px;border-top:1px solid var(--br);}
+.bib.open{display:block;}
+.bib p{font-size:.84rem;line-height:1.72;margin-bottom:8px;}
+.tlf{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:13px;}
+.tlbtn{padding:3px 9px;font-family:'JetBrains Mono',monospace;font-size:.59rem;border:1px solid var(--br);background:none;color:var(--mt);cursor:pointer;border-radius:2px;transition:all .2s;text-transform:uppercase;letter-spacing:.4px;}
+.tlbtn.active{border-color:var(--ac);color:var(--ac);background:var(--hl);}
+.tl{position:relative;padding:4px 0;}
+.tl::before{content:'';position:absolute;left:84px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--ac) 0%,var(--br) 100%);}
+.tli{display:flex;margin-bottom:10px;position:relative;align-items:flex-start;}
+.tly{width:72px;text-align:right;flex-shrink:0;font-family:'JetBrains Mono',monospace;font-size:.67rem;color:var(--ac);padding-top:3px;font-weight:600;}
+.tldot{position:absolute;left:78px;top:5px;width:13px;height:13px;border-radius:50%;border:2px solid var(--bg);z-index:2;}
+.tlc{margin-left:25px;flex:1;background:var(--cd);border:1px solid var(--br);border-radius:3px;padding:6px 10px;}
+.tlc:hover{border-color:var(--ac);}
+.tlc strong{font-size:.83rem;}
+.tlc p{font-size:.75rem;color:var(--mt);margin-top:1px;line-height:1.4;}
+.fs2{display:flex;gap:9px;margin-bottom:10px;align-items:flex-start;}
+.fn{font-family:'JetBrains Mono',monospace;font-size:.95rem;color:var(--ac);font-weight:600;min-width:20px;flex-shrink:0;}
+.fb4{font-size:.85rem;line-height:1.68;}
+.fb4 strong{color:var(--a2);}
+.mr{background:var(--sf);border:1px solid var(--br);border-left:3px solid var(--a2);border-radius:0 4px 4px 0;padding:11px 14px;font-size:.83rem;line-height:1.72;margin:9px 0;font-style:italic;color:var(--mt);}
+.mr strong{color:var(--a2);font-style:normal;}
+.cw{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:.65rem;padding:2px 7px;border-radius:2px;border:1px solid var(--ac);color:var(--ac);margin:2px;background:var(--hl);}
+#tw{position:fixed;bottom:19px;left:50%;transform:translateX(-50%);z-index:3000;display:flex;flex-direction:column;gap:6px;pointer-events:none;align-items:center;}
+.toast{background:var(--cd);border:1px solid var(--br);border-radius:4px;padding:7px 15px;font-family:'JetBrains Mono',monospace;font-size:.69rem;color:var(--tx);box-shadow:0 4px 17px var(--sh);opacity:0;transform:translateY(7px);transition:all .23s;white-space:nowrap;}
+.toast.show{opacity:1;transform:none;}
+.toast.success{border-color:var(--gn);color:var(--gn);}
+.toast.info{border-color:var(--ac);color:var(--ac);}
+.mo2{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:2000;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+.mo2.open{opacity:1;pointer-events:all;}
+.modal{background:var(--cd);border:1px solid var(--br);border-radius:6px;padding:23px;max-width:450px;width:100%;max-height:80vh;overflow-y:auto;transform:translateY(12px);transition:transform .23s;}
+.mo2.open .modal{transform:none;}
+.modal h2{font-family:'DM Serif Display',serif;color:var(--ac);font-size:1.3rem;margin-bottom:12px;}
+.mcl{float:right;background:none;border:1px solid var(--br);color:var(--mt);cursor:pointer;padding:3px 9px;border-radius:2px;font-family:'JetBrains Mono',monospace;font-size:.65rem;transition:all .2s;}
+.mcl:hover{border-color:var(--ac);color:var(--ac);}
+.kg{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;margin-top:6px;}
+.kg kbd{font-family:'JetBrains Mono',monospace;padding:2px 6px;background:var(--sf);border:1px solid var(--br);border-radius:3px;font-size:.69rem;white-space:nowrap;}
+.kg span{color:var(--mt);font-size:.81rem;align-self:center;}
+#st{position:fixed;bottom:19px;right:18px;width:33px;height:33px;background:var(--ac);color:var(--bg);border:none;border-radius:50%;cursor:pointer;font-size:.92rem;display:none;align-items:center;justify-content:center;z-index:200;transition:all .2s;box-shadow:0 2px 11px var(--sh);}
+#st:hover{transform:scale(1.1);}
+#st.show{display:flex;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--sf);}
+::-webkit-scrollbar-thumb{background:var(--br);border-radius:3px;}
+::selection{background:rgba(0,229,160,0.2);color:var(--tx);}
+@media print{.tb2,.db,#st,#tw,.mo2,#rpb,nav{display:none!important;}.sec{display:block!important;}body{background:white;color:black;}}
+</style></head><body>
+<div id="rpb"></div>
+<header>
+  <h1>AP <em>Biology</em> Master Study Guide</h1>
+  <div class="hsub">Units 1–8 · All Big Ideas · 13 Labs · FRQ Guide · 115 Key Terms</div>
+  <div class="tod" id="tod" onclick="cycleTOD()">&#128300; <strong>Term of the Day:</strong> <span id="todn">—</span> — <span id="tods"></span></div>
+</header>
+<div class="tb2">
+  <button class="tb" id="thbtn" onclick="toggleScheme()">&#9728;&#65039; Light</button>
+  <div class="sep"></div>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.59rem;color:var(--mt)">Font</span>
+  <button class="fb" onclick="adjFont(-1)">A&#8722;</button>
+  <button class="fb" onclick="adjFont(0)">A</button>
+  <button class="fb" onclick="adjFont(1)">A+</button>
+  <div class="sep"></div>
+  <span style="font-family:'JetBrains Mono',monospace;font-size:.59rem;color:var(--mt)">Timer</span>
+  <div class="td3" id="tdisp">25:00</div>
+  <button class="tb" id="tbtn" onclick="toggleTimer()">&#9654; Start</button>
+  <button class="tb" onclick="resetTimer()">&#8635;</button>
+  <div class="sep"></div>
+  <button class="tb" onclick="exportNotes()">&#128203; Export</button>
+  <div class="sp"></div>
+  <button class="tb" onclick="openKB()">&#9000;&#65039; Shortcuts</button>
+  <button class="tb" onclick="window.print()">&#128424;&#65039; Print</button>
+</div>
+<div class="db">
+  <div class="ds">Mastered: <strong id="dm">0</strong> / <strong id="dt">0</strong></div>
+  <div class="ds">MCQ: <strong id="dsc">&#8212;</strong></div>
+  <div class="dpw"><div class="dpb"><div class="dpf" id="df" style="width:0%"></div></div><span class="dpp" id="dp">0%</span></div>
+</div>
+<nav>
+  <div class="ni">
+    <a class="active" onclick="showSec('overview',this)">&#128202; Overview</a>
+    <a onclick="showSec('units',this)">&#128300; Units</a>
+    <a onclick="showSec('vocab',this)">&#128218; Terms</a>
+    <a onclick="showSec('flashcards',this)">&#127183; Flashcards</a>
+    <a onclick="showSec('diagrams',this)">&#129516; Diagrams</a>
+    <a onclick="showSec('mcq',this)">&#9999;&#65039; MCQ</a>
+    <a onclick="showSec('comparisons',this)">&#9876;&#65039; Compare</a>
+    <a onclick="showSec('bigideas',this)">&#128161; Big Ideas</a>
+    <a onclick="showSec('labs',this)">&#129514; Labs</a>
+    <a onclick="showSec('frq',this)">&#128394; FRQ Guide</a>
+    <a onclick="showSec('timeline',this)">&#128197; Timeline</a>
+    <a onclick="showSec('mistakes',this)">&#128683; Mistakes</a>
+  </div>
+</nav>
+<div class="mo2" id="kbm" onclick="if(event.target===this)closeKB()">
+  <div class="modal">
+    <button class="mcl" onclick="closeKB()">&#10005; Close</button>
+    <h2>&#9000;&#65039; Keyboard Shortcuts</h2>
+    <div class="kg">
+      <kbd>&#8592; &#8594;</kbd><span>Navigate MCQ / Flashcards</span>
+      <kbd>Space</kbd><span>Flip flashcard</span>
+      <kbd>K</kbd><span>Know It</span>
+      <kbd>D</kbd><span>Don't Know</span>
+      <kbd>A B C D</kbd><span>Answer MCQ option</span>
+      <kbd>T</kbd><span>Toggle theme</span>
+      <kbd>+ &#8722;</kbd><span>Font size up/down</span>
+      <kbd>E</kbd><span>Export mastered terms</span>
+      <kbd>P</kbd><span>Print</span>
+      <kbd>?</kbd><span>Open shortcuts</span>
+      <kbd>Esc</kbd><span>Clear search / close modal</span>
+    </div>
+  </div>
+</div>
+<div id="tw"></div>
+<button id="st" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8593;</button>
+<main>
+
+<div id="overview" class="sec active">
+<div class="sh"><h2>AP Biology Exam Overview</h2><p>Know the format cold before exam day</p></div>
+<div class="g4" style="margin-bottom:18px">
+  <div class="card" style="text-align:center"><div style="font-family:'DM Serif Display',serif;font-size:2.2rem;color:var(--ac);line-height:1">3h</div><p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-top:4px">Duration</p></div>
+  <div class="card" style="text-align:center"><div style="font-family:'DM Serif Display',serif;font-size:2.2rem;color:var(--a2);line-height:1">60</div><p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-top:4px">MCQs (50%)</p></div>
+  <div class="card" style="text-align:center"><div style="font-family:'DM Serif Display',serif;font-size:2.2rem;color:var(--a3);line-height:1">6</div><p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-top:4px">FRQs (50%)</p></div>
+  <div class="card" style="text-align:center"><div style="font-family:'DM Serif Display',serif;font-size:2.2rem;color:var(--a4);line-height:1">4</div><p style="font-family:'JetBrains Mono',monospace;font-size:.58rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-top:4px">Big Ideas</p></div>
+</div>
+<div id="wbars" style="margin-bottom:18px"></div>
+<div class="g2" style="margin-bottom:16px">
+  <div class="card"><h3>Section I — 90 min</h3><ul><li>60 MCQs <span class="tag">50%</span></li><li>Stimulus-based sets of 4–5 questions</li><li>~1.5 min per question</li><li>No penalty for guessing — answer ALL</li></ul></div>
+  <div class="card"><h3>Section II — 90 min</h3><ul><li>2 Long FRQs (~8–10 pts each) <span class="tag">25%</span></li><li>4 Short FRQs (~4 pts each) <span class="tag">25%</span></li><li>One always: experimental design</li><li>One always: data/graph analysis</li></ul></div>
+  <div class="card"><h3>Science Practices</h3><ul><li>SP1: Explain a biological concept</li><li>SP2: Use visual representations</li><li>SP3: Question &amp; methods</li><li>SP4: Data representation &amp; analysis</li><li>SP5: Statistics &amp; probability</li><li>SP6: Mathematical calculations</li></ul></div>
+  <div class="card"><h3>4 Big Ideas</h3><ul><li><strong>EVO</strong> — Evolution drives diversity</li><li><strong>ENE</strong> — Energy flows; matter cycles</li><li><strong>IST</strong> — Information flows in systems</li><li><strong>SYI</strong> — Systems interact at all levels</li></ul></div>
+</div>
+<div class="tipb"><h4>&#9889; Top 10 Exam Strategies</h4><ul>
+  <li><strong>MCQ:</strong> Read the stimulus first — identify data type (graph/table/diagram) before reading the question.</li>
+  <li><strong>Eliminate:</strong> "Always/never" answers are almost always wrong. Pick the most complete, accurate option.</li>
+  <li>Don't confuse correlation with causation in data questions — the AP exam loves this trap.</li>
+  <li><strong>FRQ:</strong> Read ALL parts before writing. Plan so you don't repeat yourself or miss a sub-part.</li>
+  <li><strong>Define every term</strong> you use. Write "enzyme (a biological catalyst)" not just "enzyme."</li>
+  <li>"Describe" = WHAT. "Explain" = HOW and WHY (mechanism). These earn different points.</li>
+  <li><strong>Hardy-Weinberg:</strong> memorize p+q=1 AND p²+2pq+q²=1. Know what each symbol represents. Show all work.</li>
+  <li><strong>Chi-square:</strong> χ²=Σ[(O−E)²/E]. df = categories − 1. p &lt; 0.05 = significant, reject null.</li>
+  <li>Experimental design FRQ: state IV, DV, control group, controlled variables, and measurement method.</li>
+  <li>Know exactly where ATP, NADH, FADH₂ are produced: glycolysis, Krebs cycle, ETC.</li>
+</ul></div>
+</div>
+
+<div id="units" class="sec">
+<div class="sh"><h2>Unit Summaries</h2><p>Click any card to expand narrative, key concepts, and terms</p></div>
+<div class="ug" id="ugrid"></div>
+<div id="udetail" style="display:none;border:1px solid var(--br);border-radius:4px;background:var(--cd);margin-top:13px">
+  <div style="padding:13px 17px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--br)">
+    <h3 id="udtitle" style="font-family:'DM Serif Display',serif;font-size:1.2rem"></h3>
+    <button class="tb" onclick="closeUnit()">&#10005; Close</button>
+  </div>
+  <div class="tr2" id="udtabs"></div>
+  <div id="udbody" style="padding:15px 17px"></div>
+</div>
+</div>
+
+<div id="vocab" class="sec">
+<div class="sh"><h2>Key Terms</h2><p>Click to reveal · &#10003; Master · &#9873; Flag for review</p></div>
+<div style="display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap">
+  <input class="sb" style="margin:0;flex:1;min-width:120px" type="text" id="vsearch" placeholder="Search terms..." oninput="filterTerms()">
+  <select class="st" id="ufilter" onchange="filterTerms()"><option value="0">All Units</option><option value="1">Unit 1</option><option value="2">Unit 2</option><option value="3">Unit 3</option><option value="4">Unit 4</option><option value="5">Unit 5</option><option value="6">Unit 6</option><option value="7">Unit 7</option><option value="8">Unit 8</option></select>
+  <select class="st" id="sfilter" onchange="filterTerms()"><option value="all">All</option><option value="mastered">Mastered</option><option value="flagged">Flagged</option><option value="unmastered">Not Mastered</option></select>
+  <button class="btn" onclick="resetMastered()">Reset</button>
+</div>
+<div class="ntc" id="vstats">Loading...</div>
+<div class="tg" id="vgrid"></div>
+</div>
+
+<div id="flashcards" class="sec">
+<div class="sh"><h2>Flashcards</h2><p>Flip · Know It / Don't Know · Missed cards resurface automatically</p></div>
+<div class="fcw">
+  <div class="fcc">
+    <button class="btn btnp" onclick="initFC('all')">All Terms</button>
+    <button class="btn" onclick="initFC('missed')">Wrong Only</button>
+    <button class="btn" onclick="initFC('flagged')">Flagged</button>
+    <button class="btn" onclick="initFC('unmastered')">Not Mastered</button>
+    <select class="st" id="fcusel"><option value="0">All Units</option><option value="1">U1</option><option value="2">U2</option><option value="3">U3</option><option value="4">U4</option><option value="5">U5</option><option value="6">U6</option><option value="7">U7</option><option value="8">U8</option></select>
+    <div class="fcp" id="fcprog">—</div>
+  </div>
+  <div class="fbar" id="fcbar"></div>
+  <div class="fc" id="fccard" onclick="flipFC()">
+    <div class="fci" id="fcinner">
+      <div class="fcf"><div class="fcul" id="fculbl"></div><div class="fct" id="fcterm" style="color:var(--ac)">Select a deck to begin</div><div class="fch">Click or Space to flip</div></div>
+      <div class="fcb"><div class="fcul" id="fculbl2"></div><div class="fcd" id="fcdef"></div></div>
+    </div>
+  </div>
+  <div class="fcr" id="fcresult" style="display:none">
+    <button class="btn btnd" onclick="markFC(false)">&#10007; Don't Know</button>
+    <button class="btn" onclick="skipFC()">&#8594; Skip</button>
+    <button class="btn btns" onclick="markFC(true)">&#10003; Know It</button>
+  </div>
+  <div class="fsum" id="fcsum" style="display:none">
+    <h3>Round Complete!</h3>
+    <div id="fcsumst" style="margin:10px 0;color:var(--mt);font-size:.85rem"></div>
+    <div style="display:flex;gap:7px;justify-content:center;margin-top:12px">
+      <button class="btn btnp" onclick="initFC('missed')">Review Wrong</button>
+      <button class="btn" onclick="initFC('all')">Start Over</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<div id="diagrams" class="sec">
+<div class="sh"><h2>Diagrams &amp; Visual Models</h2><p>Core processes as annotated SVG diagrams</p></div>
+<div class="dg" id="dgrid"></div>
+</div>
+
+<div id="mcq" class="sec">
+<div class="sh"><h2>Practice MCQs</h2><p>AP-style stimulus questions · &#8592; &#8594; or A/B/C/D keys</p></div>
+<div style="max-width:670px">
+  <div style="display:flex;gap:7px;margin-bottom:9px;flex-wrap:wrap">
+    <button class="btn" onclick="resetMCQ()">&#8635; Reset</button>
+    <button class="btn" onclick="retakeMissed()">Retake Missed</button>
+    <span id="msctxt" style="font-family:'JetBrains Mono',monospace;font-size:.73rem;color:var(--mt);align-self:center;margin-left:auto"></span>
+  </div>
+  <div class="mds" id="mdots"></div>
+  <div id="mcon"></div>
+  <div class="mnav">
+    <button class="btn" onclick="prevQ()">&#8592; Prev</button>
+    <button class="btn btnp" onclick="nextQ()">Next &#8594;</button>
+  </div>
+</div>
+</div>
+
+<div id="comparisons" class="sec">
+<div class="sh"><h2>Comparison Tables</h2><p>Most commonly tested side-by-side concepts</p></div>
+<div id="compcon"></div>
+</div>
+
+<div id="bigideas" class="sec">
+<div class="sh"><h2>The Four Big Ideas</h2><p>Every AP Bio question connects to one of these</p></div>
+<div id="bigcon"></div>
+</div>
+
+<div id="labs" class="sec">
+<div class="sh"><h2>AP Biology Labs</h2><p>All 13 official labs — method, variables, and data interpretation</p></div>
+<div class="ntc">FRQ sections frequently reference labs. Know what each lab measures, the control, and what a typical result looks like.</div>
+<div id="lablist"></div>
+</div>
+
+<div id="frq" class="sec">
+<div class="sh"><h2>FRQ Writing Guide</h2><p>Long FRQ · Short FRQ · Experimental Design · Data Analysis · Model Answers</p></div>
+<div class="tr2">
+  <button class="tp active" onclick="showFRQTab(this,'frqov')">Overview</button>
+  <button class="tp" onclick="showFRQTab(this,'frqcw')">Command Words</button>
+  <button class="tp" onclick="showFRQTab(this,'frqld')">Long FRQ</button>
+  <button class="tp" onclick="showFRQTab(this,'frqsd')">Short FRQ</button>
+  <button class="tp" onclick="showFRQTab(this,'frqed')">Exp. Design</button>
+  <button class="tp" onclick="showFRQTab(this,'frqda')">Data Analysis</button>
+  <button class="tp" onclick="showFRQTab(this,'frqma')">Model Answers</button>
+</div>
+<div id="frqov" class="tpn active"></div>
+<div id="frqcw" class="tpn"></div>
+<div id="frqld" class="tpn"></div>
+<div id="frqsd" class="tpn"></div>
+<div id="frqed" class="tpn"></div>
+<div id="frqda" class="tpn"></div>
+<div id="frqma" class="tpn"></div>
+</div>
+
+<div id="timeline" class="sec">
+<div class="sh"><h2>History of Biology Timeline</h2><p>Key discoveries — tested in historical context MCQs</p></div>
+<div class="tlf" id="tlfilters"><button class="tlbtn active" onclick="filterTL(null,this)">All</button></div>
+<div class="tl" id="biotl"></div>
+</div>
+
+<div id="mistakes" class="sec">
+<div class="sh"><h2>Common Mistakes &amp; Fixes</h2><p>The errors that cost points year after year</p></div>
+<div id="mlist"></div>
+</div>
+</main>
+
+<script>
+const UC=['','#00e5a0','#4db8ff','#ffd166','#ff9ff3','#ff6b6b','#a29bfe','#fd79a8','#00cec9'];
+const UN=['','Chemistry of Life','Cell Structure & Function','Cellular Energetics','Cell Communication & Cell Cycle','Heredity','Gene Expression & Regulation','Natural Selection','Ecology'];
+
+const UD=[null,
+{t:'Unit 1: Chemistry of Life',p:'8–11%',s:'Water, macromolecules, enzymes — the chemical foundation of all life',
+b:['Water: H-bonds give cohesion, adhesion, high specific heat, universal solvent properties','4 macromolecules: carbs, lipids, proteins, nucleic acids — built by dehydration synthesis','Protein structure: 1° (aa seq) → 2° (H-bonds) → 3° (R-group interactions) → 4°','Enzymes: lower Ea; induced fit; competitive vs allosteric inhibition; feedback inhibition'],
+n:'<p>Life is fundamentally chemistry. Water\'s unique properties stem from hydrogen bonding between polar molecules — enabling cohesion, adhesion, temperature buffering, and solvent behavior essential for life.</p><p>The four <strong>macromolecules</strong>: carbohydrates (energy, structure), lipids (membranes, hormones), proteins (enzymes, structure, signaling, transport), and nucleic acids (DNA/RNA — information). All polymers are built from monomers by <strong>dehydration synthesis</strong> (water removed) and broken by <strong>hydrolysis</strong> (water added).</p><p><strong>Enzymes</strong> lower activation energy without being consumed. Their 3D tertiary structure determines specificity — induced fit: enzyme shape changes when substrate binds. <strong>Competitive inhibitors</strong> bind the active site and CAN be overcome by excess substrate. <strong>Allosteric inhibitors</strong> bind elsewhere, change enzyme shape, and CANNOT be overcome by excess substrate. <strong>Feedback inhibition</strong>: end product inhibits an upstream enzyme, preventing overproduction.</p>',
+terms:[
+{n:'Hydrogen Bond',d:'Weak attraction between a slightly positive H atom and a slightly negative atom (O or N). Gives water its cohesion, adhesion, high specific heat, and solvent capacity. Also stabilizes protein 2° and 3° structure, and base pairing in DNA.'},
+{n:'Dehydration Synthesis',d:'Building a polymer from monomers by removing one water molecule per bond formed. All biological polymers (polysaccharides, polypeptides, nucleic acids, triglycerides) are assembled this way.'},
+{n:'Hydrolysis',d:'Breaking a polymer into monomers by adding water. Digestive enzymes (amylase, protease, lipase) catalyze hydrolysis. Reverse of dehydration synthesis.'},
+{n:'Tertiary Structure',d:'The overall 3D shape of a polypeptide, determined by R-group interactions: hydrophobic clustering, ionic bonds, H-bonds, and disulfide bridges. Determines enzyme active site shape and thus specificity.'},
+{n:'Enzyme',d:'A protein (or RNA) catalyst that lowers activation energy without being consumed. Specific — one enzyme fits one (or closely related) substrate due to active site shape. Reusable. Affected by temperature, pH, inhibitors, and substrate concentration.'},
+{n:'Competitive Inhibitor',d:'Molecule structurally similar to substrate that binds the active site, blocking substrate. Effect CAN be overcome by increasing substrate concentration (competition). Km increases; Vmax unchanged.'},
+{n:'Allosteric Inhibitor',d:'Molecule that binds an allosteric site (not the active site), changing enzyme conformation and reducing activity. CANNOT be overcome by adding substrate. Vmax decreases. Basis of feedback inhibition.'},
+{n:'Feedback Inhibition',d:'End product of a metabolic pathway inhibits an enzyme earlier in the pathway, preventing overproduction. Example: ATP inhibits phosphofructokinase (PFK) in glycolysis, slowing energy production when ATP is abundant.'},
+{n:'Phospholipid',d:'Glycerol backbone + two fatty acid tails (hydrophobic) + phosphate group (hydrophilic). Self-assembles into bilayers in water — the structural basis of all biological membranes.'},
+{n:'Cohesion',d:'Water molecules sticking to each other via hydrogen bonds. Enables surface tension and allows water columns to travel up xylem in plants against gravity (cohesion-tension model).'},
+{n:'Specific Heat',d:'Energy needed to raise 1g of a substance by 1°C. Water\'s specific heat is very high due to H-bonds — resists temperature change, stabilizing aquatic and cellular environments.'},
+{n:'Induced Fit',d:'When substrate binds the active site, the enzyme changes shape to better fit the substrate and catalyze the reaction. More accurate than the "lock-and-key" model. The conformational change positions reactive groups optimally.'},
+]},
+{t:'Unit 2: Cell Structure & Function',p:'10–13%',s:'Fluid mosaic membrane, organelles, and transport',
+b:['Prokaryote: no nucleus/membrane organelles; eukaryote: has both','Fluid mosaic: phospholipid bilayer + mobile proteins = selective permeability','Endomembrane: nuclear envelope → ER → Golgi → vesicles → plasma membrane','Passive (diffusion, osmosis) vs active (pumps, endocytosis) transport'],
+n:'<p>The <strong>fluid mosaic model</strong>: phospholipid bilayer with embedded, mobile proteins. Hydrophilic heads face aqueous environments; hydrophobic tails face inward. Proteins are channels, pumps, receptors, enzymes, or structural anchors. Membrane fluidity increases with unsaturated fatty acids.</p><p><strong>Organelle functions</strong>: Nucleus (DNA, transcription), Rough ER (protein synthesis), Smooth ER (lipid synthesis, detox), Golgi (processing, sorting, shipping), Mitochondria (ATP via respiration), Chloroplasts (photosynthesis), Ribosomes (translation).</p><p><strong>Transport</strong> — Passive (no ATP): simple diffusion (small nonpolar), facilitated diffusion (polar/charged via channel proteins), osmosis (water through aquaporins or lipid bilayer). Active (ATP required): Na⁺/K⁺ pump, endocytosis, exocytosis. Osmosis: water moves toward higher solute concentration. Hypertonic → cell shrinks; hypotonic → cell swells.</p>',
+terms:[
+{n:'Fluid Mosaic Model',d:'Cell membrane structure: phospholipid bilayer (fluid = lipids and proteins move laterally) with embedded proteins of diverse types (mosaic). Describes selective permeability and membrane dynamics.'},
+{n:'Selective Permeability',d:'Membrane allows some substances through but not others. Small nonpolar molecules (O₂, CO₂) pass freely. Large, polar, or charged molecules require protein channels or pumps. Maintains internal cell environment.'},
+{n:'Endosymbiotic Theory',d:'Mitochondria and chloroplasts evolved from free-living prokaryotes engulfed by ancestral eukaryotes. Evidence: own circular DNA, 70S ribosomes (same as bacteria), double membrane, replicate by binary fission.'},
+{n:'Osmosis',d:'Diffusion of water across a semipermeable membrane from high water potential (low solute) to low water potential (high solute). Passive — no ATP required.'},
+{n:'Turgor Pressure',d:'Pressure of water pushing outward against plant cell wall. Maintains plant rigidity (turgid = healthy). Lost in hypertonic conditions → plasmolysis → wilting. Plants have cell walls that prevent lysis.'},
+{n:'Na⁺/K⁺ Pump',d:'Active transport protein that pumps 3 Na⁺ out and 2 K⁺ in per ATP hydrolyzed. Maintains the electrochemical gradient essential for nerve impulse generation and muscle contraction.'},
+{n:'Endomembrane System',d:'Network of connected membranes: nuclear envelope → ER → vesicles → Golgi → plasma membrane/lysosomes. Synthesizes, modifies, packages, and exports proteins and lipids.'},
+{n:'Facilitated Diffusion',d:'Passive transport of polar/charged molecules down their concentration gradient through specific protein channels or carrier proteins. No ATP — driven by concentration gradient. Example: glucose enters cells via GLUT transporters.'},
+{n:'Endocytosis',d:'Cell engulfs material by wrapping membrane around it, forming a vesicle. Types: phagocytosis (solid particles — immune cells), pinocytosis (fluids), receptor-mediated endocytosis (specific molecules like LDL cholesterol).'},
+{n:'Tonicity',d:'Relative solute concentration of a solution vs. a cell. Isotonic: equal (no net water movement). Hypertonic: more solute outside (cell loses water, shrinks/crenates). Hypotonic: less solute outside (cell gains water, swells/lyses in animal cells).'},
+{n:'Cytoskeleton',d:'Network of protein fibers: microfilaments (actin — cell shape, muscle contraction, cytokinesis), microtubules (cell division, cilia/flagella motor), intermediate filaments (structural support, nuclear lamina).'},
+{n:'Cell Wall',d:'Rigid layer outside plasma membrane. Cellulose (plants), peptidoglycan (bacteria), chitin (fungi). Prevents cell lysis in hypotonic conditions; provides structural support. Absent in animal cells.'},
+]},
+{t:'Unit 3: Cellular Energetics',p:'12–16%',s:'Photosynthesis, cellular respiration, and ATP',
+b:['Photosynthesis: light reactions (thylakoid) + Calvin cycle (stroma) → glucose + O₂','Respiration: glycolysis → pyruvate oxidation → Krebs → ETC + chemiosmosis → ~30–32 ATP','Fermentation: 2 ATP, no O₂ — regenerates NAD⁺ to keep glycolysis running','Electron carriers NADH/FADH₂ feed the ETC; chemiosmosis drives most ATP production'],
+n:'<p><strong>Photosynthesis</strong>: Light reactions in thylakoid membranes split H₂O → O₂ + H⁺ + e⁻, produce ATP and NADPH. Calvin cycle in stroma uses ATP + NADPH to fix CO₂ (via RuBisCO) into G3P → glucose. C4 and CAM plants minimize photorespiration in hot/dry climates.</p><p><strong>Cellular Respiration</strong>: Glycolysis (cytoplasm) → 2 pyruvate + 2 ATP + 2 NADH. Pyruvate oxidation → acetyl-CoA + CO₂ + NADH. Krebs cycle (matrix) → 6 NADH + 2 FADH₂ + 2 ATP + CO₂ per glucose. ETC + chemiosmosis (inner mitochondrial membrane) → ~26–28 ATP. O₂ is the final electron acceptor → forms H₂O. <strong>Fermentation</strong> regenerates NAD⁺ (no O₂) so glycolysis can continue: only 2 ATP total.</p>',
+terms:[
+{n:'ATP',d:'Adenosine triphosphate — universal energy currency of cells. Energy released by hydrolysis of the third phosphate bond (ATP → ADP + Pᵢ + energy). Regenerated by cellular respiration and photosynthesis.'},
+{n:'Glycolysis',d:'10-step pathway in cytoplasm. Glucose (6C) → 2 pyruvate (3C) + net 2 ATP + 2 NADH. Does NOT require O₂. Occurs in ALL living cells. Substrate-level phosphorylation produces the ATP.'},
+{n:'Krebs Cycle',d:'Cyclic pathway in mitochondrial matrix. Each acetyl-CoA (2C) fully oxidized to CO₂. Per cycle: 3 NADH, 1 FADH₂, 1 ATP, 2 CO₂. Runs twice per glucose. Major source of electron carriers for ETC.'},
+{n:'Electron Transport Chain',d:'Protein complexes (I–IV) in inner mitochondrial membrane. High-energy electrons from NADH/FADH₂ pass through, pumping H⁺ into intermembrane space. O₂ is final electron acceptor → water forms at Complex IV.'},
+{n:'Chemiosmosis',d:'ATP synthesis driven by H⁺ flowing back through ATP synthase (Complex V) down the proton gradient. Produces ~26–28 of the ~30 total ATP from aerobic respiration. Also occurs in chloroplasts (thylakoid membrane).'},
+{n:'Light Reactions',d:'Occur in thylakoid membranes. Light energy splits H₂O (photolysis) → O₂ released. ETC pumps H⁺ into thylakoid lumen. Chemiosmosis makes ATP. NADP⁺ reduced to NADPH. ATP + NADPH feed the Calvin cycle.'},
+{n:'Calvin Cycle',d:'Occurs in stroma. Uses ATP + NADPH from light reactions. RuBisCO fixes CO₂ to RuBP → 3-PGA → G3P. Three turns produce one G3P; six turns net one glucose. CO₂ is the carbon source; ATP + NADPH are the energy source.'},
+{n:'RuBisCO',d:'Most abundant enzyme on Earth. Catalyzes CO₂ fixation to RuBP in the Calvin cycle. Can also bind O₂ (photorespiration — wasteful, releases CO₂). C4 and CAM plants concentrate CO₂ to minimize this.'},
+{n:'Fermentation',d:'Anaerobic process that regenerates NAD⁺ so glycolysis can continue. Lactic acid fermentation (muscle, bacteria): pyruvate → lactate. Alcoholic (yeast): pyruvate → ethanol + CO₂. Only 2 ATP total.'},
+{n:'NADH',d:'Electron carrier that collects high-energy electrons from glycolysis, pyruvate oxidation, and Krebs cycle. Delivers electrons to ETC Complex I. Each NADH → ~2.5 ATP via oxidative phosphorylation.'},
+{n:'Substrate-Level Phosphorylation',d:'Direct transfer of a phosphate group from a substrate molecule to ADP → ATP. Occurs in glycolysis (2 ATP net) and Krebs cycle (2 ATP). Does not require ETC or oxygen.'},
+{n:'C4 Photosynthesis',d:'CO₂ first fixed into OAA (4C) in mesophyll cells and shuttled to bundle sheath where RuBisCO is concentrated in a CO₂-rich environment. Minimizes photorespiration. Examples: corn, sugarcane, sorghum.'},
+]},
+{t:'Unit 4: Cell Communication & Cell Cycle',p:'10–15%',s:'Signal transduction, mitosis, checkpoints, cancer',
+b:['Signal transduction: Reception → Transduction (cascade) → Response','Second messengers (cAMP, Ca²⁺) amplify signals enormously','Cell cycle: G1→S→G2→M; cyclins/CDKs control checkpoints','Cancer = checkpoint failure; apoptosis = programmed cell death via caspases'],
+n:'<p>Cells respond to signals in 3 steps: <strong>Reception</strong> (ligand binds receptor) → <strong>Transduction</strong> (signal cascade amplifies) → <strong>Response</strong> (changed gene expression or enzyme activity).</p><p>Water-soluble ligands bind membrane receptors (GPCRs activate cAMP; RTKs activate phosphorylation cascades). Lipid-soluble ligands (steroids) cross the membrane and bind intracellular receptors. Second messengers (cAMP, IP₃, Ca²⁺) relay and amplify — one receptor can activate thousands of downstream enzymes.</p><p><strong>Cell cycle</strong>: G1 (growth) → S (DNA replication) → G2 (prep for division) → M (mitosis + cytokinesis). Checkpoints at G1, G2, and M are controlled by cyclin/CDK complexes. <strong>Cancer</strong>: proto-oncogene mutations → oncogenes (stuck ON, one copy needed); tumor suppressor mutations → stuck OFF (two copies needed: p53, Rb). <strong>Apoptosis</strong>: caspase enzymes dismantle the cell systematically — no inflammation.</p>',
+terms:[
+{n:'Signal Transduction',d:'Cellular process converting an extracellular signal into an intracellular response. Three stages: Reception (ligand binds receptor) → Transduction (relay cascade) → Response (change in cell behavior, gene expression, or metabolism).'},
+{n:'Ligand',d:'Signaling molecule that binds a specific receptor to initiate a cellular response. Does not need to enter the cell. Binding specificity comes from receptor shape complementarity.'},
+{n:'G Protein-Coupled Receptor',d:'Membrane receptor that activates a G protein upon ligand binding. G protein activates adenylyl cyclase → cAMP produced → protein kinase A activated → cellular response. Huge class of receptors (~800 in humans).'},
+{n:'Second Messenger',d:'Small intracellular signaling molecule (cAMP, IP₃, Ca²⁺) that relays and amplifies the extracellular signal. One activated receptor → many second messenger molecules → enormous signal amplification.'},
+{n:'Phosphorylation Cascade',d:'Series of protein kinases that sequentially activate each other by adding phosphate groups. Each step amplifies the signal. One receptor activation → millions of downstream effects via kinase cascade.'},
+{n:'Proto-Oncogene',d:'Normal gene that promotes cell growth and division. Mutated → oncogene (like a stuck accelerator). Examples: ras, HER2, src. Only ONE mutant copy needed (dominant). Causes uncontrolled cell division.'},
+{n:'Tumor Suppressor Gene',d:'Gene that restrains cell division or triggers apoptosis. BOTH copies must be lost for cancer to develop (recessive). Examples: p53 (DNA damage monitor), Rb (G1 checkpoint). Loss → uncontrolled proliferation.'},
+{n:'Cyclin',d:'Regulatory protein whose concentration oscillates through the cell cycle. Binds and activates CDK (cyclin-dependent kinase). The cyclin-CDK complex triggers cell cycle progression at specific checkpoints.'},
+{n:'Apoptosis',d:'Programmed cell death executed by caspase enzymes. Nucleus fragments, cell shrinks, packaged into vesicles for phagocytosis. No inflammatory response. Essential for development and eliminating damaged/infected cells.'},
+{n:'Telomere',d:'Repetitive DNA sequences (TTAGGG) capping chromosome ends. Shorten with each division → limits cell divisions (Hayflick limit). Cancer cells reactivate telomerase → unlimited division. Also prevents chromosome degradation.'},
+{n:'Cytokinesis',d:'Division of cytoplasm following mitosis. Animal cells: cleavage furrow (actin ring pinches inward). Plant cells: cell plate forms from Golgi vesicles fusing at cell center, then cell wall deposited.'},
+{n:'Mitosis',d:'Nuclear division producing two genetically identical daughter nuclei. PMAT: Prophase (chromosomes condense, spindle forms), Metaphase (align at plate), Anaphase (sister chromatids separate to poles), Telophase (nuclear envelopes reform).'},
+]},
+{t:'Unit 5: Heredity',p:'8–11%',s:'Meiosis, Mendel\'s laws, and non-Mendelian inheritance',
+b:['Meiosis I: separates homologs; Meiosis II: separates sister chromatids','Crossing over in prophase I increases genetic diversity','Laws: Segregation (gametes get one allele) and Independent Assortment (different chromosomes)','Non-Mendelian: incomplete dominance, codominance, sex-linkage, polygenic, epistasis'],
+n:'<p><strong>Meiosis</strong> produces haploid gametes. Meiosis I (reductional): homologs pair (synapsis), crossing over occurs in prophase I, then homologs separate → two haploid cells with duplicated chromosomes. Meiosis II (equational): sister chromatids separate → four genetically unique haploid cells.</p><p><strong>Mendel\'s Laws</strong>: Segregation — allele pairs separate during gamete formation; each gamete gets one. Independent Assortment — alleles of different genes on different chromosomes segregate independently. Exceptions: linked genes (same chromosome) violate independent assortment.</p><p><strong>Non-Mendelian</strong>: Incomplete dominance (intermediate phenotype: red × white → pink, ratio 1:2:1). Codominance (both alleles fully expressed: AB blood type). Sex-linked (males hemizygous for X-linked genes → more vulnerable to recessives). Polygenic (multiple genes → bell curve distribution). Epistasis (one gene masks another). Pleiotropy (one gene → multiple phenotypes).</p>',
+terms:[
+{n:'Meiosis',d:'Two-division process in gonads producing 4 haploid cells from one diploid cell. Meiosis I (reductional) separates homologous chromosomes, halving chromosome number. Meiosis II (equational) separates sister chromatids — essentially mitosis.'},
+{n:'Crossing Over',d:'Exchange of DNA segments between non-sister chromatids of homologous chromosomes during prophase I. Creates recombinant chromosomes with new allele combinations. Frequency between two genes = map distance in centimorgans.'},
+{n:'Independent Assortment',d:'Alleles of genes on different chromosomes segregate independently during meiosis I. For n chromosome pairs: 2ⁿ possible gamete genotypes (humans: 2²³ ≈ 8.4 million, before crossing over).'},
+{n:'Incomplete Dominance',d:'Neither allele is completely dominant over the other. Heterozygote shows an intermediate phenotype. Example: red × white snapdragon → pink. F2 ratio: 1 red : 2 pink : 1 white.'},
+{n:'Codominance',d:'Both alleles are fully and simultaneously expressed in the heterozygote. Neither is masked. Example: AB blood type — both A and B antigens present on red blood cells. Distinct from incomplete dominance (no blending).'},
+{n:'Sex-Linked Trait',d:'Trait encoded by a gene on a sex chromosome (usually X). Males (XY) are hemizygous — one X copy means any recessive X-linked allele is expressed. Examples: color blindness, hemophilia A, Duchenne muscular dystrophy.'},
+{n:'Epistasis',d:'One gene\'s alleles mask the expression of a different gene. Example: Labrador coat color — gene B/b (color) is masked by gene E/e (deposition). ee = yellow regardless of B/b genotype.'},
+{n:'Polygenic Inheritance',d:'A single phenotypic trait determined by two or more genes. Produces continuous variation with a normal (bell curve) distribution. Examples: human height, skin color, intelligence. Hard to predict individual outcomes.'},
+{n:'Pleiotropy',d:'One gene affects multiple, seemingly unrelated phenotypic traits. Example: sickle cell anemia gene → abnormal hemoglobin → affects RBC shape, O₂ transport, pain crises, organ damage, AND resistance to malaria in heterozygotes.'},
+{n:'Test Cross',d:'Cross between an organism of unknown genotype and a homozygous recessive individual. 1:1 ratio of dominant:recessive phenotype → unknown parent is heterozygous. All dominant offspring → homozygous dominant.'},
+{n:'Linked Genes',d:'Genes on the same chromosome tend to be inherited together, violating independent assortment. Crossing over creates recombinant offspring. Recombination frequency (%) = map distance (centimorgans, cM). Genes &lt;50 cM apart are linked.'},
+{n:'Punnett Square',d:'Grid tool for predicting offspring genotype and phenotype ratios from known parent genotypes. Monohybrid cross: 3:1 phenotype ratio. Dihybrid cross: 9:3:3:1. Assumes random fertilization.'},
+]},
+{t:'Unit 6: Gene Expression & Regulation',p:'12–16%',s:'DNA replication, central dogma, operons, epigenetics, CRISPR',
+b:['Central dogma: DNA → RNA → Protein (one direction)','Replication: semiconservative; helicase, primase, DNA pol III (5\'→3\'), ligase','RNA processing: 5\' cap, poly-A tail, splicing of introns; alternative splicing','Regulation: operons (prokaryotes); transcription factors + epigenetics (eukaryotes)'],
+n:'<p><strong>DNA replication</strong> is semiconservative — each new helix has one original + one new strand (Meselson-Stahl). Helicase unwinds; primase lays RNA primer; DNA pol III adds nucleotides 5\'→3\'; ligase seals Okazaki fragments on the lagging strand.</p><p><strong>Transcription</strong>: RNA polymerase reads template 3\'→5\', synthesizes pre-mRNA 5\'→3\'. In eukaryotes: 5\' methylguanosine cap, poly-A tail (~200 A\'s), spliceosome removes introns, exons joined. Alternative splicing → multiple proteins from one gene.</p><p><strong>Translation</strong>: mRNA codons (triplets) read 5\'→3\' at ribosome. tRNA anticodons bring correct amino acids. AUG = start; UAA/UAG/UGA = stop. Code is redundant (multiple codons per aa) but not ambiguous (one codon = one aa).</p><p><strong>Regulation</strong>: Prokaryotes — lac operon (inducible), trp operon (repressible). Eukaryotes — transcription factors, enhancers, chromatin remodeling, DNA methylation (silences), histone acetylation (activates), miRNA (post-transcriptional). CRISPR-Cas9: guide RNA → Cas9 cuts → gene disrupted or replaced.</p>',
+terms:[
+{n:'Semiconservative Replication',d:'Each new DNA double helix consists of one original (parental) strand and one newly synthesized strand. Proved by Meselson-Stahl experiment using ¹⁵N/¹⁴N density-gradient centrifugation.'},
+{n:'DNA Polymerase III',d:'Main enzyme synthesizing new DNA. Reads template 3\'→5\'; synthesizes 5\'→3\'. Cannot initiate — requires RNA primer (from primase). Has proofreading activity (3\'→5\' exonuclease). High fidelity: ~1 error per 10⁹ bases.'},
+{n:'Transcription',d:'Synthesis of RNA from a DNA template. RNA polymerase binds promoter, unwinds DNA, reads template strand 3\'→5\', synthesizes mRNA 5\'→3\'. Occurs in nucleus in eukaryotes. Product: pre-mRNA (eukaryotes) or mRNA (prokaryotes).'},
+{n:'RNA Processing',d:'Eukaryotic pre-mRNA modifications before export to cytoplasm: 5\' 7-methylguanosine cap (protects from degradation, aids ribosome binding), poly-A tail (~200 A\'s, stability/export signal), intron splicing by spliceosome, exon joining. Alternative splicing possible.'},
+{n:'Translation',d:'Synthesis of a polypeptide from mRNA at the ribosome. tRNA anticodons base-pair with mRNA codons to deliver amino acids. Ribosomes have A (aminoacyl), P (peptidyl), E (exit) sites. Peptide bonds formed by rRNA (ribozyme activity).'},
+{n:'Codon',d:'Triplet of mRNA nucleotides specifying one amino acid (or start/stop signal). 64 codons encode 20 amino acids — code is redundant (multiple codons per aa) but not ambiguous (each codon = one aa). AUG = start (Met); UAA, UAG, UGA = stop.'},
+{n:'Lac Operon',d:'Inducible prokaryotic operon. Genes OFF when lactose absent (repressor blocks operator). When lactose present: allolactose binds repressor → repressor releases operator → RNA polymerase transcribes lacZ, lacY, lacA → beta-galactosidase and permease produced.'},
+{n:'Trp Operon',d:'Repressible prokaryotic operon (biosynthetic pathway). Genes ON when tryptophan scarce. When tryptophan abundant: trp binds repressor (corepressor) → active repressor blocks operator → trp synthesis genes turn OFF.'},
+{n:'Epigenetics',d:'Heritable changes in gene expression that do NOT alter DNA sequence. DNA methylation (cytosine methylation → silences genes). Histone acetylation (neutralizes charge → loosens chromatin → activates genes). Both heritable through cell division.'},
+{n:'microRNA (miRNA)',d:'Small (~22 nt) noncoding RNA that base-pairs with complementary mRNA sequences → blocks translation or triggers mRNA degradation. Major post-transcriptional regulator. Approximately 1,000+ miRNAs in humans; dysregulation linked to cancer.'},
+{n:'CRISPR-Cas9',d:'Programmable gene editing system. Guide RNA (gRNA) directs Cas9 nuclease to a specific DNA sequence by complementary base pairing. Cas9 makes a double-strand break → repaired by NHEJ (disrupts gene) or HDR (allows precise sequence insertion).'},
+{n:'Frameshift Mutation',d:'Insertion or deletion of nucleotides NOT in multiples of 3. Shifts the reading frame for all downstream codons → completely different amino acid sequence → usually nonfunctional protein. Often more damaging than point mutations.'},
+]},
+{t:'Unit 7: Natural Selection',p:'13–20%',s:'Hardy-Weinberg, evolution mechanisms, speciation, phylogenetics',
+b:['Natural selection: heritable variation + differential reproductive success = allele frequency change','Hardy-Weinberg: p+q=1; p²+2pq+q²=1; 5 conditions for equilibrium','Genetic drift strongest in small populations: bottleneck and founder effects','Allopatric vs sympatric speciation; pre- and post-zygotic reproductive barriers'],
+n:'<p><strong>Natural selection</strong>: heritable variation → differential survival/reproduction → allele frequencies change over generations. Acts on phenotype, not directly on genotype.</p><p><strong>Hardy-Weinberg equilibrium</strong>: allele and genotype frequencies stay constant if: no mutation, no migration, infinite population, random mating, no selection. Violation = evolution is occurring. p + q = 1; p² + 2pq + q² = 1. Use q² = recessive phenotype frequency to start calculations.</p><p><strong>Other mechanisms</strong>: Genetic drift (random, strongest in small populations — bottleneck and founder effects). Gene flow (migration moves alleles between populations). Mutation (ultimate source of new alleles). Sexual selection (mate choice → traits that may reduce survival but increase reproduction).</p><p><strong>Speciation</strong>: Allopatric (geographic isolation → divergence → reproductive isolation, most common). Sympatric (without separation — polyploidy in plants). Prezygotic barriers: habitat, temporal, behavioral, mechanical, gametic. Postzygotic: hybrid inviability or infertility.</p>',
+terms:[
+{n:'Natural Selection',d:'Primary mechanism of evolution. Heritable traits that increase reproductive success become more common each generation. Acts on phenotype; indirectly selects genotype. Three modes: directional (shift mean), stabilizing (narrow variation), disruptive (favor extremes).'},
+{n:'Hardy-Weinberg Equilibrium',d:'Null model for population genetics. Allele frequencies remain constant if: no mutation, no migration, infinite population, random mating, no selection. Any violation indicates evolution is occurring. Use to calculate expected genotype frequencies.'},
+{n:'Genetic Drift',d:'Random fluctuation in allele frequencies due to chance, not selection. Most powerful in small populations. Can cause alleles to go to fixation (100%) or be lost (0%) by chance alone. Not adaptive.'},
+{n:'Bottleneck Effect',d:'Drastic reduction in population size (natural disaster, overhunting) → survivors may not represent original gene pool → reduced genetic diversity. Examples: cheetahs, northern elephant seals, Florida panther.'},
+{n:'Founder Effect',d:'Small group colonizes a new isolated area → carries only a subset of original allele diversity → different allele frequencies than source population. Example: Old Order Amish have high frequency of Ellis-van Creveld syndrome.'},
+{n:'Gene Flow',d:'Movement of alleles between populations via migration. Tends to reduce genetic differences between populations. Can introduce new beneficial alleles. Opposes local adaptation through natural selection.'},
+{n:'Directional Selection',d:'One extreme phenotype is favored; population mean shifts in that direction over time. Decreases variation. Examples: antibiotic resistance (bacteria), beak size during drought (Grant finch study), industrial melanism (peppered moths).'},
+{n:'Stabilizing Selection',d:'Intermediate phenotype is favored; both extremes are selected against. Reduces variation around the mean without shifting it. Most common mode in stable environments. Classic example: human birth weight.'},
+{n:'Disruptive Selection',d:'Both extreme phenotypes are favored; intermediate is selected against. Increases variation; can lead to sympatric speciation. Example: black-bellied seedcracker bill size (large or small — both superior to intermediate).'},
+{n:'Allopatric Speciation',d:'Speciation caused by geographic isolation separating populations. Most common mode. Isolated populations diverge via selection and drift → develop reproductive isolation → recognized as separate species when reunited.'},
+{n:'Adaptive Radiation',d:'Rapid diversification of one ancestral lineage into many species occupying different ecological niches. Examples: Darwin\'s finches (Galapagos), Hawaiian honeycreepers, cichlid fish, mammal diversification after dinosaur extinction.'},
+{n:'Clade',d:'A group consisting of an ancestor and ALL of its descendants (monophyletic group). Defined by shared derived characters (synapomorphies). Valid unit of cladistic classification. Phylogenetic trees are built from nested clades.'},
+]},
+{t:'Unit 8: Ecology',p:'10–15%',s:'Population dynamics, community ecology, biogeochemical cycles',
+b:['Exponential growth (J-curve) vs logistic growth (S-curve, carrying capacity K)','Interspecific: predation (+/−), competition (−/−), mutualism (+/+), commensalism (+/0)','~10% energy efficiency between trophic levels limits food chain length','Nitrogen, carbon, phosphorus cycles — matter cycles; energy does not'],
+n:'<p><strong>Population ecology</strong>: Exponential growth (J-curve): unlimited resources, dN/dt = rN. Logistic growth (S-curve): growth slows near K; dN/dt = rN[(K−N)/K]. r-strategists: small, many offspring, short-lived. K-strategists: large, few offspring, long-lived.</p><p><strong>Community interactions</strong>: Predation (+/−), competition (−/−), mutualism (+/+), commensalism (+/0), parasitism (+/−). Competitive exclusion principle: two species with identical niches cannot coexist. Character displacement: niche divergence when species coexist. Keystone species: disproportionate ecosystem impact relative to biomass.</p><p><strong>Ecosystems</strong>: Energy flows one-way through trophic levels with ~10% efficiency (90% lost as heat — limits food chains to 4–5 levels). Matter cycles via biogeochemical cycles. Nitrogen: fixation (Rhizobium) → nitrification → assimilation → decomposition → denitrification. Carbon: photosynthesis fixes CO₂; respiration releases it; human activity disrupts the balance.</p>',
+terms:[
+{n:'Carrying Capacity (K)',d:'Maximum sustainable population size in an environment given available resources. As N approaches K, birth rate falls and death rate rises (density-dependent regulation). Set by food, space, predation, disease.'},
+{n:'Logistic Growth',d:'S-shaped (sigmoidal) population growth. Rate is maximum at N = K/2 (inflection point). Growth slows as N approaches K due to density-dependent limiting factors. More realistic than exponential model.'},
+{n:'r-strategist',d:'Life history: high reproductive rate, many small offspring, minimal parental care, short lifespan. Thrives in unstable, unpredictable environments. Population crashes and recovers quickly. Examples: insects, annual plants, mice.'},
+{n:'K-strategist',d:'Life history: low reproductive rate, few large offspring, extensive parental investment, long lifespan. Thrives in stable environments near K. Slow to recover from population crashes. Examples: elephants, whales, humans, large trees.'},
+{n:'Competitive Exclusion Principle',d:'Gause\'s principle: two species competing for identical, limiting resources cannot coexist indefinitely. The superior competitor will drive the other to local extinction or force niche divergence (character displacement).'},
+{n:'Keystone Species',d:'Species with a disproportionately large ecological impact relative to its biomass/abundance. Its removal causes dramatic ecosystem-level cascades. Examples: sea otters (control urchins → kelp forests), wolves in Yellowstone (trophic cascade).'},
+{n:'Primary Succession',d:'Ecological succession beginning on bare rock/substrate with no soil. Pioneer species (lichens, mosses) colonize first, break down rock, accumulate organic matter. Extremely slow; climax community may take centuries.'},
+{n:'Secondary Succession',d:'Succession in a disturbed area where soil already exists (after fire, flood, farming). Faster than primary succession. Example: forest returns after wildfire — grasses → shrubs → pioneer trees → climax forest.'},
+{n:'Nitrogen Cycle',d:'N₂ fixation by Rhizobium (legume root nodules) → NH₃/NH₄⁺ → nitrification by Nitrosomonas/Nitrobacter → NO₃⁻ → plant assimilation → decomposition → denitrification returns N₂ to atmosphere.'},
+{n:'10% Rule',d:'Only ~10% of energy at one trophic level is incorporated into biomass at the next level. ~90% lost as metabolic heat. Limits viable food chains to 4–5 trophic levels. Explains why large carnivores are rare.'},
+{n:'Trophic Level',d:'Position in a food chain. Level 1: producers (plants). Level 2: primary consumers (herbivores). Level 3: secondary consumers. Etc. Energy decreases at each level; biomass pyramids show this decrease upward.'},
+{n:'Biogeochemical Cycle',d:'Movement of a chemical element (C, N, P, S, H₂O) through living organisms and the abiotic environment (atmosphere, hydrosphere, lithosphere). Matter is recycled; energy is not. Key cycles: water, carbon, nitrogen, phosphorus.'},
+]},
+];
+
+const allTerms = UD.slice(1).flatMap((u,i)=>u.terms.map(t=>({n:t.n,d:t.d,unit:i+1})));
+
+const MCQ=[
+  {unit:'U1',stim:'A researcher adds a molecule that binds the active site of an enzyme. When substrate concentration is doubled, enzyme activity returns to normal.',
+   q:'Which best describes this inhibitor?',opts:['A) Allosteric — it changes enzyme shape permanently','B) Competitive — outcompeted by excess substrate at the active site','C) Noncompetitive — binds a site other than the active site','D) Irreversible — covalently modifies the active site'],
+   c:1,exp:'Competitive inhibitors bind the ACTIVE SITE. Adding more substrate outcompetes the inhibitor — activity is restored. This is the defining feature of competitive inhibition. Allosteric/noncompetitive inhibitors CANNOT be overcome by adding substrate (they change enzyme shape, not active site occupancy).'},
+  {unit:'U2',stim:'Red blood cells in 0.9% NaCl show no volume change. In 0.3% NaCl they swell and lyse.',
+   q:'Why do red blood cells lyse in 0.3% NaCl?',opts:['A) Active transport pumps water into the cell against its gradient','B) The 0.3% solution is hypotonic — water enters by osmosis, exceeding membrane capacity','C) The 0.3% solution is hypertonic — salts enter the cell, increasing internal pressure','D) Facilitated diffusion channels allow Na⁺ to flood in, drawing water along'],
+   c:1,exp:'0.3% NaCl has LESS solute than the cell cytoplasm → hypotonic. Water moves from high water potential (outside) to low water potential (inside, higher solute) by osmosis. Animal cells have no cell wall to resist expansion — they swell until the membrane ruptures (lysis). At 0.9% (isotonic), no net water movement.'},
+  {unit:'U3',stim:'An experiment measured ATP yield in cells before and after treatment with a drug that makes the inner mitochondrial membrane freely permeable to H⁺ ions.',
+   q:'Which best predicts the effect of this drug?',opts:['A) ATP production increases — H⁺ flows faster through ATP synthase','B) Oxidative phosphorylation stops — H⁺ gradient is eliminated, so ATP synthase cannot function','C) Glycolysis stops — the drug blocks pyruvate entry into mitochondria','D) Total ATP is unaffected because glycolysis still produces 2 ATP'],
+   c:1,exp:'Chemiosmosis requires a H⁺ gradient across the inner mitochondrial membrane. H⁺ normally flows through ATP synthase, driving ATP production. If the membrane becomes freely permeable, the gradient is eliminated (no proton motive force) → ATP synthase stops → ~26–28 ATP from oxidative phosphorylation are lost. Only 2 ATP from glycolysis (substrate-level phosphorylation) remain.'},
+  {unit:'U3',stim:'Plants are supplied with H₂¹⁸O (oxygen-18 labeled water) but normal unlabeled CO₂.',
+   q:'In which product would O-18 most likely appear?',opts:['A) Glucose — O-18 from water is incorporated into G3P in the Calvin cycle','B) O₂ — water is split in the light reactions, releasing its oxygen atoms as O₂','C) CO₂ — labeled oxygen exchanges with CO₂ during RuBisCO carboxylation','D) ATP — labeled oxygen is incorporated into the phosphate groups of ATP'],
+   c:1,exp:'In the light reactions, Photosystem II splits water (photolysis): 2H₂O → 4H⁺ + 4e⁻ + O₂. The O₂ released comes DIRECTLY from water. If water is labeled with O-18, the O-18 appears in the O₂ gas released. (CO₂\'s oxygens end up in G3P/glucose and also in water formed at the ETC.)'},
+  {unit:'U4',stim:'A cell line has homozygous loss-of-function mutations in p53. p53 normally activates DNA repair and triggers apoptosis when DNA damage is irreparable.',
+   q:'Which prediction about this cell line is best supported?',opts:['A) The cell undergoes apoptosis more rapidly, since p53 loss activates caspases','B) The cell continues dividing despite DNA damage, accumulating mutations — increasing cancer risk','C) CDK activity increases, but cyclins fail to accumulate due to the mutation','D) The cell enters permanent G0 phase because checkpoint proteins are absent'],
+   c:1,exp:'p53 is the "guardian of the genome" — a tumor suppressor. When both p53 copies are lost, the G1 checkpoint cannot arrest the cell cycle after DNA damage, and apoptosis cannot be triggered. The cell keeps dividing with unrepaired mutations, accumulating more. This is why p53 mutations appear in ~50% of all human cancers — it is the most commonly mutated gene in cancer.'},
+  {unit:'U5',stim:'In a population of 10,000 individuals, 900 show the recessive phenotype (aa). Assume Hardy-Weinberg equilibrium.',
+   q:'How many individuals in the population are heterozygous (Aa)?',opts:['A) 900','B) 1,800','C) 4,200','D) 4,900'],
+   c:2,exp:'q² = 900/10,000 = 0.09 → q = 0.3. p = 1 − 0.3 = 0.7. 2pq = 2(0.7)(0.3) = 0.42. Number of Aa: 0.42 × 10,000 = 4,200. Check: p²(0.49) + 2pq(0.42) + q²(0.09) = 1.00 ✓. This is the most common H-W calculation format on the AP exam.'},
+  {unit:'U6',stim:'A mutation changes the start codon (AUG) in an mRNA to GUG.',
+   q:'Which best predicts the effect on the protein product?',opts:['A) A normal protein is made, with valine substituted for methionine at the N-terminus','B) Translation cannot initiate — little or no functional protein is produced','C) The ribosome skips the mutated codon and initiates at the next downstream AUG','D) The pre-mRNA is degraded before export from the nucleus'],
+   c:1,exp:'Ribosomes require AUG as the start codon for initiator Met-tRNA recognition. Without AUG, translation cannot be initiated at that position. The result is little to no functional protein. (In rare cases a downstream AUG may be used, producing a truncated N-terminal variant, but this is not the primary predicted outcome.)'},
+  {unit:'U7',stim:'4% of a beetle population shows a recessive white color. After one generation of bird predation targeting white beetles, only 1% show the white phenotype.',
+   q:'Which conclusion is best supported?',opts:['A) Genetic drift is causing random allele frequency changes','B) Directional selection is reducing the frequency of the recessive allele','C) The founder effect has reduced genetic diversity','D) Hardy-Weinberg equilibrium is maintained because variation still exists'],
+   c:1,exp:'Birds preferentially eating white beetles = non-random differential survival based on phenotype = natural selection. Since white (recessive) beetles are disadvantaged, the dominant allele increases in frequency over time — this is directional selection. Genetic drift is random, not directional. H-W equilibrium is clearly violated (allele frequencies are changing).'},
+  {unit:'U8',stim:'Two species (A and B) with identical niches are placed in the same ecosystem. Over 20 weeks, species A remains stable while species B declines to zero.',
+   q:'Which principle best explains this outcome?',opts:['A) Predator-prey oscillation — A consumed B','B) Character displacement — B evolved a different niche to reduce competition','C) Competitive exclusion — two species with identical niches cannot coexist; the better competitor (A) eliminated B','D) Mutualism — A provided resources to B which were later depleted'],
+   c:2,exp:'The competitive exclusion principle (Gause\'s principle): two species competing for identical, limiting resources cannot indefinitely coexist. The superior competitor drives the other to local extinction. This matches the data: stable A, declining B → 0. Character displacement requires evolutionary change and both species would persist — impossible in 20 weeks.'},
+  {unit:'U6',q:'Which correctly describes introns vs exons in eukaryotic gene expression?',opts:['A) Introns are translated into protein; exons are spliced out of pre-mRNA','B) Exons are protein-coding sequences retained in mature mRNA; introns are spliced out in the nucleus','C) Exons contain regulatory sequences; introns contain the coding sequence','D) Introns exist only in bacteria; eukaryotes have only exons'],
+   c:1,exp:'In eukaryotic pre-mRNA: introns (intervening sequences) are non-coding and removed by the spliceosome in the nucleus. Exons (expressed sequences) are joined together in the mature mRNA and translated into protein. Alternative splicing of exons can produce multiple distinct proteins from a single gene.'},
+  {unit:'U7',q:'Two bird populations separated by a mountain range for 50,000 years reunite but no longer interbreed successfully. What has occurred?',opts:['A) Sympatric speciation via polyploidy','B) Allopatric speciation — geographic isolation led to divergence and reproductive isolation','C) Genetic drift only — populations look different but remain one species','D) Directional selection in both populations toward the same phenotype, creating barriers'],
+   c:1,exp:'Allopatric speciation: geographic isolation → populations evolve independently (selection, drift, mutation) → accumulate enough genetic divergence to develop reproductive isolation → different species when reunited. The inability to interbreed successfully is the defining criterion under the Biological Species Concept.'},
+  {unit:'U8',q:'Why do food chains rarely exceed 4–5 trophic levels?',opts:['A) Predators at high trophic levels have fewer enemies, limiting population size','B) ~90% of energy is lost as heat at each trophic level, so little usable energy remains at the 5th level','C) Biodiversity decreases at higher trophic levels, so fewer species can occupy them','D) Decomposers recycle all energy at the 4th trophic level, preventing transfer to a 5th'],
+   c:1,exp:'~90% of energy is lost as metabolic heat at each trophic level. Only ~10% is incorporated into biomass. Starting with 10,000 kJ at producers: herbivores get 1,000 kJ, primary carnivores get 100 kJ, secondary carnivores get 10 kJ, tertiary get 1 kJ. By level 5 or 6, so little energy remains that sustaining a viable population is impossible.'},
+];
+
+const COMPS=[
+  {t:'Prokaryotic vs Eukaryotic Cells',cols:['Prokaryotic','Eukaryotic'],rows:[['Nucleus','No — nucleoid region','Yes — double-membrane, true nucleus'],['Membrane organelles','None','Mitochondria, ER, Golgi, etc.'],['Ribosomes','70S (30S + 50S)','80S cytoplasmic; 70S in organelles'],['DNA','Circular, no histones','Linear chromosomes + histones'],['Cell wall','Peptidoglycan (bacteria)','Cellulose (plants), chitin (fungi), none (animals)'],['Size','1–10 µm','10–100 µm']]},
+  {t:'Mitosis vs Meiosis',cols:['Mitosis','Meiosis'],rows:[['Purpose','Growth, repair, asexual reproduction','Gamete production (sexual reproduction)'],['# Divisions','1','2 (Meiosis I + II)'],['Daughter cells','2 diploid (2n)','4 haploid (n)'],['Genetic outcome','Identical to parent','Genetically unique (crossing over + independent assortment)'],['Crossing over','No','Yes — prophase I'],['Homolog pairing','No','Yes — prophase I (synapsis)']]},
+  {t:'Photosynthesis vs Cellular Respiration',cols:['Photosynthesis','Cellular Respiration'],rows:[['Equation','6CO₂ + 6H₂O + light → C₆H₁₂O₆ + 6O₂','C₆H₁₂O₆ + 6O₂ → 6CO₂ + 6H₂O + ATP'],['Energy transform','Light → chemical (glucose + ATP)','Chemical (glucose) → ATP + heat'],['Location','Chloroplast (thylakoid + stroma)','Cytoplasm + mitochondria'],['Electron carriers','NADPH','NADH, FADH₂'],['H⁺ gradient location','Thylakoid membrane','Inner mitochondrial membrane'],['Who performs it','Plants, algae, cyanobacteria','ALL living organisms']]},
+  {t:'Competitive vs Allosteric Inhibition',cols:['Competitive','Allosteric (Noncompetitive)'],rows:[['Binding site','Active site — competes with substrate','Allosteric site — different from active site'],['Effect on Km','Increases (apparent affinity decreases)','Unchanged'],['Effect on Vmax','Unchanged (overcome by adding substrate)','Decreases (fewer active enzyme molecules)'],['Overcome by substrate?','YES','NO'],['Example','Sulfa drugs vs dihydropteroate synthase','ATP inhibits PFK (feedback inhibition)']]},
+  {t:'Types of Natural Selection',cols:['Directional','Stabilizing','Disruptive'],rows:[['What is favored','One extreme phenotype','Intermediate phenotype','Both extreme phenotypes'],['Effect on variation','Shifts mean; reduces variation','Reduces variation; mean unchanged','Increases variation'],['Classic example','Antibiotic resistance; beak size in drought','Human birth weight','Black-bellied seedcracker beak size'],['Outcome','Adaptation to directional pressure','Stable optimal phenotype','Possible sympatric speciation']]},
+  {t:'DNA Replication vs Transcription vs Translation',cols:['Replication','Transcription','Translation'],rows:[['Template','Both DNA strands','DNA template strand (3\'→5\')','mRNA (5\'→3\')'],['Product','DNA double helix','mRNA (pre-mRNA in eukaryotes)','Polypeptide'],['Key enzyme','DNA polymerase III','RNA polymerase','Ribosome (rRNA catalyzes peptide bond)'],['Base pairing','A-T, G-C','A-U, T-A, G-C','Codon-anticodon (A-U, G-C)'],['Location','Nucleus','Nucleus → cytoplasm','Cytoplasm (rough ER or free ribosome)']]},
+];
+
+const LABS=[
+  {n:1,nm:'Artificial Selection',u:'U7',c:'#fd79a8',sk:'Selectively breed Wisconsin Fast Plants across generations for a quantitative trait. Demonstrates that artificial selection changes phenotype frequency.',v:'IV: selection criterion; DV: phenotype frequency in next generation; Control: random mating group'},
+  {n:2,nm:'Hardy-Weinberg Modeling',u:'U7',c:'#fd79a8',sk:'Population bead simulations test H-W assumptions. Calculate expected genotype frequencies; compare to observed. Any deviation = evolution.',v:'Use p+q=1 and p²+2pq+q²=1; test each assumption separately (add selection, drift, mutation)'},
+  {n:3,nm:'Comparing DNA Sequences',u:'U7',c:'#fd79a8',sk:'Use BLAST or provided sequences to build phylogenetic trees and infer evolutionary relatedness. Molecular homology as evidence of common ancestry.',v:'% sequence similarity; parsimony; outgroup comparison'},
+  {n:4,nm:'Diffusion and Osmosis',u:'U2',c:'#4db8ff',sk:'Potato cores or dialysis tubing in sucrose solutions of varying concentration. Mass change indicates net water movement.',v:'IV: solute concentration (0–1.0 M sucrose); DV: % change in mass; Control: distilled water (0 M)'},
+  {n:5,nm:'Photosynthesis — Floating Leaf Disk',u:'U3',c:'#ffd166',sk:'Leaf disks infiltrated with CO₂ solution sink; photosynthesis produces O₂ → buoyancy restored. Count floating disks over time.',v:'IV: light intensity or wavelength; DV: rate of floating disks; Control: covered (dark) disks'},
+  {n:6,nm:'Cellular Respiration — Respirometer',u:'U3',c:'#ffd166',sk:'Sealed respirometers with germinating seeds vs. dormant seeds vs. glass beads. KOH absorbs CO₂; O₂ consumption measured by water displacement.',v:'IV: germination state; DV: O₂ consumption (mL/min); Control: glass beads; also test temperature variation'},
+  {n:7,nm:'Cell Division — Mitosis & Meiosis',u:'U4',c:'#ff9ff3',sk:'Count cells in each mitotic phase in onion root tip slides. Calculate relative time in each phase. Model meiosis with crossing over using clay.',v:'% cells in phase = relative time in that phase; prophase most common (longest phase)'},
+  {n:8,nm:'Bacterial Transformation — pGLO',u:'U6',c:'#a29bfe',sk:'Transform E. coli with pGLO plasmid (GFP gene + ampicillin resistance). Test plates with/without ampicillin and arabinose for transformation success.',v:'IV: plasmid presence, arabinose; DV: colony growth, UV fluorescence; Control: no plasmid on amp plate (no growth)'},
+  {n:9,nm:'Restriction Enzyme / Gel Electrophoresis',u:'U6',c:'#a29bfe',sk:'Cut DNA with restriction enzymes; separate by gel electrophoresis. Band patterns reveal fragment sizes and identify DNA samples.',v:'IV: restriction enzyme; DV: band size/position vs. ladder; smaller fragments run farther'},
+  {n:10,nm:'Energy Dynamics',u:'U8',c:'#00cec9',sk:'Measure energy/biomass flow through trophic levels (plant → cricket → frog). Calculate transfer efficiency.',v:'IV: trophic level; DV: energy/biomass at each level; Efficiency = (energy out ÷ energy in) × 100%'},
+  {n:11,nm:'Transpiration',u:'U2',c:'#4db8ff',sk:'Potometer measures water uptake rate under different environmental conditions (temp, humidity, light, wind).',v:'IV: environmental condition; DV: rate of water movement in capillary; Control: calm, room temp, moderate light'},
+  {n:12,nm:'Fruit Fly Behavior — Chemotaxis',u:'U7',c:'#fd79a8',sk:'Observe Drosophila movement toward/away from stimuli. Design controlled experiment to test stimulus preference. Chi-square analysis.',v:'IV: stimulus type or intensity; DV: % flies in each zone after set time; Control: no stimulus'},
+  {n:13,nm:'Pill Bug Habitat Choice — Chi-Square',u:'U8',c:'#00cec9',sk:'Isopods in choice chamber with different conditions (wet/dry, light/dark). Count distribution; chi-square test against null (50/50).',v:'IV: environmental variable; DV: number of pill bugs in each zone; df = 1; null: equal distribution'},
+];
+
+const BIGIDEAS=[
+  {code:'EVO',nm:'Evolution',c:'#fd79a8',d:'Evolution drives the diversity and unity of life. All species share common ancestors; populations evolve through natural selection, drift, gene flow, and mutation.',
+   con:['Unit 5: Meiosis generates genetic variation — raw material for evolution','Unit 6: Mutations create new alleles; DNA sequences provide molecular evidence of common ancestry','Unit 7: Natural selection, H-W equilibrium, genetic drift, speciation — the core of EVO','Unit 8: Species interactions and ecosystem structure reflect evolutionary history'],
+   ex:['Antibiotic resistance: selection favors resistant bacteria after antibiotic exposure','Homologous structures (vertebrate forelimbs) show modification of common ancestral form','Molecular homology: cytochrome c gene sequence conserved across taxa','Adaptive radiation: Darwin\'s finches diversified from one ancestor into 14+ species']},
+  {code:'ENE',nm:'Energy & Matter',c:'#ffd166',d:'Living systems require free energy and matter to grow and maintain homeostasis. Energy flows one-way; matter cycles through biogeochemical cycles.',
+   con:['Unit 3: Photosynthesis (energy capture) and respiration (energy release) — core of ENE','Unit 8: Trophic levels (energy flow) and nitrogen/carbon cycles (matter cycling)','Unit 1: Enzyme-catalyzed reactions extract usable energy from chemical bonds','Unit 2: Active transport — energy-requiring cellular processes maintain homeostasis'],
+   ex:['ATP as universal energy currency — transferred in virtually all energy-requiring reactions','~10% energy efficiency limits food chain length to 4–5 levels','Nitrogen cycle: fixation, nitrification, assimilation, decomposition, denitrification','Chemiosmosis in both mitochondria and chloroplasts — shared evolutionary mechanism']},
+  {code:'IST',nm:'Information Storage & Transmission',c:'#4db8ff',d:'Genetic information encoded in DNA is expressed as proteins that determine cell structure and function. Information is transmitted from cell to cell and parent to offspring.',
+   con:['Unit 5: Meiosis and heredity — genetic information passes between generations','Unit 6: DNA replication, transcription, translation, regulation — central dogma','Unit 4: Signal transduction — how cells send and receive molecular information','Unit 7: Mutations alter DNA → new alleles → raw material for evolution'],
+   ex:['Central dogma: DNA → RNA → Protein — information flows one direction','Lac operon: gene regulation responds to environmental signals (lactose present/absent)','CRISPR-Cas9: directed editing of specific DNA sequences','Epigenetic silencing: same DNA, different gene expression via methylation/acetylation']},
+  {code:'SYI',nm:'Systems & Interactions',c:'#00e5a0',d:'Living systems are organized, complex, and interact at all levels — from molecular to ecosystem. Homeostasis is maintained through feedback loops.',
+   con:['Unit 2: Cell membrane — regulates what enters/leaves the cellular system','Unit 4: Signal transduction pathways — cells communicating as an organismal system','Unit 8: Ecosystems — species interactions create complex interdependent systems','Unit 1: Feedback inhibition — enzymes maintain metabolic homeostasis'],
+   ex:['Blood glucose regulation: insulin/glucagon negative feedback maintains homeostasis','Predator-prey oscillation: population systems show dynamic equilibrium','Signal amplification: 1 receptor → thousands of activated enzymes via cascade','Keystone species: removing one species reshapes the entire ecosystem']},
+];
+
+const TIMELINE=[
+  {yr:1665,ev:'Hooke describes cells',d:'Observed cork under compound microscope; coined the term "cell." First biological application of microscopy.',cat:'cell'},
+  {yr:1838,ev:'Cell Theory established',d:'Schleiden & Schwann: all organisms are composed of cells; the cell is the basic unit of life. Virchow later: cells arise only from preexisting cells.',cat:'cell'},
+  {yr:1859,ev:'Darwin publishes Origin of Species',d:'Natural selection as the mechanism of evolution. Based on Beagle voyage observations (1831–1836). Changed biology permanently.',cat:'evolution'},
+  {yr:1865,ev:'Mendel publishes inheritance laws',d:'Pea plant experiments establish segregation and independent assortment. Published in an obscure journal; unrecognized for 35 years.',cat:'genetics'},
+  {yr:1900,ev:"Mendel's work rediscovered",d:'De Vries, Correns, and Tschermak independently rediscover Mendelian ratios in their own plant experiments, sparking the field of genetics.',cat:'genetics'},
+  {yr:1910,ev:'Morgan: genes on chromosomes',d:'Drosophila white-eye mutation shows X-linked inheritance, demonstrating genes are on specific chromosomes.',cat:'genetics'},
+  {yr:1928,ev:"Griffith's transformation",d:'Heat-killed virulent bacteria + live avirulent bacteria → virulent cells. Some "transforming principle" transfers hereditary information.',cat:'genetics'},
+  {yr:1944,ev:'Avery: DNA is the genetic material',d:'Avery, MacLeod, and McCarty show the transforming principle is DNA, not protein. Initially controversial.',cat:'genetics'},
+  {yr:1952,ev:'Hershey-Chase experiment',d:'Radioactive labeling of bacteriophage confirms DNA (not protein) is injected into bacteria and carries genetic information.',cat:'genetics'},
+  {yr:1953,ev:'Watson & Crick: DNA double helix',d:'Using Franklin\'s X-ray diffraction data (Photo 51), propose the double helix structure with complementary base pairing.',cat:'genetics'},
+  {yr:1958,ev:'Meselson-Stahl experiment',d:'Density-gradient centrifugation with ¹⁵N/¹⁴N proves DNA replication is semiconservative — the most elegant experiment in biology.',cat:'genetics'},
+  {yr:1961,ev:'Genetic code cracked',d:'Nirenberg & Matthaei decode first codon (UUU = phenylalanine). Full 64-codon table completed by 1966.',cat:'genetics'},
+  {yr:1972,ev:'First recombinant DNA',d:'Paul Berg joins DNA from different species using restriction enzymes and ligase. Birth of genetic engineering.',cat:'biotech'},
+  {yr:1983,ev:'PCR invented',d:'Kary Mullis develops polymerase chain reaction — exponentially amplifies tiny DNA samples. Nobel Prize 1993. Transformed medicine, forensics, and research.',cat:'biotech'},
+  {yr:1990,ev:'Human Genome Project begins',d:'International consortium to sequence all ~3 billion human base pairs. Completed 2003. Launched the genomics era.',cat:'biotech'},
+  {yr:1996,ev:'Dolly the sheep cloned',d:'First mammal cloned from an adult somatic cell (mammary cell) via somatic cell nuclear transfer. Raised profound ethical questions.',cat:'biotech'},
+  {yr:2012,ev:'CRISPR-Cas9 as gene editing tool',d:'Doudna & Charpentier publish programmable gene editing. Nobel Prize 2020. Transforming medicine, agriculture, and biotechnology.',cat:'biotech'},
+];
+
+const MISTAKES=[
+  {t:'Writing T instead of U in mRNA',d:'mRNA uses uracil (U), not thymine (T). Writing "ATG" in mRNA or "AUG" in DNA will always cost points on FRQs.',fix:'DNA uses T; RNA uses U. In mRNA: AUG, UAA, GCU. In DNA: ATG, TAA, GCT. Always label which molecule you\'re writing.'},
+  {t:'Saying the Calvin cycle uses light directly',d:'The Calvin cycle uses the PRODUCTS of light reactions (ATP and NADPH), not light itself. It runs on chemical energy.',fix:'Light → light reactions → ATP + NADPH → Calvin cycle. The Calvin cycle is a series of enzyme reactions in the stroma — it runs in the dark if ATP and NADPH are supplied.'},
+  {t:'Misidentifying the final electron acceptor in ETC',d:'O₂ is the final electron acceptor in aerobic respiration, forming water at Complex IV. Confusing O₂\'s role is a very common error.',fix:'Aerobic: O₂ + 4H⁺ + 4e⁻ → 2H₂O (at Complex IV). Anaerobic: pyruvate (lactic fermentation) or acetaldehyde (alcoholic) accepts electrons to regenerate NAD⁺.'},
+  {t:'Hardy-Weinberg calculation errors',d:'Most common: confusing q² (recessive phenotype frequency) with q (allele frequency). Also: squaring p before finding q.',fix:'Always: (1) q² = recessive phenotype frequency, (2) q = √q², (3) p = 1−q, (4) 2pq = heterozygote frequency. Check: p² + 2pq + q² = 1.'},
+  {t:'Confusing Meiosis I and Meiosis II',d:'Meiosis I is the UNIQUE step — separates homologous chromosomes, reducing 2n→n. Meiosis II separates sister chromatids (like mitosis). Crossing over occurs in prophase I only.',fix:'Meiosis I = REDUCTIONAL (chromosome number halves). Meiosis II = EQUATIONAL (like mitosis). After meiosis I, cells are already haploid but chromosomes still have two sister chromatids.'},
+  {t:'Saying all mutations are harmful',d:'Most mutations are NEUTRAL (synonymous substitutions, non-coding regions). Evolution REQUIRES mutations as the source of new alleles. Some are beneficial.',fix:'A mutation\'s effect depends entirely on context. A mutation harmful in one environment may be beneficial in another (e.g., sickle cell allele provides malaria resistance in heterozygotes).'},
+  {t:'Osmosis direction confusion',d:'Water does NOT move toward lower solute concentration. Water moves toward HIGHER solute concentration (lower water potential). "Water follows the solute."',fix:'Water: high water potential (low solute, dilute) → low water potential (high solute, concentrated). Hypertonic solution outside → cell loses water → shrinks. Hypotonic → cell gains water → swells.'},
+  {t:'Thinking 10% energy is "passed through"',d:'90% of energy is LOST as metabolic heat at each trophic level. Only 10% is incorporated into new biomass. "10% transferred" means 90% is gone.',fix:'10,000 kJ at producers → 1,000 kJ at herbivores → 100 kJ at primary carnivores → 10 kJ at secondary carnivores. Almost nothing at level 5 — explains why food chains are short.'},
+  {t:'Natural selection acts on genotype',d:'Natural selection acts on PHENOTYPE. A recessive lethal allele heterozygous is invisible to selection and persists in the population indefinitely.',fix:'Selection sees what the organism looks like and how it behaves, not its DNA. Heterozygous carriers survive and pass on both alleles. Selection cannot "see" a recessive allele unless expressed.'},
+  {t:'Confusing competitive exclusion with character displacement',d:'Competitive exclusion: one species goes locally extinct. Character displacement: both species persist but evolve different niches (phenotypic divergence reduces competition).',fix:'Exclusion = one species eliminated. Displacement = both species persist but evolve divergent traits. Character displacement is evolutionary evidence that competition shaped phenotype; exclusion is what happens when divergence doesn\'t occur.'},
+];
+
+// ===== STATE =====
+let mastered=new Set(JSON.parse(localStorage.getItem('bio-m')||'[]'));
+let flagged=new Set(JSON.parse(localStorage.getItem('bio-f')||'[]'));
+let mcqAns={},mcqFl=new Set(),curQ=0;
+let fcDeck=[],fcIdx=0,fcKnow=[],fcDK=[],fcFlipped=false;
+let todIdx=Math.floor(Math.random()*allTerms.length);
+let tSecs=25*60,tRunning=false,tIv=null;
+let fs=parseFloat(localStorage.getItem('bio-fs')||'1');
+
+const saveMastered=()=>localStorage.setItem('bio-m',JSON.stringify([...mastered]));
+const saveFlagged=()=>localStorage.setItem('bio-f',JSON.stringify([...flagged]));
+
+// ===== SCHEME =====
+function applyScheme(s){document.documentElement.setAttribute('data-theme',s);localStorage.setItem('bio-sc',s);document.getElementById('thbtn').textContent=s==='dark'?'☀️ Light':'🌙 Dark';}
+function toggleScheme(){applyScheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');toast(document.documentElement.getAttribute('data-theme')==='dark'?'🌙 Dark mode':'☀️ Light mode','info');}
+
+// ===== FONT =====
+function adjFont(d){if(d===0)fs=1;else fs=Math.max(.8,Math.min(1.32,fs+d*.08));document.documentElement.style.setProperty('--fs',fs);localStorage.setItem('bio-fs',fs);}
+
+// ===== TOAST =====
+function toast(msg,type=''){const w=document.getElementById('tw');const el=document.createElement('div');el.className='toast '+(type||'');el.textContent=msg;w.appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));setTimeout(()=>{el.classList.remove('show');setTimeout(()=>el.remove(),280);},2500);}
+
+// ===== MODAL =====
+const openKB=()=>document.getElementById('kbm').classList.add('open');
+const closeKB=()=>document.getElementById('kbm').classList.remove('open');
+
+// ===== DASH =====
+function updateDash(){
+  const m=mastered.size,tot=allTerms.length,pct=Math.round(m/tot*100);
+  document.getElementById('dm').textContent=m;document.getElementById('dt').textContent=tot;
+  document.getElementById('df').style.width=pct+'%';document.getElementById('dp').textContent=pct+'%';
+  const sc=Object.entries(mcqAns).filter(([i,a])=>a===MCQ[+i].c).length,tc=Object.keys(mcqAns).length;
+  document.getElementById('dsc').textContent=tc?sc+'/'+tc:'—';
+}
+
+// ===== NAV =====
+function showSec(id,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(el)el.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ===== SCROLL =====
+window.addEventListener('scroll',()=>{
+  document.getElementById('st').classList.toggle('show',window.scrollY>360);
+  const dh=document.documentElement.scrollHeight-window.innerHeight;
+  if(dh>0)document.getElementById('rpb').style.width=(window.scrollY/dh*100)+'%';
+});
+
+// ===== TIMER =====
+function renderTimer(){const m=Math.floor(tSecs/60),s=tSecs%60,el=document.getElementById('tdisp');el.textContent=m+':'+String(s).padStart(2,'0');el.classList.toggle('warn',tSecs<=120&&tRunning);}
+function toggleTimer(){if(tRunning){clearInterval(tIv);tRunning=false;document.getElementById('tbtn').textContent='▶ Start';}else{tRunning=true;document.getElementById('tbtn').textContent='⏸ Pause';tIv=setInterval(()=>{if(tSecs<=0){clearInterval(tIv);tRunning=false;document.getElementById('tbtn').textContent='▶ Start';toast('⏰ Session done! Take a break.','info');return;}tSecs--;renderTimer();},1000);}}
+function resetTimer(){clearInterval(tIv);tRunning=false;tSecs=25*60;document.getElementById('tbtn').textContent='▶ Start';renderTimer();}
+
+// ===== EXPORT =====
+function exportNotes(){if(!mastered.size){toast('No mastered terms yet!');return;}const lines=[...mastered].map(n=>{const t=allTerms.find(t=>t.n===n);return t?'U'+t.unit+' · '+t.n+': '+t.d:n;});navigator.clipboard.writeText('AP Bio Mastered Terms ('+lines.length+')\n'+'='.repeat(40)+'\n\n'+lines.join('\n\n')).then(()=>toast('Copied '+lines.length+' terms!','success')).catch(()=>toast('Copy failed'));}
+
+// ===== TOD =====
+const buildTOD=()=>{const t=allTerms[todIdx];document.getElementById('todn').textContent=t.n;document.getElementById('tods').textContent=t.d.slice(0,65)+(t.d.length>65?'..':'');};
+const cycleTOD=()=>{todIdx=(todIdx+1)%allTerms.length;buildTOD();};
+
+// ===== WEIGHTS =====
+function buildWeights(){
+  const ws=[{u:'U1',p:9},{u:'U2',p:11},{u:'U3',p:14},{u:'U4',p:12},{u:'U5',p:9},{u:'U6',p:14},{u:'U7',p:16},{u:'U8',p:12}];
+  document.getElementById('wbars').innerHTML='<div style="font-family:\'JetBrains Mono\',monospace;font-size:.65rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:7px">Unit Weighting on AP Exam</div>'+ws.map((w,i)=>'<div style="display:flex;align-items:center;gap:7px;margin-bottom:4px"><div style="width:36px;font-family:\'JetBrains Mono\',monospace;font-size:.59rem;color:var(--mt)">'+w.u+'</div><div style="flex:1;height:5px;background:var(--br);border-radius:2px;overflow:hidden"><div style="height:100%;width:'+w.p*5+'%;background:'+UC[i+1]+';border-radius:2px"></div></div><div style="font-family:\'JetBrains Mono\',monospace;font-size:.59rem;color:'+UC[i+1]+';width:30px">'+w.p+'%</div></div>').join('');
+}
+
+// ===== UNITS =====
+function buildUnits(){
+  document.getElementById('ugrid').innerHTML=UD.slice(1).map((u,i)=>{const n=i+1;return '<div class="uc" onclick="openUnit('+n+')" onmouseenter="this.style.borderColor=\''+UC[n]+'\'" onmouseleave="this.style.borderColor=\'\'"><div class="ucb" style="background:'+UC[n]+'"></div><div class="uci"><div class="un">Unit '+n+' · '+u.p+'</div><h3 style="color:'+UC[n]+'">'+UN[n]+'</h3><p>'+u.s+'</p></div><div class="ucf"><span>Click to expand</span><span style="color:'+UC[n]+'">→</span></div></div>';}).join('');
+}
+function openUnit(n){
+  const u=UD[n];
+  document.getElementById('udtitle').textContent=u.t;document.getElementById('udtitle').style.color=UC[n];
+  document.getElementById('udtabs').innerHTML=['Narrative','Key Concepts','Terms'].map((l,i)=>'<button class="tp'+(i===0?' active':'')+'" onclick="showUT(this,\'ut'+n+'_'+i+'\')">'+l+'</button>').join('');
+  document.getElementById('udbody').innerHTML=
+    '<div id="ut'+n+'_0"><div style="font-size:.87rem;line-height:1.8;max-width:740px">'+u.n+'</div></div>'+
+    '<div id="ut'+n+'_1" style="display:none"><ul style="list-style:disc;padding-left:17px;font-size:.85rem;line-height:2.05">'+u.b.map(b=>'<li>'+b+'</li>').join('')+'</ul></div>'+
+    '<div id="ut'+n+'_2" style="display:none"><div class="tg">'+u.terms.map(t=>renderTC(t,n)).join('')+'</div></div>';
+  const el=document.getElementById('udetail');el.style.display='block';
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),50);
+}
+const closeUnit=()=>document.getElementById('udetail').style.display='none';
+function showUT(btn,id){
+  btn.closest('#udetail').querySelectorAll('.tp').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const pid=id.replace(/_\d$/,'_');
+  btn.closest('#udetail').querySelectorAll('[id^="ut"]').forEach(d=>d.style.display='none');
+  document.getElementById(id).style.display='block';
+}
+
+function renderTC(t,n){
+  const m=mastered.has(t.n),f=flagged.has(t.n);
+  const nm=t.n.replace(/'/g,'&#39;');
+  return '<div class="tc'+(m?' mastered':'')+(f?' flagged':'')+'" onclick="toggleTC(this)">'+
+    '<div style="display:flex;justify-content:space-between"><div class="tn" style="color:'+UC[n]+'">'+t.n+'</div>'+
+    '<span style="font-family:\'JetBrains Mono\',monospace;font-size:.53rem;padding:1px 4px;border:1px solid var(--br);border-radius:2px;color:var(--mt);flex-shrink:0;margin-left:4px">U'+n+'</span></div>'+
+    '<div class="td4">'+t.d+'</div>'+
+    '<div class="ta">'+
+    '<button class="tbt mb" onclick="event.stopPropagation();doMaster(\''+nm+'\',this.closest(\'.tc\'))">✓ Master</button>'+
+    '<button class="tbt fb3" onclick="event.stopPropagation();doFlag(\''+nm+'\',this.closest(\'.tc\'))">⚑ Flag</button>'+
+    '</div></div>';
+}
+
+// ===== VOCAB =====
+function buildVocab(){document.getElementById('vgrid').innerHTML=allTerms.map(t=>renderTC(t,t.unit)).join('');updateVStats();}
+function filterTerms(){
+  const q=document.getElementById('vsearch').value.toLowerCase();
+  const uf=document.getElementById('ufilter').value;
+  const sf=document.getElementById('sfilter').value;
+  let vis=0;
+  document.querySelectorAll('#vgrid .tc').forEach(c=>{
+    const nm=c.querySelector('.tn').textContent.toLowerCase();
+    const df=c.querySelector('.td4').textContent.toLowerCase();
+    const utxt=c.querySelector('span[style*="border"]')?.textContent?.replace('U','');
+    const t=allTerms.find(t=>t.n.toLowerCase()===nm);
+    const m=t&&mastered.has(t.n),fl=t&&flagged.has(t.n);
+    const ok=((!q||nm.includes(q)||df.includes(q))&&(uf==='0'||utxt===uf)&&(sf==='all'||(sf==='mastered'&&m)||(sf==='flagged'&&fl)||(sf==='unmastered'&&!m)));
+    c.style.display=ok?'':'none';if(ok)vis++;
+  });
+  document.getElementById('vstats').textContent=mastered.size+'/'+allTerms.length+' mastered · '+flagged.size+' flagged · Showing '+vis+' terms';
+}
+function updateVStats(){document.getElementById('vstats').textContent=mastered.size+'/'+allTerms.length+' mastered · '+flagged.size+' flagged · '+allTerms.length+' total terms';}
+const toggleTC=c=>c.classList.toggle('open');
+
+function doMaster(name,card){
+  const t=allTerms.find(t=>t.n===name||t.n===name.replace(/&#39;/g,"'"));
+  const nm=t?t.n:name;
+  if(mastered.has(nm)){mastered.delete(nm);toast('Unmarked: '+nm);}
+  else{mastered.add(nm);toast('✓ Mastered: '+nm,'success');}
+  saveMastered();updateDash();updateVStats();
+  document.querySelectorAll('.tc').forEach(c=>{if(c.querySelector('.tn')?.textContent===nm)c.classList.toggle('mastered',mastered.has(nm));});
+}
+function doFlag(name,card){
+  const t=allTerms.find(t=>t.n===name||t.n===name.replace(/&#39;/g,"'"));
+  const nm=t?t.n:name;
+  if(flagged.has(nm)){flagged.delete(nm);toast('Unflagged: '+nm);}
+  else{flagged.add(nm);toast('⚑ Flagged: '+nm);}
+  saveFlagged();updateVStats();
+  document.querySelectorAll('.tc').forEach(c=>{if(c.querySelector('.tn')?.textContent===nm)c.classList.toggle('flagged',flagged.has(nm));});
+}
+function resetMastered(){if(!confirm('Reset all mastered terms?'))return;mastered.clear();saveMastered();document.querySelectorAll('.tc').forEach(c=>c.classList.remove('mastered'));updateDash();updateVStats();toast('Reset.');}
+
+// ===== FLASHCARDS =====
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+function initFC(mode){
+  const u=parseInt(document.getElementById('fcusel').value);
+  let pool=allTerms.filter(t=>u===0||t.unit===u);
+  if(mode==='missed')pool=pool.filter(t=>fcDK.includes(t.n));
+  if(mode==='flagged')pool=pool.filter(t=>flagged.has(t.n));
+  if(mode==='unmastered')pool=pool.filter(t=>!mastered.has(t.n));
+  if(!pool.length){toast('No cards — try a different filter');return;}
+  fcDeck=shuffle(pool);fcIdx=0;fcKnow=[];fcDK=[];fcFlipped=false;
+  document.getElementById('fcsum').style.display='none';
+  document.getElementById('fccard').style.display='block';
+  document.getElementById('fcresult').style.display='none';
+  renderFC();
+}
+function renderFC(){
+  if(fcIdx>=fcDeck.length){showFCSum();return;}
+  const c=fcDeck[fcIdx];fcFlipped=false;
+  document.getElementById('fcinner').classList.remove('fl');
+  document.getElementById('fculbl').textContent='Unit '+c.unit+' — '+UN[c.unit];
+  document.getElementById('fculbl2').textContent='Unit '+c.unit;
+  document.getElementById('fcterm').textContent=c.n;
+  document.getElementById('fcterm').style.color=UC[c.unit];
+  document.getElementById('fcdef').textContent=c.d;
+  document.getElementById('fcresult').style.display='none';
+  document.getElementById('fcprog').textContent=(fcIdx+1)+' / '+fcDeck.length;
+  buildFCBar();
+}
+function buildFCBar(){
+  document.getElementById('fcbar').innerHTML=fcDeck.map((_,i)=>{
+    const cls=i<fcIdx?(fcKnow.includes(fcDeck[i].n)?'kn':'dk'):(i===fcIdx?'cu':'');
+    return '<div class="fdot '+cls+'"></div>';
+  }).join('');
+}
+function flipFC(){fcFlipped=!fcFlipped;document.getElementById('fcinner').classList.toggle('fl',fcFlipped);if(fcFlipped)document.getElementById('fcresult').style.display='flex';}
+function markFC(know){
+  const nm=fcDeck[fcIdx].n;
+  if(know){fcKnow.push(nm);if(!mastered.has(nm)){mastered.add(nm);saveMastered();updateDash();}}
+  else fcDK.push(nm);
+  fcIdx++;renderFC();
+}
+const skipFC=()=>{fcIdx++;renderFC();};
+function showFCSum(){
+  document.getElementById('fccard').style.display='none';
+  document.getElementById('fcresult').style.display='none';
+  document.getElementById('fcsum').style.display='block';
+  document.getElementById('fcsumst').innerHTML='<strong style="color:var(--gn)">✓ Know: '+fcKnow.length+'</strong> &nbsp; <strong style="color:var(--rd)">✗ Don\'t Know: '+fcDK.length+'</strong><br><span style="font-size:.75rem;display:block;margin-top:4px;color:var(--mt)">Mastered: '+mastered.size+'/'+allTerms.length+'</span>';
+}
+
+// ===== DIAGRAMS =====
+function buildDiagrams(){
+  const diags=[
+    {t:'Cell Membrane — Fluid Mosaic Model',svg:`<svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:var(--sf);padding:8px">
+<defs><marker id="a1" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto"><path d="M0,0 L5,2.5 L0,5 Z" fill="#4a7a8a"/></marker></defs>
+${Array.from({length:11},(_,i)=>`<circle cx="${20+i*32}" cy="40" r="8" fill="#00e5a0" opacity=".85"/>`).join('')}
+${Array.from({length:11},(_,i)=>`<circle cx="${20+i*32}" cy="120" r="8" fill="#00e5a0" opacity=".85"/>`).join('')}
+${Array.from({length:11},(_,i)=>`<line x1="${16+i*32}" y1="48" x2="${14+i*32}" y2="80" stroke="#1a4030" stroke-width="2.5" opacity=".6"/><line x1="${24+i*32}" y1="48" x2="${26+i*32}" y2="80" stroke="#1a4030" stroke-width="2.5" opacity=".6"/>`).join('')}
+${Array.from({length:11},(_,i)=>`<line x1="${16+i*32}" y1="112" x2="${14+i*32}" y2="80" stroke="#1a4030" stroke-width="2.5" opacity=".6"/><line x1="${24+i*32}" y1="112" x2="${26+i*32}" y2="80" stroke="#1a4030" stroke-width="2.5" opacity=".6"/>`).join('')}
+<rect x="52" y="24" width="26" height="112" rx="13" fill="#a29bfe" opacity=".85"/>
+<rect x="182" y="24" width="22" height="56" rx="11" fill="#fd79a8" opacity=".85"/>
+<rect x="282" y="80" width="22" height="56" rx="11" fill="#fd79a8" opacity=".85"/>
+<rect x="320" y="24" width="18" height="112" rx="9" fill="#ffd166" opacity=".8"/>
+<text x="10" y="14" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#00e5a0">Hydrophilic heads</text>
+<text x="10" y="152" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#00e5a0">Hydrophilic heads</text>
+<text x="110" y="84" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a7a8a">Hydrophobic tails</text>
+<text x="22" y="88" font-family="JetBrains Mono,monospace" font-size="8" fill="#a29bfe">Channel</text>
+<text x="188" y="18" font-family="JetBrains Mono,monospace" font-size="8" fill="#fd79a8">Receptor</text>
+<text x="323" y="18" font-family="JetBrains Mono,monospace" font-size="8" fill="#ffd166">Enzyme</text>
+</svg>`},
+    {t:'ATP Production — Cellular Respiration',svg:`<svg viewBox="0 0 380 185" xmlns="http://www.w3.org/2000/svg" style="background:var(--sf);padding:10px">
+<defs><marker id="a2" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4a7a8a"/></marker></defs>
+<text x="190" y="16" text-anchor="middle" font-family="DM Serif Display,serif" font-size="12" fill="#00e5a0">1 Glucose → ~30–32 ATP (aerobic)</text>
+<rect x="8" y="26" width="84" height="56" rx="3" fill="none" stroke="#ffd166" stroke-width="1.5"/>
+<text x="50" y="44" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#ffd166">GLYCOLYSIS</text>
+<text x="50" y="56" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#4a7a8a">Cytoplasm</text>
+<text x="50" y="70" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#00e5a0">2 ATP</text>
+<text x="50" y="80" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#4db8ff">2 NADH</text>
+<line x1="92" y1="54" x2="112" y2="54" stroke="#4a7a8a" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="112" y="26" width="84" height="56" rx="3" fill="none" stroke="#a29bfe" stroke-width="1.5"/>
+<text x="154" y="41" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#a29bfe">PYR. OXIDATION</text>
+<text x="154" y="53" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#a29bfe">+ KREBS CYCLE</text>
+<text x="154" y="66" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#00e5a0">2 ATP</text>
+<text x="154" y="78" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4db8ff">8 NADH · 2 FADH₂</text>
+<line x1="196" y1="54" x2="216" y2="54" stroke="#4a7a8a" stroke-width="1.5" marker-end="url(#a2)"/>
+<rect x="216" y="26" width="96" height="56" rx="3" fill="none" stroke="#00e5a0" stroke-width="1.5"/>
+<text x="264" y="40" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#00e5a0">ETC + CHEMIOSMOSIS</text>
+<text x="264" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4a7a8a">Inner mito. membrane</text>
+<text x="264" y="66" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="#00e5a0">~26–28 ATP</text>
+<text x="264" y="78" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#ff6b6b">O₂ + e⁻ → H₂O</text>
+<rect x="8" y="96" width="304" height="30" rx="3" fill="rgba(0,229,160,0.07)" stroke="rgba(0,229,160,0.25)" stroke-width="1"/>
+<text x="160" y="115" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="9.5" fill="#00e5a0">TOTAL: ~30–32 ATP · Fermentation (anaerobic): 2 ATP only</text>
+<text x="190" y="143" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4db8ff">NADH → ETC Complex I → H⁺ gradient → ATP synthase → ATP</text>
+<text x="190" y="157" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4db8ff">FADH₂ enters at Complex II → fewer H⁺ pumped → less ATP than NADH</text>
+<text x="190" y="171" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#mt">Fermentation: pyruvate → lactate (animal/bacteria) OR → ethanol + CO₂ (yeast)</text>
+</svg>`},
+    {t:'Photosynthesis Overview',svg:`<svg viewBox="0 0 380 170" xmlns="http://www.w3.org/2000/svg" style="background:var(--sf);padding:10px">
+<defs><marker id="a3" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#4db8ff"/></marker></defs>
+<ellipse cx="110" cy="78" rx="82" ry="40" fill="rgba(0,229,160,0.06)" stroke="#00e5a0" stroke-width="1"/>
+<text x="110" y="50" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#00e5a0">THYLAKOID MEMBRANE</text>
+<text x="110" y="63" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a7a8a">Light Reactions</text>
+<text x="110" y="76" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#ffd166">H₂O → O₂ + H⁺ + e⁻</text>
+<text x="110" y="88" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#00e5a0">Outputs: ATP + NADPH + O₂</text>
+<line x1="194" y1="78" x2="226" y2="78" stroke="#4db8ff" stroke-width="2" marker-end="url(#a3)"/>
+<text x="210" y="72" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4db8ff">ATP+NADPH</text>
+<ellipse cx="300" cy="90" rx="58" ry="46" fill="rgba(77,184,255,0.06)" stroke="#4db8ff" stroke-width="1"/>
+<text x="300" y="62" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#4db8ff">STROMA</text>
+<text x="300" y="75" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#4a7a8a">Calvin Cycle</text>
+<text x="300" y="88" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#ffd166">CO₂ + RuBP → G3P</text>
+<text x="300" y="100" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4a7a8a">(RuBisCO fixes CO₂)</text>
+<text x="300" y="112" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#00e5a0">G3P → Glucose</text>
+<text x="20" y="45" font-family="JetBrains Mono,monospace" font-size="9" fill="#ffd166">☀ LIGHT</text>
+<line x1="40" y1="51" x2="33" y2="65" stroke="#ffd166" stroke-width="1.5" marker-end="url(#a3)"/>
+<text x="10" y="138" font-family="JetBrains Mono,monospace" font-size="8" fill="#4db8ff">CO₂ input → Calvin cycle</text>
+<text x="10" y="152" font-family="JetBrains Mono,monospace" font-size="8" fill="#00e5a0">O₂ output ← photolysis of H₂O</text>
+</svg>`},
+    {t:'Hardy-Weinberg Equations',svg:`<svg viewBox="0 0 380 155" xmlns="http://www.w3.org/2000/svg" style="background:var(--sf);padding:14px">
+<text x="190" y="19" text-anchor="middle" font-family="DM Serif Display,serif" font-size="13" fill="#00e5a0">Hardy-Weinberg Equilibrium</text>
+<rect x="90" y="28" width="200" height="36" rx="4" fill="rgba(0,229,160,0.08)" stroke="rgba(0,229,160,0.3)" stroke-width="1"/>
+<text x="190" y="52" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="16" fill="#4db8ff">p + q = 1</text>
+<rect x="54" y="74" width="272" height="36" rx="4" fill="rgba(77,184,255,0.06)" stroke="rgba(77,184,255,0.25)" stroke-width="1"/>
+<text x="190" y="97" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="13" fill="#a29bfe">p² + 2pq + q² = 1</text>
+<text x="22" y="126" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#4db8ff">p = freq. dominant allele (A)</text>
+<text x="22" y="138" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#4db8ff">q = freq. recessive allele (a)</text>
+<text x="200" y="120" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#a29bfe">p² = homozygous dominant (AA)</text>
+<text x="200" y="132" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#a29bfe">2pq = heterozygous (Aa)</text>
+<text x="200" y="144" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#ffd166">q² = recessive phenotype → START HERE</text>
+<text x="22" y="150" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#ff6b6b">5 conditions required for equilibrium</text>
+</svg>`},
+    {t:'Signal Transduction Pathway',svg:`<svg viewBox="0 0 380 160" xmlns="http://www.w3.org/2000/svg" style="background:var(--sf);padding:8px">
+<defs><marker id="a4" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#a29bfe"/></marker></defs>
+<text x="10" y="16" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#4a7a8a">EXTRACELLULAR</text>
+<circle cx="56" cy="34" r="12" fill="#fd79a8" opacity=".85"/>
+<text x="56" y="38" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white">Ligand</text>
+<rect x="36" y="48" width="40" height="44" rx="6" fill="#a29bfe" opacity=".8"/>
+<text x="56" y="73" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white">Receptor</text>
+<line x1="0" y1="92" x2="380" y2="92" stroke="var(--br)" stroke-width="2"/>
+<text x="10" y="106" font-family="JetBrains Mono,monospace" font-size="7.5" fill="#4a7a8a">INTRACELLULAR</text>
+<line x1="74" y1="88" x2="128" y2="112" stroke="#a29bfe" stroke-width="2" marker-end="url(#a4)"/>
+<circle cx="144" cy="118" r="14" fill="#ffd166" opacity=".85"/>
+<text x="144" y="122" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="black">cAMP</text>
+<text x="144" y="104" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7" fill="#4a7a8a">2nd messenger</text>
+<line x1="158" y1="118" x2="196" y2="118" stroke="#a29bfe" stroke-width="2" marker-end="url(#a4)"/>
+<rect x="198" y="107" width="56" height="22" rx="3" fill="#4db8ff" opacity=".85"/>
+<text x="226" y="121" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="white">Kinase A</text>
+<line x1="254" y1="118" x2="294" y2="118" stroke="#a29bfe" stroke-width="2" marker-end="url(#a4)"/>
+<rect x="294" y="100" width="72" height="38" rx="3" fill="#00e5a0" opacity=".8"/>
+<text x="330" y="118" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="black">RESPONSE</text>
+<text x="330" y="130" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="7.5" fill="black">gene exp / enzyme</text>
+<text x="56" y="155" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#fd79a8">Reception</text>
+<text x="160" y="155" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#ffd166">Transduction</text>
+<text x="330" y="155" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="8" fill="#00e5a0">Response</text>
+</svg>`},
+  ];
+  document.getElementById('dgrid').innerHTML=diags.map(d=>'<div class="dc"><h3>'+d.t+'</h3>'+d.svg+'</div>').join('');
+}
+
+// ===== MCQ =====
+function buildMCQ(){renderQ();renderDots();}
+function renderQ(){
+  const q=MCQ[curQ],ans=mcqAns[curQ],fl=mcqFl.has(curQ);
+  document.getElementById('mcon').innerHTML=
+    '<div class="mcard"><div class="mmeta"><span>Q'+(curQ+1)+'/'+MCQ.length+' · '+q.unit+'</span>'+
+    '<button class="mfb'+(fl?' flagged':'')+'" onclick="toggleMFL('+curQ+')">'+(fl?'⚑ Flagged':'⚐ Flag')+'</button></div>'+
+    (q.stim?'<div class="mstim">"'+q.stim+'"</div>':'')+
+    '<div class="mq">'+q.q+'</div>'+
+    '<div class="mopts">'+q.opts.map((o,i)=>'<button class="mo'+(ans!==undefined?(i===q.c?' correct':(i===ans?' wrong':'')):'')+'\" onclick="ansQ('+i+')" '+(ans!==undefined?'disabled':'')+'>'+o+'</button>').join('')+'</div>'+
+    '<div class="mexp'+(ans!==undefined?' show':'')+'">'+
+    (ans!==undefined?'<strong>'+(ans===q.c?'✅ Correct!':'❌ Incorrect.')+'</strong><br><br>':'')+q.exp+'</div></div>';
+  document.getElementById('msctxt').textContent='Score: '+Object.entries(mcqAns).filter(([i,a])=>a===MCQ[+i].c).length+'/'+Object.keys(mcqAns).length;
+}
+function toggleMFL(i){mcqFl.has(i)?mcqFl.delete(i):mcqFl.add(i);renderQ();renderDots();}
+function renderDots(){
+  document.getElementById('mdots').innerHTML=MCQ.map((q,i)=>{
+    let cls=i===curQ?'current':mcqAns[i]!==undefined?(mcqAns[i]===q.c?'correct':'wrong'):'';
+    if(mcqFl.has(i))cls+=' flagged';
+    return '<div class="md '+cls.trim()+'" onclick="jumpQ('+i+')" title="Q'+(i+1)+'"></div>';
+  }).join('');
+}
+function ansQ(i){if(mcqAns[curQ]!==undefined)return;mcqAns[curQ]=i;renderQ();renderDots();updateDash();}
+const nextQ=()=>{if(curQ<MCQ.length-1){curQ++;renderQ();renderDots();}};
+const prevQ=()=>{if(curQ>0){curQ--;renderQ();renderDots();}};
+const jumpQ=i=>{curQ=i;renderQ();renderDots();};
+function resetMCQ(){mcqAns={};mcqFl.clear();curQ=0;renderQ();renderDots();updateDash();}
+function retakeMissed(){const m=Object.entries(mcqAns).filter(([i,a])=>a!==MCQ[+i].c).map(([i])=>+i);if(!m.length){toast('All correct! 🎉','success');return;}mcqAns={};curQ=m[0];renderQ();renderDots();}
+
+// ===== COMPARISONS =====
+function buildComparisons(){
+  document.getElementById('compcon').innerHTML=COMPS.map(c=>
+    '<h3 style="font-family:\'DM Serif Display\',serif;color:var(--ac);margin:20px 0 10px;font-size:1.2rem">'+c.t+'</h3>'+
+    '<div style="overflow-x:auto;margin-bottom:4px"><table class="ct"><thead><tr><th>Category</th>'+c.cols.map(col=>'<th style="color:var(--a2)">'+col+'</th>').join('')+'</tr></thead><tbody>'+
+    c.rows.map(r=>'<tr><td>'+r[0]+'</td>'+r.slice(1).map(v=>'<td>'+v+'</td>').join('')+'</tr>').join('')+
+    '</tbody></table></div>'
+  ).join('');
+}
+
+// ===== BIG IDEAS =====
+function buildBigIdeas(){
+  document.getElementById('bigcon').innerHTML=BIGIDEAS.map((b,i)=>
+    '<div class="bic"><div class="bih" onclick="toggleBI(this,\'bi'+i+'\')">'+
+    '<span class="bitg" style="color:'+b.c+';border-color:'+b.c+'">'+b.code+'</span>'+
+    '<div class="bin" style="color:'+b.c+'">'+b.nm+'</div>'+
+    '<div style="margin-left:auto;color:var(--mt);font-size:.75rem;flex-shrink:0;padding-left:8px">▼</div></div>'+
+    '<div class="bib" id="bi'+i+'"><p>'+b.d+'</p>'+
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin-bottom:5px">Unit Connections</div>'+
+    b.con.map(c=>'<p style="font-size:.82rem;color:var(--mt);line-height:1.58">→ '+c+'</p>').join('')+
+    '<div style="font-family:\'JetBrains Mono\',monospace;font-size:.63rem;text-transform:uppercase;letter-spacing:1px;color:var(--mt);margin:9px 0 5px">Exam Examples</div>'+
+    b.ex.map(e=>'<p style="font-size:.82rem;line-height:1.58">• '+e+'</p>').join('')+
+    '</div></div>'
+  ).join('');
+}
+function toggleBI(h,id){const b=document.getElementById(id);b.classList.toggle('open');h.querySelector('div:last-child').style.transform=b.classList.contains('open')?'rotate(180deg)':'';}
+
+// ===== LABS =====
+function buildLabs(){
+  document.getElementById('lablist').innerHTML=LABS.map(l=>
+    '<div class="lc"><div class="ln" style="color:'+l.c+'">'+String(l.n).padStart(2,'0')+'</div>'+
+    '<div class="lb"><h4>'+l.nm+'</h4><p>'+l.sk+'</p>'+
+    '<p style="margin-top:4px;font-size:.77rem;color:var(--a2)">📊 '+l.v+'</p>'+
+    '<span class="ltag" style="background:'+l.c+'22;color:'+l.c+';border:1px solid '+l.c+'44">'+l.u+'</span></div></div>'
+  ).join('');
+}
+
+// ===== FRQ =====
+function buildFRQ(){
+  document.getElementById('frqov').innerHTML=`<div class="tipb"><h4>FRQ Section Structure (90 min, 50% of score)</h4><ul>
+    <li><strong>2 Long FRQs</strong> (~8–10 pts each, ~22 min) — multi-part, multi-unit questions</li>
+    <li><strong>4 Short FRQs</strong> (~4 pts each, ~11 min) — focused on one concept or skill</li>
+    <li>One FRQ always tests <strong>experimental design</strong></li>
+    <li>One FRQ always tests <strong>data/graph analysis</strong></li>
+    <li>Score parts independently — partial credit is ALWAYS available</li>
+  </ul></div>
+  <div class="g2"><div class="card"><h3>Long FRQ Anatomy</h3><ul>
+    <li>Part A: Describe or explain a biological process</li><li>Part B: Interpret a graph or diagram</li>
+    <li>Part C: Experimental design or prediction + justification</li><li>Part D: Connect to a Big Idea or another unit</li>
+    <li>Justify ALL claims with molecular mechanisms</li></ul></div>
+  <div class="card"><h3>Short FRQ Anatomy</h3><ul>
+    <li>Usually 2–3 focused sub-parts</li><li>"Predict + Justify" format very common</li>
+    <li>Data interpretation with specific values required</li><li>Calculate (H-W, chi-square) + show all work</li>
+    <li>2–4 sentences per part is typically sufficient</li></ul></div></div>
+  <div class="tipb" style="background:rgba(255,107,107,0.05);border-color:rgba(255,107,107,0.2)"><h4 style="color:var(--rd)">🚫 FRQ Mistakes That Cost Points</h4><ul>
+    <li>Vague language: "the cell does this to survive" = 0 pts. Name the specific mechanism.</li>
+    <li>"Because it needs to" is circular reasoning. Explain HOW and WHY at the molecular level.</li>
+    <li>Skipping units or significant figures on all calculations.</li>
+    <li>Not referencing specific data values when asked to "use the data."</li>
+    <li>Contradicting yourself — if you write something wrong AND right for the same point, you score 0.</li>
+    <li>Leaving any sub-part blank — partial credit counts, write something intelligent.</li>
+  </ul></div>`;
+
+  document.getElementById('frqcw').innerHTML=`<div class="ntc">These command words mean SPECIFIC things to AP graders. Wrong approach = point lost.</div>
+  <div class="g2">${[
+    {w:'Describe',d:'State WHAT something is or does. Give specific details and characteristics. No mechanism required — but be precise.'},
+    {w:'Explain',d:'Give the MECHANISM — HOW and WHY something happens. Not just what, but the biological process causing it.'},
+    {w:'Predict',d:'State a specific future outcome AND direction. Always follow with Justify. "The rate will increase because..."'},
+    {w:'Justify',d:'Provide biological reasoning/evidence that supports your prediction or claim. Use biological principles, not intuition.'},
+    {w:'Calculate',d:'Show ALL math with units. Write the formula first, plug in values, show all steps. Do not skip to the answer.'},
+    {w:'Identify',d:'Name or point out something specific. Usually brief — 1 word to 1 sentence.'},
+    {w:'Evaluate',d:'Assess whether data support a claim. Is the evidence consistent? Are controls valid? What are limitations?'},
+    {w:'Design',d:'Plan a complete experiment: hypothesis, IV, DV, control group, controlled variables, measurement method.'},
+    {w:'Construct',d:'Draw a labeled graph, diagram, or phylogeny. Must include all required labels, units, and axis titles.'},
+    {w:'Compare',d:'State BOTH similarities AND differences. Describe BOTH items, not just one.'},
+  ].map(c=>'<div class="card"><h3><span class="cw">'+c.w+'</span></h3><p style="font-size:.84rem;line-height:1.62">'+c.d+'</p></div>').join('')}</div>`;
+
+  document.getElementById('frqed').innerHTML=`<div class="tipb"><h4>Experimental Design FRQ — Complete Checklist</h4><ul>
+    <li><strong>Hypothesis:</strong> "If [IV manipulation], then [DV outcome], because [biological mechanism]."</li>
+    <li><strong>Independent Variable (IV):</strong> The ONE thing you deliberately change between groups.</li>
+    <li><strong>Dependent Variable (DV):</strong> What you MEASURE as a result. Must include units.</li>
+    <li><strong>Control Group:</strong> No treatment (or standard). Identical to experimental group except for IV.</li>
+    <li><strong>Controlled Variables:</strong> List 2–3 things kept constant (temperature, pH, time, concentration).</li>
+    <li><strong>Replication:</strong> Multiple trials or large sample size — reduces random error.</li>
+    <li><strong>How to measure:</strong> State specific method and units (absorbance at 410 nm, mL O₂/min).</li>
+    <li><strong>Statistical test:</strong> State which test (t-test, chi-square) and what result supports or refutes your hypothesis.</li>
+  </ul></div>
+  <div class="mr"><strong>Example prompt:</strong> "Design an experiment to test whether temperature affects enzyme activity."<br><br>
+  <strong>H:</strong> If temperature increases from 25°C to 45°C, enzyme activity will increase then decrease above the optimal temperature, because increased temperature raises collision frequency but high temperatures denature the active site.<br>
+  <strong>IV:</strong> Temperature (25°C, 35°C, 45°C, 55°C, 65°C) — 5 treatment groups<br>
+  <strong>DV:</strong> Rate of substrate breakdown — change in absorbance at 410 nm per minute (spectrophotometer)<br>
+  <strong>Control:</strong> 25°C tube with buffer only, no enzyme<br>
+  <strong>Controlled variables:</strong> pH (7.4), enzyme concentration (0.1 mg/mL), substrate concentration (1.0 mM), reaction time (5 min)<br>
+  <strong>Replication:</strong> 3 trials per temperature; calculate mean ± SD; one-way ANOVA for significance</div>`;
+
+  document.getElementById('frqda').innerHTML=`<div class="tipb"><h4>Data Analysis FRQ — Step by Step</h4><ul>
+    <li><strong>Read the axes first:</strong> What is X? What is Y? Units? Scale (linear vs log)? Time range?</li>
+    <li><strong>Identify the trend:</strong> Increasing, decreasing, plateau, peak, exponential, sigmoidal?</li>
+    <li><strong>Reference specific data:</strong> Don't say "increased." Say "increased from 2.3 to 8.7 μmol/min between 0 and 10 min."</li>
+    <li><strong>Never extrapolate beyond the data.</strong> Only describe what is actually shown in the graph.</li>
+    <li><strong>Error bars:</strong> Overlapping error bars suggest the difference may not be statistically significant.</li>
+  </ul></div>
+  <div class="card" style="margin-bottom:12px"><h3>Chi-Square Test</h3>
+  <div style="font-family:'JetBrains Mono',monospace;font-size:1.05rem;color:var(--ac);padding:8px 0">χ² = Σ [ (O − E)² / E ]</div>
+  <ul style="font-size:.83rem;line-height:1.85">
+    <li>O = observed count; E = expected count (from null hypothesis)</li>
+    <li>Degrees of freedom (df) = number of categories − 1</li>
+    <li>χ² &gt; critical value at p = 0.05 → REJECT null → result is significant (not due to chance)</li>
+    <li>χ² &lt; critical value → FAIL TO REJECT null → consistent with chance (null supported)</li>
+  </ul></div>
+  <div class="card"><h3>Hardy-Weinberg Calculation (Step by Step)</h3><ul style="font-size:.83rem;line-height:1.85">
+    <li>Step 1: recessive phenotype frequency = q² (convert % to decimal)</li>
+    <li>Step 2: q = √q²</li>
+    <li>Step 3: p = 1 − q</li>
+    <li>Step 4: p² = homozygous dominant frequency; 2pq = heterozygous frequency</li>
+    <li>Step 5: multiply by N for actual number of individuals</li>
+    <li>CHECK: p² + 2pq + q² MUST equal 1.0 ✓</li>
+  </ul></div>`;
+
+  document.getElementById('frqld').innerHTML=`<div class="ntc">Long FRQs are 8–10 points. Read ALL parts before writing. Label each part clearly.</div>
+  ${[['Read all parts first','Identify which biological concept each part targets and which Science Practice (explain, calculate, design, analyze) is being tested.'],
+  ['Underline command words','Describe vs Explain vs Predict + Justify require fundamentally different answers. Different command = different grading criteria.'],
+  ['Mechanism, not description','Bad: "photosynthesis produces glucose." Good: "RuBisCO catalyzes CO₂ fixation to RuBP in the stroma, producing 3-PGA, which is reduced by ATP and NADPH from the light reactions into G3P — the precursor to glucose."'],
+  ['Claim → mechanism → connection','For each paragraph: state your claim → name the specific molecule/structure/process → explain the mechanism → connect back to the question.'],
+  ['Scientific vocabulary','Use precise terms consistently. Define terms on first use if there is any ambiguity. Vague language earns no credit.'],
+  ['Complexity/connection parts','State the biological principle → apply it to this specific context → explain what it predicts or explains about the given scenario.'],
+  ].map(([n,d],i)=>'<div class="fs2"><div class="fn">'+(i+1)+'</div><div class="fb4"><strong>'+n+':</strong> '+d+'</div></div>').join('')}`;
+
+  document.getElementById('frqsd').innerHTML=`<div class="ntc">Short FRQs = 4 points each. Be precise, mechanistic, and concise — 2–4 sentences max per sub-part.</div>
+  <div class="mr"><strong>Prompt:</strong> A drug blocks ATP synthesis. Predict the effect on active transport. Justify.<br><br>
+  <strong>Prediction:</strong> Active transport will cease. <strong>Justification:</strong> Active transport (e.g., the Na⁺/K⁺ pump) requires ATP hydrolysis to drive conformational changes that move ions against their electrochemical gradients. Without ATP, the pump cannot translocate Na⁺ out or K⁺ in — ion gradients will dissipate by passive diffusion.</div>
+  <div class="mr"><strong>Prompt:</strong> 36% of a mouse population cannot taste bitter compounds (recessive). Calculate heterozygous frequency assuming H-W equilibrium.<br><br>
+  q² = 0.36 → q = 0.6 → p = 0.4 → <strong>2pq = 2(0.4)(0.6) = 0.48</strong> (48% of population is heterozygous)</div>
+  <div class="mr"><strong>Prompt:</strong> Describe ONE piece of molecular evidence for the endosymbiotic origin of mitochondria.<br><br>
+  Mitochondria contain their own circular DNA lacking histones, resembling the DNA organization of alpha-proteobacteria — the proposed prokaryotic ancestor. This supports the endosymbiotic hypothesis because no eukaryotic organelle should carry bacterial-type DNA unless it descended from an engulfed free-living prokaryote.</div>`;
+
+  document.getElementById('frqma').innerHTML=`<div class="mr"><strong>Sample Long FRQ Part:</strong> "Explain how the plasma membrane enables selective permeability. Include two specific transport mechanisms."<br><br>
+  The plasma membrane consists of a phospholipid bilayer with hydrophilic phosphate heads facing aqueous environments and hydrophobic fatty acid tails forming the membrane interior. This structure makes the membrane selectively permeable: small nonpolar molecules (O₂, CO₂, steroid hormones) dissolve through the hydrophobic core by simple diffusion — moving down their concentration gradient without protein assistance or energy expenditure.<br><br>
+  Large polar molecules and ions cannot cross the hydrophobic core unaided. Glucose enters cells via facilitated diffusion through GLUT carrier proteins — moving from high to low concentration passively, no ATP required, but a channel protein is necessary due to glucose's polarity and size.<br><br>
+  The Na⁺/K⁺-ATPase exemplifies active transport: it moves 3 Na⁺ out and 2 K⁺ in per ATP hydrolyzed — against both concentration gradients. ATP is required because movement opposes the electrochemical gradient. This pump maintains the resting membrane potential essential for nerve impulse generation and muscle contraction.<br><br>
+  <strong style="color:var(--a2)">Big Idea SYI connection:</strong> Selective permeability allows the cell to function as a regulated system — maintaining internal ionic composition, pH, and solute concentration independent of the external environment, enabling cellular homeostasis.</div>`;
+}
+const showFRQTab=(btn,id)=>{document.querySelectorAll('#frq .tp').forEach(b=>b.classList.remove('active'));document.querySelectorAll('#frq .tpn').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(id).classList.add('active');};
+
+// ===== TIMELINE =====
+const TLC={cell:'#00e5a0',genetics:'#4db8ff',evolution:'#fd79a8',biotech:'#ffd166'};
+function buildTimeline(){
+  const f=document.getElementById('tlfilters');
+  ['cell','genetics','evolution','biotech'].forEach(c=>{const b=document.createElement('button');b.className='tlbtn';b.textContent=c.charAt(0).toUpperCase()+c.slice(1);b.onclick=()=>filterTL(c,b);f.appendChild(b);});
+  renderTL(null);
+}
+const renderTL=cat=>{const evts=cat?TIMELINE.filter(e=>e.cat===cat):TIMELINE;document.getElementById('biotl').innerHTML=evts.map(e=>'<div class="tli"><div class="tly">'+e.yr+'</div><div class="tldot" style="background:'+TLC[e.cat]+';border-color:var(--bg)"></div><div class="tlc"><strong style="color:'+TLC[e.cat]+'">'+e.ev+'</strong><p>'+e.d+'</p></div></div>').join('');};
+function filterTL(cat,btn){document.querySelectorAll('.tlbtn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderTL(cat);}
+
+// ===== MISTAKES =====
+const buildMistakes=()=>{document.getElementById('mlist').innerHTML=MISTAKES.map(m=>'<div class="mc2"><h4>'+m.t+'</h4><p>'+m.d+'</p><div class="mfix">'+m.fix+'</div></div>').join('');};
+
+// ===== KEYBOARD =====
+function setupKeys(){
+  document.addEventListener('keydown',e=>{
+    const tag=document.activeElement.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
+    if(document.getElementById('kbm').classList.contains('open')){if(e.key==='Escape')closeKB();return;}
+    switch(e.key){
+      case'ArrowRight':nextQ();break;case'ArrowLeft':prevQ();break;
+      case' ':e.preventDefault();if(fcDeck.length)flipFC();break;
+      case'k':case'K':if(fcFlipped)markFC(true);break;
+      case'd':if(fcFlipped)markFC(false);break;
+      case'a':case'A':ansQ(0);break;case'b':case'B':ansQ(1);break;
+      case'c':case'C':ansQ(2);break;case'D':ansQ(3);break;
+      case't':case'T':toggleScheme();break;
+      case'+':case'=':adjFont(1);break;case'-':adjFont(-1);break;
+      case'p':case'P':window.print();break;
+      case'e':case'E':exportNotes();break;
+      case'?':openKB();break;
+      case'Escape':{const s=document.getElementById('vsearch');if(s){s.value='';filterTerms();}}break;
+    }
+  });
+}
+
+// ===== INIT =====
+function init(){
+  applyScheme(localStorage.getItem('bio-sc')||'dark');
+  adjFont(0);
+  buildWeights();buildUnits();buildVocab();buildDiagrams();buildMCQ();
+  buildComparisons();buildBigIdeas();buildLabs();buildFRQ();buildTimeline();buildMistakes();
+  buildTOD();updateDash();setupKeys();renderTimer();
+}
+window.addEventListener('DOMContentLoaded',init);
+</script></body></html>
