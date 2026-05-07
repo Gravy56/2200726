@@ -1,0 +1,1477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merch Makers: Comic Book Assembly</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,700;1,400&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #111111;
+    --yellow: #FFD600;
+    --red: #E63946;
+    --blue: #1B4FD8;
+    --cyan: #4CC9F0;
+    --white: #FAFAF5;
+    --panel-bg: #1A1A2E;
+    --border: 4px solid var(--ink);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--ink);
+    font-family: 'Comic Neue', cursive;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    cursor: none;
+  }
+
+  /* Custom cursor - crosshair pen nib */
+  .cursor {
+    position: fixed;
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease;
+  }
+  .cursor::before {
+    content: '✏️';
+    font-size: 20px;
+    line-height: 1;
+  }
+  .cursor.clicking::before { transform: scale(0.8); }
+
+  /* Halftone background pattern */
+  .halftone {
+    background-image: radial-gradient(circle, rgba(0,0,0,0.15) 1px, transparent 1px);
+    background-size: 14px 14px;
+  }
+
+  /* ─── SLIDESHOW WRAPPER ─── */
+  #slideshow {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: none;
+  }
+
+  .slide.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  /* ─── PANEL CHROME ─── */
+  .panel {
+    position: relative;
+    border: 5px solid var(--ink);
+    box-shadow: 8px 8px 0 var(--ink);
+    overflow: hidden;
+    background: var(--white);
+  }
+
+  /* ─── NAVIGATION ─── */
+  #nav {
+    position: fixed;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    z-index: 1000;
+    background: var(--yellow);
+    border: 3px solid var(--ink);
+    box-shadow: 4px 4px 0 var(--ink);
+    padding: 8px 20px;
+    border-radius: 2px;
+  }
+
+  .nav-btn {
+    background: var(--ink);
+    color: var(--yellow);
+    border: none;
+    font-family: 'Bangers', cursive;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    padding: 6px 18px;
+    cursor: pointer;
+    transition: transform 0.15s var(--ease-spring), background 0.1s;
+    border-radius: 2px;
+  }
+  .nav-btn:hover {
+    transform: scale(1.08) translateY(-2px);
+    background: var(--red);
+  }
+  .nav-btn:active { transform: scale(0.95); }
+
+  #slide-counter {
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    color: var(--ink);
+    min-width: 70px;
+    text-align: center;
+  }
+
+  /* Progress dots */
+  #dots {
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+  }
+  .dot {
+    width: 12px; height: 12px;
+    border: 2px solid var(--white);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s var(--ease-spring);
+    background: transparent;
+  }
+  .dot.active {
+    background: var(--yellow);
+    border-color: var(--yellow);
+    transform: scale(1.4);
+  }
+
+  /* ─── INK SPLASH TRANSITION ─── */
+  #ink-splash {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+  #ink-splash svg {
+    width: 100vmax;
+    height: 100vmax;
+    transform: scale(0);
+    transition: transform 0.35s cubic-bezier(0.55, 0, 1, 0.45),
+                opacity 0.15s ease 0.35s;
+  }
+  #ink-splash.splashing {
+    opacity: 1;
+  }
+  #ink-splash.splashing svg {
+    transform: scale(1.6);
+  }
+
+  /* ─── SPEECH BUBBLES ─── */
+  .speech-bubble {
+    position: relative;
+    background: var(--white);
+    border: 3px solid var(--ink);
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    line-height: 1.3;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -16px;
+    left: 24px;
+    border: 8px solid transparent;
+    border-top-color: var(--ink);
+  }
+  .speech-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 26px;
+    border: 6px solid transparent;
+    border-top-color: var(--white);
+    z-index: 1;
+  }
+
+  .thought-bubble {
+    position: relative;
+    background: var(--white);
+    border: 3px solid var(--ink);
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+  }
+  .thought-bubble::after, .thought-bubble::before {
+    content: '';
+    position: absolute;
+    bottom: -14px;
+    left: 20px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--white);
+    border: 3px solid var(--ink);
+  }
+  .thought-bubble::after {
+    bottom: -22px;
+    left: 14px;
+    width: 7px; height: 7px;
+  }
+
+  /* Action words */
+  .action-word {
+    font-family: 'Bangers', cursive;
+    letter-spacing: 3px;
+    text-shadow: 4px 4px 0 var(--ink);
+    display: inline-block;
+    transform-origin: center;
+    animation: actionPop 0.5s var(--ease-spring) both;
+  }
+
+  @keyframes actionPop {
+    0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  /* Star burst */
+  .starburst {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .starburst-bg {
+    position: absolute;
+    inset: -20px;
+    background: var(--yellow);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    animation: starSpin 4s linear infinite;
+  }
+
+  @keyframes starSpin {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.05); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  /* Panel enter animations */
+  .panel-enter {
+    animation: panelSlam 0.5s var(--ease-spring) both;
+  }
+  @keyframes panelSlam {
+    0% { transform: scale(1.1) rotate(1deg); opacity: 0; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+
+  .slide-in-left {
+    animation: slideLeft 0.6s var(--ease-out) both;
+  }
+  @keyframes slideLeft {
+    0% { transform: translateX(-60px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  .slide-in-right {
+    animation: slideRight 0.6s var(--ease-out) both;
+  }
+  @keyframes slideRight {
+    0% { transform: translateX(60px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+  }
+
+  .slide-in-up {
+    animation: slideUp 0.6s var(--ease-out) both;
+  }
+  @keyframes slideUp {
+    0% { transform: translateY(50px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .pop-in {
+    animation: popIn 0.5s var(--ease-spring) both;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Delay utilities */
+  .d1 { animation-delay: 0.1s; }
+  .d2 { animation-delay: 0.25s; }
+  .d3 { animation-delay: 0.4s; }
+  .d4 { animation-delay: 0.55s; }
+  .d5 { animation-delay: 0.7s; }
+  .d6 { animation-delay: 0.85s; }
+  .d7 { animation-delay: 1.0s; }
+
+  /* Wiggle idle animation */
+  .wiggle {
+    animation: wiggle 3s ease-in-out infinite;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-1deg); }
+    50% { transform: rotate(1deg); }
+  }
+
+  /* Bounce idle */
+  .bounce {
+    animation: bounce 2s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 1 — TITLE
+  ──────────────────────────────────────────── */
+  #slide-1 {
+    background: var(--panel-bg);
+  }
+
+  .s1-layout {
+    width: 92vw;
+    height: 88vh;
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 0;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--yellow);
+  }
+
+  .s1-main {
+    background: var(--yellow);
+    padding: 48px 52px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .s1-main .halftone {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .s1-kicker {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 6px;
+    color: var(--ink);
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: slideLeft 0.6s var(--ease-out) 0.2s both;
+  }
+
+  .s1-title {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(4rem, 9vw, 7.5rem);
+    line-height: 0.95;
+    color: var(--ink);
+    text-shadow: 5px 5px 0 rgba(0,0,0,0.15);
+    opacity: 0;
+    animation: panelSlam 0.7s var(--ease-spring) 0.35s both;
+  }
+
+  .s1-subtitle {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1.5rem;
+    color: var(--ink);
+    margin-top: 20px;
+    opacity: 0;
+    animation: slideUp 0.6s var(--ease-out) 0.7s both;
+  }
+
+  .s1-tagline {
+    font-size: 1rem;
+    color: var(--ink);
+    font-style: italic;
+    margin-top: 12px;
+    max-width: 400px;
+    opacity: 0;
+    animation: slideUp 0.5s var(--ease-out) 0.9s both;
+  }
+
+  .s1-sidebar {
+    background: var(--panel-bg);
+    border-left: 5px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 20px;
+  }
+
+  .day2-badge {
+    width: 180px;
+    height: 180px;
+    background: var(--red);
+    border: 5px solid var(--ink);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 6px 6px 0 var(--ink);
+    opacity: 0;
+    animation: popIn 0.8s var(--ease-spring) 0.5s both;
+  }
+  .day2-badge .top { font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 3px; color: var(--yellow); }
+  .day2-badge .big { font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--white); line-height: 1; }
+  .day2-badge .excl { font-family: 'Bangers', cursive; font-size: 3.5rem; color: var(--yellow); line-height: 1; }
+
+  .s1-bubbles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 2 — WHERE WE LEFT OFF
+  ──────────────────────────────────────────── */
+  #slide-2 {
+    background: #f0ede0;
+  }
+  .s2-layout {
+    width: 92vw;
+    height: 88vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 0;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+  }
+  .s2-header {
+    grid-column: 1 / -1;
+    background: var(--ink);
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 5px solid var(--ink);
+  }
+  .s2-header h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    color: var(--yellow);
+    letter-spacing: 4px;
+  }
+  .issue-tag {
+    font-family: 'Bangers', cursive;
+    background: var(--red);
+    color: var(--white);
+    padding: 4px 14px;
+    font-size: 1rem;
+    letter-spacing: 2px;
+    border: 2px solid var(--white);
+  }
+
+  .s2-left {
+    background: var(--panel-bg);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-right: 5px solid var(--ink);
+    position: relative;
+    overflow: hidden;
+  }
+  .s2-left .halftone {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    padding: 12px 16px;
+  }
+  .check-icon {
+    width: 32px; height: 32px;
+    background: #2ecc71;
+    border: 3px solid var(--ink);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    font-weight: bold;
+    color: var(--ink);
+  }
+  .check-item span {
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    color: var(--white);
+    font-size: 1rem;
+  }
+
+  .not-yet {
+    background: var(--red);
+    border: 3px solid var(--ink);
+    padding: 12px 20px;
+    text-align: center;
+    margin-top: auto;
+    font-family: 'Bangers', cursive;
+    color: var(--white);
+    font-size: 1.4rem;
+    letter-spacing: 3px;
+    animation: wiggle 2s ease-in-out infinite 1.5s;
+  }
+
+  .s2-right {
+    background: var(--white);
+    padding: 36px 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    position: relative;
+  }
+  .s2-right h3 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.8rem;
+    color: var(--ink);
+    letter-spacing: 2px;
+    line-height: 1;
+  }
+  .s2-right p {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  .arrow-visual {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin: 4px 0;
+  }
+  .arrow-line {
+    height: 5px;
+    background: var(--yellow);
+    flex: 1;
+    border: 2px solid var(--ink);
+  }
+  .arrow-head {
+    font-size: 2rem;
+    color: var(--yellow);
+    text-shadow: 2px 2px 0 var(--ink);
+    font-family: 'Bangers', cursive;
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 3 — PAGE ANATOMY
+  ──────────────────────────────────────────── */
+  #slide-3 { background: var(--white); }
+  .s3-layout {
+    width: 92vw;
+    height: 88vh;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--red);
+    background: var(--white);
+  }
+  .s3-header {
+    background: var(--ink);
+    padding: 16px 32px;
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    color: var(--yellow);
+    letter-spacing: 5px;
+    border-bottom: 5px solid var(--ink);
+  }
+  .s3-panels-demo {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    border-bottom: 5px solid var(--ink);
+  }
+  .demo-panel {
+    border: 3px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  .demo-panel.big {
+    grid-row: 1 / 3;
+    background: var(--panel-bg);
+    color: var(--yellow);
+    font-size: 1rem;
+  }
+  .demo-panel.small-top {
+    background: #e8e8e8;
+    color: #666;
+    border-bottom-width: 1.5px;
+  }
+  .demo-panel.small-bottom {
+    background: #f0f0f0;
+    color: #666;
+    border-top-width: 1.5px;
+  }
+
+  .gutter-label {
+    position: absolute;
+    right: -1px;
+    top: 50%;
+    transform: translateY(-50%) translateX(50%) rotate(90deg);
+    font-family: 'Comic Neue', cursive;
+    font-size: 0.6rem;
+    color: #999;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    z-index: 5;
+    background: white;
+    padding: 2px 4px;
+  }
+
+  .panel-tag {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: rgba(0,0,0,0.7);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    letter-spacing: 1px;
+    font-family: 'Bangers', cursive;
+  }
+  .demo-panel.big .panel-tag {
+    background: var(--yellow);
+    color: var(--ink);
+  }
+
+  .panel-demo-label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-align: center;
+  }
+
+  .s3-vocab {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+  }
+  .vocab-card {
+    border: 2px solid var(--ink);
+    border-top: none;
+    padding: 14px 16px;
+    background: var(--white);
+    position: relative;
+  }
+  .vocab-card:not(:last-child) {
+    border-right: none;
+  }
+  .vocab-card .term {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: var(--red);
+    letter-spacing: 1px;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .vocab-card .def {
+    font-size: 0.82rem;
+    color: #444;
+    line-height: 1.3;
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 4 — TOOLKIT
+  ──────────────────────────────────────────── */
+  #slide-4 { background: var(--panel-bg); }
+  .s4-layout {
+    width: 92vw;
+    height: 88vh;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--cyan);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--panel-bg);
+  }
+  .s4-header {
+    background: var(--yellow);
+    border-bottom: 5px solid var(--ink);
+    padding: 16px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .s4-header h2 {
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    letter-spacing: 5px;
+    color: var(--ink);
+  }
+  .s4-tools {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0;
+  }
+  .tool-card {
+    border: 3px solid var(--ink);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.2s var(--ease-spring);
+    cursor: pointer;
+  }
+  .tool-card:hover { transform: scale(1.02) translateY(-3px); z-index: 2; }
+  .tool-card-header {
+    padding: 14px 20px 12px;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+    border-bottom: 3px solid var(--ink);
+    color: var(--ink);
+  }
+  .tool-role {
+    font-family: 'Bangers', cursive;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    padding: 6px 20px;
+    border-bottom: 2px solid rgba(0,0,0,0.2);
+    opacity: 0.8;
+  }
+  .tool-desc {
+    padding: 16px 20px;
+    font-size: 1rem;
+    line-height: 1.4;
+    color: #ddd;
+    flex: 1;
+  }
+  .tool-card[data-color="cyan"] { background: #16213e; }
+  .tool-card[data-color="cyan"] .tool-card-header { background: var(--cyan); }
+  .tool-card[data-color="cyan"] .tool-role { color: var(--cyan); }
+  .tool-card[data-color="pink"] { background: #16213e; }
+  .tool-card[data-color="pink"] .tool-card-header { background: #F72585; }
+  .tool-card[data-color="pink"] .tool-role { color: #F72585; }
+  .tool-card[data-color="yellow"] { background: #16213e; }
+  .tool-card[data-color="yellow"] .tool-card-header { background: var(--yellow); }
+  .tool-card[data-color="yellow"] .tool-role { color: var(--yellow); }
+  .tool-card[data-color="green"] { background: #16213e; }
+  .tool-card[data-color="green"] .tool-card-header { background: #7BF1A8; }
+  .tool-card[data-color="green"] .tool-role { color: #7BF1A8; }
+
+  /* ────────────────────────────────────────────
+     SLIDE 5 — THE PROCESS
+  ──────────────────────────────────────────── */
+  #slide-5 { background: var(--white); }
+  .s5-layout {
+    width: 92vw;
+    height: 88vh;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: var(--white);
+  }
+  .s5-header {
+    background: var(--ink);
+    padding: 16px 32px;
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    color: var(--red);
+    letter-spacing: 5px;
+    border-bottom: 5px solid var(--ink);
+  }
+  .s5-steps {
+    display: flex;
+    flex-direction: column;
+    padding: 20px 32px;
+    gap: 0;
+    justify-content: space-evenly;
+  }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 12px 0;
+    border-bottom: 2px dashed #ddd;
+    position: relative;
+  }
+  .step-row:last-child { border-bottom: none; }
+  .step-num {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 3px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bangers', cursive;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .step-content { flex: 1; }
+  .step-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+  .step-body {
+    font-size: 0.9rem;
+    color: #444;
+    line-height: 1.4;
+  }
+  .step-time {
+    font-family: 'Bangers', cursive;
+    font-size: 0.85rem;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    padding: 3px 10px;
+    letter-spacing: 1px;
+    align-self: flex-start;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 6 — PRO TIPS
+  ──────────────────────────────────────────── */
+  #slide-6 { background: #fff8e7; }
+  .s6-layout {
+    width: 92vw;
+    height: 88vh;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--ink);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: #fff8e7;
+  }
+  .s6-header {
+    background: var(--ink);
+    padding: 16px 32px;
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    color: var(--yellow);
+    letter-spacing: 5px;
+    border-bottom: 5px solid var(--ink);
+  }
+  .s6-tips {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 0;
+  }
+  .tip-card {
+    border: 2px solid var(--ink);
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--white);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s;
+    cursor: default;
+  }
+  .tip-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 0 var(--ink);
+    z-index: 2;
+  }
+  .tip-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 6px;
+    background: var(--tip-color, var(--red));
+  }
+  .tip-title {
+    font-family: 'Bangers', cursive;
+    font-size: 1.1rem;
+    color: var(--red);
+    letter-spacing: 1px;
+    padding-left: 12px;
+  }
+  .tip-body {
+    font-size: 0.88rem;
+    color: #333;
+    line-height: 1.4;
+    padding-left: 12px;
+  }
+
+  /* ────────────────────────────────────────────
+     SLIDE 7 — MISSION
+  ──────────────────────────────────────────── */
+  #slide-7 { background: var(--panel-bg); }
+  .s7-layout {
+    width: 92vw;
+    height: 88vh;
+    border: 5px solid var(--ink);
+    box-shadow: 10px 10px 0 var(--yellow);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    background: var(--panel-bg);
+  }
+  .s7-header {
+    background: var(--yellow);
+    border-bottom: 5px solid var(--ink);
+    padding: 16px 32px;
+    font-family: 'Bangers', cursive;
+    font-size: 2.2rem;
+    color: var(--ink);
+    letter-spacing: 5px;
+  }
+  .s7-mission {
+    background: var(--red);
+    border-bottom: 5px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 40px;
+    text-align: center;
+  }
+  .s7-mission p {
+    font-family: 'Bangers', cursive;
+    font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+    color: var(--white);
+    letter-spacing: 2px;
+    line-height: 1.2;
+    text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+  }
+  .s7-checklists {
+    padding: 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: center;
+  }
+  .checkpoint-label {
+    font-family: 'Bangers', cursive;
+    color: var(--cyan);
+    letter-spacing: 4px;
+    font-size: 1rem;
+    margin-bottom: 6px;
+  }
+  .checkpoint {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 8px 0;
+  }
+  .check-box {
+    width: 28px; height: 28px;
+    border: 3px solid var(--yellow);
+    background: #252540;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s var(--ease-spring);
+    position: relative;
+  }
+  .check-box:hover { transform: scale(1.15); }
+  .check-box.checked {
+    background: #2ecc71;
+    border-color: #2ecc71;
+  }
+  .check-box.checked::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--white);
+    line-height: 25px;
+    text-align: center;
+  }
+  .check-label {
+    font-family: 'Comic Neue', cursive;
+    font-weight: 700;
+    color: var(--white);
+    font-size: 1rem;
+  }
+  .check-label.bonus {
+    color: var(--yellow);
+    font-style: italic;
+  }
+
+  /* ─── FLOATING ACTION WORD ─── */
+  .float-action {
+    position: absolute;
+    font-family: 'Bangers', cursive;
+    pointer-events: none;
+    z-index: 10;
+    animation: floatWord 0.6s var(--ease-spring) both;
+    text-shadow: 4px 4px 0 var(--ink);
+  }
+  @keyframes floatWord {
+    0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+    60% { transform: scale(1.15) rotate(3deg); opacity: 1; }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes floatAway {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(0) translateY(-40px); opacity: 0; }
+  }
+
+  /* ─── SPEED LINES OVERLAY ─── */
+  .speed-lines {
+    position: absolute;
+    inset: 0;
+    background: repeating-conic-gradient(
+      from 0deg at 50% 50%,
+      transparent 0deg,
+      transparent 5deg,
+      rgba(255,255,255,0.03) 5deg,
+      rgba(255,255,255,0.03) 6deg
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<!-- Ink splash transition overlay -->
+<div id="ink-splash">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <path d="M100,10 C120,10 140,20 155,35 C165,45 178,55 185,70 C193,87 195,107 190,125 C183,148 168,167 148,178 C130,189 108,193 88,188 C65,183 44,170 30,152 C16,134 9,110 12,87 C15,63 29,40 50,26 C67,14 83,10 100,10Z"
+      fill="#111111"/>
+  </svg>
+</div>
+
+<div id="slideshow">
+
+  <!-- ═══ SLIDE 1: TITLE ═══ -->
+  <div class="slide active" id="slide-1">
+    <div class="s1-layout panel-enter">
+      <div class="s1-main">
+        <div class="halftone"></div>
+        <div style="position:relative; z-index:1;">
+          <div class="s1-kicker">MERCH MAKERS  ·  EPISODE 2</div>
+          <h1 class="s1-title">COMIC<br>BOOK<br>ASSEMBLY</h1>
+          <p class="s1-subtitle">The pieces are ready. Today we build.</p>
+          <p class="s1-tagline">Your storyboard is done. Your characters are waiting. Time to put them on the page.</p>
+        </div>
+      </div>
+      <div class="s1-sidebar">
+        <div class="day2-badge pop-in d3">
+          <span class="top">SESSION</span>
+          <span class="big">02</span>
+        </div>
+        <div class="s1-bubbles">
+          <div class="speech-bubble slide-in-right d4" style="font-size:0.85rem;">Last time: storyboard ✓</div>
+          <div class="speech-bubble slide-in-right d5" style="font-size:0.85rem; margin-left:20px;">Characters: locked in ✓</div>
+          <div class="speech-bubble slide-in-right d6" style="font-size:0.85rem; background:#FFD600;">Today: LET'S GO 💥</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 2: WHERE WE LEFT OFF ═══ -->
+  <div class="slide" id="slide-2">
+    <div class="s2-layout">
+      <div class="s2-header slide-in-left">
+        <h2>PREVIOUSLY IN MERCH MAKERS...</h2>
+        <div class="issue-tag">RECAP</div>
+      </div>
+      <div class="s2-left">
+        <div class="halftone"></div>
+        <div class="check-item slide-in-left d1" style="position:relative; z-index:1">
+          <div class="check-icon">✓</div>
+          <span>Characters created & designed</span>
+        </div>
+        <div class="check-item slide-in-left d2" style="position:relative; z-index:1">
+          <div class="check-icon">✓</div>
+          <span>Story storyboarded panel by panel</span>
+        </div>
+        <div class="check-item slide-in-left d3" style="position:relative; z-index:1">
+          <div class="check-icon">✓</div>
+          <span>Assets downloaded & ready</span>
+        </div>
+        <div class="check-item slide-in-left d4" style="position:relative; z-index:1">
+          <div class="check-icon">✓</div>
+          <span>The story lives in our heads</span>
+        </div>
+        <div class="not-yet slide-in-up d5">⚡ NOT YET ASSEMBLED ⚡</div>
+      </div>
+      <div class="s2-right">
+        <h3 class="slide-in-right d2">TODAY<br>WE FIX<br>THAT.</h3>
+        <p class="slide-in-right d3">A comic book is a sequence of panels — and we've already done the hardest part: knowing what those panels say. Now we just need to put them on the page.</p>
+        <div class="arrow-visual slide-in-right d4">
+          <div class="arrow-line"></div>
+          <div class="arrow-head">▶▶</div>
+        </div>
+        <div class="thought-bubble pop-in d5" style="font-size:0.95rem; align-self:flex-start;">Storyboard → Digital Comic</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 3: PAGE ANATOMY ═══ -->
+  <div class="slide" id="slide-3">
+    <div class="s3-layout">
+      <div class="s3-header slide-in-left">ANATOMY OF A PAGE</div>
+      <div class="s3-panels-demo">
+        <div class="demo-panel big panel-enter d1">
+          <div class="panel-tag">PANEL 1</div>
+          <span class="action-word d2" style="font-size:2rem; color:var(--yellow);">BIG ESTABLISHING SHOT</span>
+          <div class="panel-demo-label" style="color:#aaa; margin-top:8px;">Sets the scene — wide view, reader knows where they are</div>
+          <div class="gutter-label">← GUTTER →</div>
+        </div>
+        <div style="display:flex; flex-direction:column; border-left: 5px solid var(--ink);">
+          <div class="demo-panel small-top panel-enter d2">
+            <div class="panel-tag" style="background:#666;">PANEL 2</div>
+            <span style="font-family:'Bangers',cursive; font-size:1rem; letter-spacing:2px; color:#555;">CLOSE-UP</span>
+            <div class="panel-demo-label">Reaction / Character face</div>
+          </div>
+          <div class="demo-panel small-bottom panel-enter d3">
+            <div class="panel-tag" style="background:#666;">PANEL 3</div>
+            <span style="font-family:'Bangers',cursive; font-size:1rem; letter-spacing:2px; color:#555;">ACTION / DIALOGUE</span>
+            <div class="panel-demo-label">What happens next</div>
+          </div>
+        </div>
+      </div>
+      <div class="s3-vocab">
+        <div class="vocab-card slide-in-up d1">
+          <span class="term">PANEL</span>
+          <span class="def">One box = one moment in time.</span>
+        </div>
+        <div class="vocab-card slide-in-up d2">
+          <span class="term">GUTTER</span>
+          <span class="def">The space between panels. Your reader's brain fills it in.</span>
+        </div>
+        <div class="vocab-card slide-in-up d3">
+          <span class="term">BLEED</span>
+          <span class="def">Art that goes edge-to-edge on the page. Dramatic effect.</span>
+        </div>
+        <div class="vocab-card slide-in-up d4">
+          <span class="term">SPEECH BUBBLE</span>
+          <span class="def">Dialogue lives here. Round tail = talking. Cloud = thinking.</span>
+        </div>
+        <div class="vocab-card slide-in-up d5">
+          <span class="term">CAPTION</span>
+          <span class="def">Narration. Not a character speaking — the story speaking.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 4: TOOLKIT ═══ -->
+  <div class="slide" id="slide-4">
+    <div class="s4-layout">
+      <div class="s4-header slide-in-left">
+        <h2>THE TOOLKIT</h2>
+        <div class="action-word d2" style="font-size:1.5rem; color:var(--red);">GEAR UP!</div>
+      </div>
+      <div class="s4-tools">
+        <div class="tool-card panel-enter d1" data-color="cyan">
+          <div class="tool-card-header">Canva / Google Slides</div>
+          <div class="tool-role">LAYOUT CANVAS</div>
+          <div class="tool-desc">Drag panels onto a page. Set your page size. This is your digital drawing table — and it's easier than it sounds.</div>
+        </div>
+        <div class="tool-card panel-enter d2" data-color="pink">
+          <div class="tool-card-header">Your Character Assets</div>
+          <div class="tool-role">THE CAST</div>
+          <div class="tool-desc">PNGs you already downloaded. Drop them in, resize, position. Done. Your characters are waiting in the wings.</div>
+        </div>
+        <div class="tool-card panel-enter d3" data-color="yellow">
+          <div class="tool-card-header">Text Tool</div>
+          <div class="tool-role">DIALOGUE & CAPTIONS</div>
+          <div class="tool-desc">Speech bubbles, thought clouds, caption boxes. Keep your font consistent across every panel — readers notice.</div>
+        </div>
+        <div class="tool-card panel-enter d4" data-color="green">
+          <div class="tool-card-header">Shapes / Borders</div>
+          <div class="tool-role">PANEL FRAMES</div>
+          <div class="tool-desc">Rectangles with thick black borders = comic panels. It really is that simple. Bold borders, uniform gap between them.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 5: THE PROCESS ═══ -->
+  <div class="slide" id="slide-5">
+    <div class="s5-layout">
+      <div class="s5-header slide-in-left">THE PROCESS</div>
+      <div class="s5-steps">
+        <div class="step-row slide-in-left d1">
+          <div class="step-num" style="background:var(--ink); color:var(--yellow);">01</div>
+          <div class="step-content">
+            <div class="step-title">Set Your Canvas</div>
+            <div class="step-body">Open Canva (or Slides). Set page to a comic ratio — 6.625" × 10.25" is standard. Or just use a square. Your call.</div>
+          </div>
+          <div class="step-time">5 MIN</div>
+        </div>
+        <div class="step-row slide-in-left d2">
+          <div class="step-num" style="background:var(--red); color:var(--white);">02</div>
+          <div class="step-content">
+            <div class="step-title">Build Your First Panel</div>
+            <div class="step-body">Draw a rectangle. Give it a thick border. Drop in your first character asset. Position them. Add a caption or speech bubble.</div>
+          </div>
+          <div class="step-time">10–15 MIN</div>
+        </div>
+        <div class="step-row slide-in-left d3">
+          <div class="step-num" style="background:var(--ink); color:var(--yellow);">03</div>
+          <div class="step-content">
+            <div class="step-title">Flow Through the Storyboard</div>
+            <div class="step-body">Use last session's storyboard as your script. Panel by panel, moment by moment. Don't skip ahead — build in sequence.</div>
+          </div>
+          <div class="step-time">MAIN BLOCK</div>
+        </div>
+        <div class="step-row slide-in-left d4">
+          <div class="step-num" style="background:var(--red); color:var(--white);">04</div>
+          <div class="step-content">
+            <div class="step-title">Text & Lettering</div>
+            <div class="step-body">Add dialogue. Keep it SHORT in each bubble — comics breathe. Bold for emphasis. Comic Sans is actually fine here (seriously).</div>
+          </div>
+          <div class="step-time">ONGOING</div>
+        </div>
+        <div class="step-row slide-in-left d5">
+          <div class="step-num" style="background:var(--ink); color:var(--yellow);">05</div>
+          <div class="step-content">
+            <div class="step-title">Review & Refine</div>
+            <div class="step-body">Print preview or full-screen it. Does the eye flow naturally? Are the panels telling the story? Fix what feels stuck.</div>
+          </div>
+          <div class="step-time">END OF SESSION</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 6: PRO TIPS ═══ -->
+  <div class="slide" id="slide-6">
+    <div class="s6-layout">
+      <div class="s6-header slide-in-left">TIPS FROM THE PROS</div>
+      <div class="s6-tips">
+        <div class="tip-card panel-enter d1" style="--tip-color: var(--red);">
+          <div class="tip-title">★ Vary Your Panel Sizes</div>
+          <div class="tip-body">Big panel = big moment. Small panel = quick beat. Use size to control pacing — the reader feels it even if they don't know why.</div>
+        </div>
+        <div class="tip-card panel-enter d2" style="--tip-color: var(--blue);">
+          <div class="tip-title">★ Leave Breathing Room</div>
+          <div class="tip-body">Don't cram every panel. Whitespace is part of the art. Gutters matter. Silence between panels is as powerful as sound.</div>
+        </div>
+        <div class="tip-card panel-enter d3" style="--tip-color: var(--cyan);">
+          <div class="tip-title">★ Stay Consistent</div>
+          <div class="tip-body">Consistency is more important than perfection. Pick your character's angle and stick to it. Readers trust consistency.</div>
+        </div>
+        <div class="tip-card panel-enter d4" style="--tip-color: var(--red);">
+          <div class="tip-title">★ Less Text, More Image</div>
+          <div class="tip-body">If you wrote 3 sentences of dialogue, cut to 1. The picture carries 80% of the story. Trust what you drew.</div>
+        </div>
+        <div class="tip-card panel-enter d5" style="--tip-color: var(--yellow);">
+          <div class="tip-title">★ Sound Effects Are Visual</div>
+          <div class="tip-body">POW. CRASH. WHOOSH. Make them big. Make them part of the panel design, not an afterthought tossed on top.</div>
+        </div>
+        <div class="tip-card panel-enter d6" style="--tip-color: var(--blue);">
+          <div class="tip-title">★ End on a Question</div>
+          <div class="tip-body">The last panel should make someone want to flip the page — even if there's no next page yet. That's the hook.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLIDE 7: MISSION ═══ -->
+  <div class="slide" id="slide-7">
+    <div class="s7-layout">
+      <div class="s7-header slide-in-left">TODAY'S MISSION</div>
+      <div class="s7-mission panel-enter d2">
+        <p>Get at least ONE complete comic page assembled before the end of the session.</p>
+      </div>
+      <div class="s7-checklists">
+        <div class="checkpoint-label slide-in-left d1">CHECKPOINTS</div>
+        <div class="checkpoint slide-in-up d2">
+          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
+          <span class="check-label">Canvas set up with panel grid</span>
+        </div>
+        <div class="checkpoint slide-in-up d3">
+          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
+          <span class="check-label">At least 3 panels placed and populated</span>
+        </div>
+        <div class="checkpoint slide-in-up d4">
+          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
+          <span class="check-label">Characters in the right panels</span>
+        </div>
+        <div class="checkpoint slide-in-up d5">
+          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
+          <span class="check-label">Dialogue or captions added</span>
+        </div>
+        <div class="checkpoint slide-in-up d6">
+          <div class="check-box" onclick="this.classList.toggle('checked')"></div>
+          <span class="check-label bonus">⭐ BONUS: Sound effects or a title banner</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /slideshow -->
+
+<!-- Navigation -->
+<div id="nav">
+  <button class="nav-btn" id="prev-btn">◀ PREV</button>
+  <div id="slide-counter">1 / 7</div>
+  <button class="nav-btn" id="next-btn">NEXT ▶</button>
+</div>
+
+<div id="dots"></div>
+
+<script>
+// ─── CURSOR ───
+const cursor = document.getElementById('cursor');
+document.addEventListener('mousemove', e => {
+  cursor.style.left = e.clientX + 'px';
+  cursor.style.top = e.clientY + 'px';
+});
+document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
+
+// ─── SLIDES ───
+const slides = document.querySelectorAll('.slide');
+const counter = document.getElementById('slide-counter');
+const dotsContainer = document.getElementById('dots');
+const inkSplash = document.getElementById('ink-splash');
+const inkSvg = inkSplash.querySelector('svg');
+let current = 0;
+let transitioning = false;
+
+// Build dots
+slides.forEach((_, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'dot' + (i === 0 ? ' active' : '');
+  dot.addEventListener('click', () => goTo(i));
+  dotsContainer.appendChild(dot);
+});
+const dots = dotsContainer.querySelectorAll('.dot');
+
+// Ink splash transition
+const splashColors = ['#111111', '#E63946', '#1B4FD8', '#FFD600', '#111111', '#E63946', '#1A1A2E'];
+
+function goTo(index) {
+  if (transitioning || index === current || index < 0 || index >= slides.length) return;
+  transitioning = true;
+
+  const dir = index > current ? 1 : -1;
+
+  // Trigger ink splash
+  inkSvg.style.fill = splashColors[index] || '#111';
+  inkSplash.style.opacity = '1';
+  inkSplash.classList.add('splashing');
+
+  setTimeout(() => {
+    // Swap slides at peak of splash
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = index;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    counter.textContent = `${current + 1} / ${slides.length}`;
+
+    // Re-trigger animations
+    restartAnimations(slides[current]);
+
+    // Fade out splash
+    inkSplash.style.opacity = '0';
+    inkSvg.style.transition = 'transform 0s';
+    setTimeout(() => {
+      inkSplash.classList.remove('splashing');
+      inkSvg.style.transition = '';
+      transitioning = false;
+    }, 350);
+
+  }, 300);
+}
+
+function restartAnimations(slide) {
+  const animated = slide.querySelectorAll('[class*="slide-in"], [class*="pop-in"], [class*="panel-enter"], [class*="action-word"]');
+  animated.forEach(el => {
+    el.style.animation = 'none';
+    el.offsetHeight; // reflow
+    el.style.animation = '';
+  });
+}
+
+document.getElementById('next-btn').addEventListener('click', () => goTo(current + 1));
+document.getElementById('prev-btn').addEventListener('click', () => goTo(current - 1));
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goTo(current - 1); }
+  if (e.key >= '1' && e.key <= '7') goTo(parseInt(e.key) - 1);
+});
+
+// Touch/swipe
+let touchStartX = 0;
+document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+document.addEventListener('touchend', e => {
+  const diff = touchStartX - e.changedTouches[0].clientX;
+  if (Math.abs(diff) > 60) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+});
+
+// ─── FLOATING ACTION WORDS on click ───
+const actionWords = ['POW!', 'ZAP!', 'BOOM!', 'BAM!', 'WHAM!', 'CRASH!', 'KA-POW!', 'CRUNCH!'];
+const actionColors = ['#FFD600', '#E63946', '#4CC9F0', '#7BF1A8', '#F72585', '#FF9500'];
+
+document.addEventListener('click', e => {
+  if (e.target.closest('#nav') || e.target.closest('#dots') || e.target.closest('.check-box') || e.target.closest('.nav-btn')) return;
+
+  const word = document.createElement('div');
+  word.className = 'float-action';
+  word.style.left = (e.clientX - 30) + 'px';
+  word.style.top = (e.clientY - 30) + 'px';
+  word.style.fontSize = (Math.random() * 1.5 + 1.5) + 'rem';
+  word.style.color = actionColors[Math.floor(Math.random() * actionColors.length)];
+  word.textContent = actionWords[Math.floor(Math.random() * actionWords.length)];
+  word.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
+
+  document.body.appendChild(word);
+
+  setTimeout(() => {
+    word.style.animation = 'floatAway 0.5s ease forwards';
+    setTimeout(() => word.remove(), 500);
+  }, 700);
+});
+</script>
+</body>
+</html>
