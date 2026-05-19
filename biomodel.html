@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predator-Prey Dynamics — Biological Systems Model Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  :root {
+    --ink: #1a1714;
+    --ink-mid: #3d3a36;
+    --ink-light: #6b6761;
+    --paper: #faf8f4;
+    --paper-warm: #f3f0e8;
+    --paper-rule: #e8e3d8;
+    --accent-wolf: #3a5a7c;
+    --accent-moose: #8b4513;
+    --accent-gold: #c8973a;
+    --body-max: 820px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--ink);
+    background: var(--paper);
+    padding: 0;
+  }
+
+  .page {
+    max-width: var(--body-max);
+    margin: 0 auto;
+    padding: 64px 48px 80px;
+  }
+
+  /* COVER */
+  .cover {
+    text-align: center;
+    padding: 80px 48px 64px;
+    border-bottom: 1px solid var(--paper-rule);
+    margin-bottom: 64px;
+    position: relative;
+  }
+  .cover::before {
+    content: '';
+    display: block;
+    width: 2px;
+    height: 60px;
+    background: var(--accent-gold);
+    margin: 0 auto 32px;
+  }
+  .cover-eyebrow {
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    margin-bottom: 20px;
+  }
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .cover-subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-mid);
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    font-size: 13px;
+    color: var(--ink-light);
+    font-weight: 300;
+    line-height: 2;
+  }
+  .cover-meta strong {
+    font-weight: 600;
+    color: var(--ink-mid);
+  }
+
+  /* SECTIONS */
+  .section { margin-bottom: 72px; }
+
+  .section-number {
+    font-size: 11px;
+    font-weight: 300;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-gold);
+    margin-bottom: 8px;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 24px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--paper-rule);
+  }
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--ink-mid);
+    margin: 28px 0 12px;
+  }
+  p {
+    margin-bottom: 16px;
+    color: var(--ink-mid);
+  }
+  p:last-child { margin-bottom: 0; }
+
+  /* DIAGRAM BOX */
+  .diagram-container {
+    background: var(--paper-warm);
+    border: 1px solid var(--paper-rule);
+    border-radius: 4px;
+    padding: 32px 24px;
+    margin: 28px 0;
+  }
+  .diagram-caption {
+    text-align: center;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--ink-light);
+    margin-top: 16px;
+  }
+
+  /* CHART CONTAINERS */
+  .chart-wrap {
+    margin: 32px 0;
+    padding: 24px;
+    background: var(--paper-warm);
+    border: 1px solid var(--paper-rule);
+    border-radius: 4px;
+  }
+  .chart-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .chart-desc {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .chart-inner {
+    position: relative;
+    width: 100%;
+    height: 300px;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--ink-light);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  /* PULLQUOTE */
+  .pullquote {
+    border-left: 3px solid var(--accent-gold);
+    padding: 4px 24px;
+    margin: 28px 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-style: italic;
+    color: var(--ink-mid);
+    line-height: 1.5;
+  }
+  .pullquote cite {
+    display: block;
+    font-size: 12px;
+    font-style: normal;
+    font-family: 'Source Serif 4', serif;
+    font-weight: 300;
+    color: var(--ink-light);
+    margin-top: 10px;
+    letter-spacing: 0.05em;
+  }
+
+  /* SOURCES */
+  .source-card {
+    border: 1px solid var(--paper-rule);
+    border-radius: 4px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    background: white;
+  }
+  .source-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .source-meta {
+    font-size: 12px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+  }
+  .source-body {
+    font-size: 14px;
+    color: var(--ink-mid);
+    line-height: 1.65;
+    margin: 0;
+  }
+
+  /* CALLOUT */
+  .callout {
+    background: white;
+    border: 1px solid var(--paper-rule);
+    border-top: 3px solid var(--accent-wolf);
+    border-radius: 4px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .callout.moose { border-top-color: var(--accent-moose); }
+  .callout-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-wolf);
+    margin-bottom: 8px;
+  }
+  .callout.moose .callout-label { color: var(--accent-moose); }
+  .callout p { font-size: 14px; margin: 0; }
+
+  /* VOCAB */
+  .vocab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .vocab-item {
+    background: white;
+    border: 1px solid var(--paper-rule);
+    border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .vocab-term {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .vocab-def {
+    font-size: 12px;
+    color: var(--ink-light);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* LIMITATION TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    font-family: 'Source Serif 4', serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--ink-light);
+  }
+  td {
+    padding: 12px 12px;
+    border-bottom: 1px solid var(--paper-rule);
+    color: var(--ink-mid);
+    vertical-align: top;
+    line-height: 1.55;
+  }
+  tr:last-child td { border-bottom: none; }
+
+  /* REFERENCES */
+  .references ol { padding-left: 22px; }
+  .references li {
+    font-size: 13px;
+    color: var(--ink-light);
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--paper-rule);
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--ink-light);
+    letter-spacing: 0.05em;
+  }
+
+  @media (max-width: 600px) {
+    .page { padding: 40px 24px 60px; }
+    .cover-title { font-size: 30px; }
+    .cover-subtitle { font-size: 18px; }
+  }
+  @media print {
+    body { background: white; }
+    .page { padding: 40px 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="cover-eyebrow">AP Biology — Biological Systems Model Report</div>
+    <div class="cover-title">When the Wolves<br>Came Back</div>
+    <div class="cover-subtitle">Modeling predator-prey dynamics on Isle Royale</div>
+    <div class="cover-meta">
+      <strong>System:</strong> Predator-Prey Ecology (Canis lupus / Alces alces)<br>
+      <strong>Dataset:</strong> Isle Royale Wolf-Moose Project, 1959–2026<br>
+      <strong>Course:</strong> AP Biology &nbsp;·&nbsp; <strong>Submitted:</strong> May 20, 2026
+    </div>
+  </div>
+
+  <!-- SECTION 1: DRIVING QUESTION -->
+  <div class="section">
+    <div class="section-number">Introduction</div>
+    <h2>Driving Question</h2>
+    <p>How can a model represent, explain, and — when the real world doesn't cooperate — help us revise our understanding of a biological system?</p>
+    <p>Isle Royale is a 210-square-mile island sitting in Lake Superior, about 15 miles off the Minnesota shore. It is remote enough to be almost perfectly isolated, which makes it one of the most valuable natural laboratories on Earth. Moose arrived in the early 1900s. For decades they had no predators, and their population swung between boom and crash driven entirely by starvation and disease. Then, in 1948, a pack of gray wolves crossed an ice bridge from Canada — and suddenly there was a predator. Scientists arrived ten years later to watch what happened. They are still watching. The Isle Royale Wolf-Moose Project is the longest continuously running predator-prey study in the world, now in its 68th year.</p>
+    <p>What they found over those 68 years is the subject of this report. The simple model predicts oscillation. Reality delivers disease outbreaks, genetic collapse, climate shifts, and a government wolf-translocation program. The model is still useful — but only after it's been broken and rebuilt.</p>
+  </div>
+
+  <!-- SECTION 2: MODEL DIAGRAM -->
+  <div class="section">
+    <div class="section-number">Section 1</div>
+    <h2>Model Diagram</h2>
+    <p>The initial model is based on the Lotka-Volterra equations, developed independently by Alfred Lotka (1925) and Vito Volterra (1926). The model assumes two species in a closed system: a prey population that grows exponentially when the predator is absent, and a predator population that depends entirely on prey for survival. The diagram below maps the key components, flows, and feedback loops of this system.</p>
+
+    <div class="diagram-container">
+      <!--
+        Layout plan (viewBox 740 × 500):
+        Vegetation:   x=30  w=150  y=196 h=60  → center=(105,226), right=180, bottom=256
+        Moose:        x=240 w=160  y=164 h=72  → center=(320,200), right=400, bottom=236, top=164
+        Wolf:         x=530 w=170  y=164 h=72  → center=(615,200), right=700, bottom=236, top=164
+        Moose births: x=248 w=144  y=48  h=44  → center=(320,70),  bottom=92
+        Wolf births:  x=534 w=148  y=48  h=44  → center=(608,70),  bottom=92
+        Moose deaths: x=248 w=144  y=316 h=44  → center=(320,338), top=316
+        Wolf deaths:  x=534 w=148  y=316 h=44  → center=(608,338), top=316
+
+        Arrow routing (no overlaps):
+        Predation wolf→moose:   ABOVE boxes — wolf top (615,164)→y=130→x=320→moose top (320,164)
+          Label at y=120, above arc
+        Prey→wolf growth:       BELOW boxes — moose bottom (320,236)→y=270→x=615→wolf bottom (615,236)
+          Label at y=286, below arc
+        Veg→moose food:         horizontal stubs — veg right (180) to moose left (240) at y=210
+          Label at y=205 above stub
+        Moose grazes veg:       horizontal stub — moose left (240) to veg right (180) at y=226
+          Label at y=240 below stub
+        Moose births→moose:     straight down 320,92→320,162
+        Wolf births→wolf:       straight down 608,92→608,162
+        Moose→moose deaths:     straight down 320,236→320,314
+        Wolf→wolf deaths:       straight down 608,236→608,314
+      -->
+      <svg width="100%" viewBox="0 0 740 500" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Predator-prey system diagram — initial Lotka-Volterra model</title>
+        <desc>Lotka-Volterra model showing moose, wolves, and vegetation. Predation arrow routes above the boxes; prey-growth arrow routes below. Birth and death boxes connect vertically. Vegetation and moose exchange two horizontal stubs.</desc>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arr-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#a32d2d" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arr-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#185fa5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arr-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#3b6d11" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+          <marker id="arr-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#ba7517" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- ══ BIRTH BOXES (top row) ══ -->
+        <rect x="248" y="48" width="144" height="44" rx="6" fill="#f3f0e8" stroke="#d3d1c7" stroke-width="0.8"/>
+        <text x="320" y="68" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="13" font-weight="600" fill="#3d3a36">Moose births</text>
+        <text x="320" y="84" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">rate α (logistic)</text>
+
+        <rect x="534" y="48" width="148" height="44" rx="6" fill="#f3f0e8" stroke="#d3d1c7" stroke-width="0.8"/>
+        <text x="608" y="68" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="13" font-weight="600" fill="#3d3a36">Wolf births</text>
+        <text x="608" y="84" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">rate δ (prey-dependent)</text>
+
+        <!-- Birth → population (straight down) -->
+        <line x1="320" y1="92" x2="320" y2="162" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr)"/>
+        <line x1="608" y1="92" x2="608" y2="162" stroke="#185fa5" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-blue)"/>
+
+        <!-- ══ PREDATION: wolf top → above y=128 → moose top ══ -->
+        <path d="M608 164 L608 128 L320 128 L320 164" fill="none" stroke="#a32d2d" stroke-width="2" marker-end="url(#arr-red)"/>
+        <text x="464" y="118" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" font-weight="600" fill="#a32d2d">predation (rate β) — wolf kills moose</text>
+
+        <!-- ══ MAIN POPULATION BOXES (middle row) ══ -->
+        <!-- Vegetation: x=30 w=150 y=196 h=60 → right=180, center=(105,226) -->
+        <rect x="30" y="196" width="150" height="60" rx="8" fill="#eaf3de" stroke="#639922" stroke-width="1"/>
+        <text x="105" y="220" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-weight="700" fill="#27500a">Vegetation</text>
+        <text x="105" y="238" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#3b6d11">balsam fir, shrubs</text>
+
+        <!-- Moose: x=240 w=160 y=164 h=72 → right=400, center=(320,200) -->
+        <rect x="240" y="164" width="160" height="72" rx="10" fill="#faeeda" stroke="#ba7517" stroke-width="1.5"/>
+        <text x="320" y="188" text-anchor="middle" font-family="'Playfair Display', serif" font-size="17" font-weight="700" fill="#412402">Moose</text>
+        <text x="320" y="206" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#854f0b">Alces alces (PREY)</text>
+        <text x="320" y="222" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#854f0b">~500–2,400 individuals</text>
+
+        <!-- Wolf: x=530 w=170 y=164 h=72 → right=700, center=(615,200) -->
+        <rect x="530" y="164" width="170" height="72" rx="10" fill="#e6f1fb" stroke="#185fa5" stroke-width="1.5"/>
+        <text x="615" y="188" text-anchor="middle" font-family="'Playfair Display', serif" font-size="17" font-weight="700" fill="#042c53">Wolf</text>
+        <text x="615" y="206" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">Canis lupus (PREDATOR)</text>
+        <text x="615" y="222" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">2–50 individuals</text>
+
+        <!-- ══ VEGETATION ↔ MOOSE (two horizontal stubs, separated vertically) ══ -->
+        <!-- Veg → Moose food: veg right (180) → moose left (240) at y=212 -->
+        <line x1="180" y1="212" x2="238" y2="212" stroke="#639922" stroke-width="1.5" marker-end="url(#arr-green)"/>
+        <text x="210" y="207" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#3b6d11">food source</text>
+        <!-- Moose grazes veg: moose left (240) → veg right (180) at y=228 -->
+        <line x1="240" y1="228" x2="182" y2="228" stroke="#ba7517" stroke-width="1.3" stroke-dasharray="5 3" marker-end="url(#arr-amber)"/>
+        <text x="210" y="243" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#854f0b">grazing pressure</text>
+
+        <!-- ══ PREY FUELS WOLF GROWTH: below boxes at y=258 ══ -->
+        <!-- moose bottom (320,236) → y=258 → wolf bottom (608,236) -->
+        <path d="M320 236 L320 258 L608 258 L608 236" fill="none" stroke="#185fa5" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+        <text x="464" y="274" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">prey abundance drives wolf reproduction</text>
+
+        <!-- ══ DEATH BOXES (bottom row) ══ -->
+        <rect x="248" y="302" width="144" height="44" rx="6" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.8"/>
+        <text x="320" y="322" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="12" font-weight="600" fill="#501313">Moose deaths</text>
+        <text x="320" y="338" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#a32d2d">starvation, ticks, age</text>
+
+        <rect x="534" y="302" width="148" height="44" rx="6" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.8"/>
+        <text x="608" y="322" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="12" font-weight="600" fill="#501313">Wolf deaths</text>
+        <text x="608" y="338" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#a32d2d">starvation, disease, age</text>
+
+        <!-- Population → death (straight down) -->
+        <line x1="320" y1="236" x2="320" y2="300" stroke="#a32d2d" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-red)"/>
+        <line x1="608" y1="236" x2="608" y2="300" stroke="#a32d2d" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arr-red)"/>
+
+        <!-- ══ LEGEND ══ -->
+        <rect x="30" y="374" width="680" height="106" rx="4" fill="#f3f0e8" stroke="#e8e3d8" stroke-width="0.5"/>
+        <text x="50" y="394" font-family="'Source Serif 4', serif" font-size="11" font-weight="600" fill="#3d3a36">Key interactions:</text>
+        <!-- Row 1 -->
+        <line x1="50" y1="412" x2="80" y2="412" stroke="#a32d2d" stroke-width="2"/>
+        <text x="86" y="416" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">predation (wolf kills moose, rate β)</text>
+        <line x1="310" y1="412" x2="340" y2="412" stroke="#185fa5" stroke-width="1.5"/>
+        <text x="346" y="416" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">prey fuels predator reproduction (rate δ)</text>
+        <!-- Row 2 -->
+        <line x1="50" y1="432" x2="80" y2="432" stroke="#3b6d11" stroke-width="1.5"/>
+        <text x="86" y="436" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">vegetation feeds moose</text>
+        <line x1="310" y1="432" x2="340" y2="432" stroke="#ba7517" stroke-width="1.3" stroke-dasharray="5 3"/>
+        <text x="346" y="436" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">moose grazes vegetation (feedback)</text>
+        <!-- Row 3 -->
+        <line x1="50" y1="452" x2="80" y2="452" stroke="#ba7517" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="86" y="456" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">population growth flow (births → population)</text>
+        <line x1="310" y1="452" x2="340" y2="452" stroke="#a32d2d" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="346" y="456" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">population decline flow (population → deaths)</text>
+      </svg>
+      <p class="diagram-caption">Figure 1. Initial Lotka-Volterra predator-prey model for Isle Royale, showing key components (moose, wolves, vegetation), directional interactions, and feedback mechanisms. The predation arrow routes above the main boxes; the prey-growth arrow routes below. All labels sit in clear space, not on arrow paths.</p>
+    </div>
+
+    <h3>Key terms</h3>
+    <div class="vocab-grid">
+      <div class="vocab-item">
+        <div class="vocab-term">Lotka-Volterra model</div>
+        <p class="vocab-def">Mathematical framework describing oscillating predator and prey populations in a closed system.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Carrying capacity (K)</div>
+        <p class="vocab-def">Maximum population size an environment can sustainably support given available resources.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Functional response</div>
+        <p class="vocab-def">The relationship between predator kill rate and prey density (Types I, II, III).</p>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Numerical response</div>
+        <p class="vocab-def">Change in predator population size in response to change in prey population density.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Negative feedback loop</div>
+        <p class="vocab-def">A regulatory mechanism where a change in a variable triggers a response that opposes the initial change.</p>
+      </div>
+      <div class="vocab-item">
+        <div class="vocab-term">Trophic cascade</div>
+        <p class="vocab-def">Indirect effects of a predator on lower trophic levels, including vegetation (e.g., wolf → moose → balsam fir).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: SYSTEM EXPLANATION -->
+  <div class="section">
+    <div class="section-number">Section 2</div>
+    <h2>System Explanation</h2>
+
+    <p>The predator-prey system on Isle Royale operates through two interlocking feedback loops. In the first, moose populations grow exponentially when wolf populations are low — more food, less predation pressure, higher calf survival. As moose abundance increases, wolves have more prey to hunt. They eat more, reproduce more, and their population rises. In the second loop, as wolf populations climb, predation intensity increases. Fewer moose survive to reproductive age. The moose population contracts. With less prey available, wolves begin to starve and their numbers fall. Moose recover. The cycle repeats.</p>
+
+    <div class="pullquote">
+      "Kill rate should be greatest during years when the ratio of moose per wolf is greatest — abundant prey makes them easier to find, and fewer wolves means less time lost to territorial conflict."
+      <cite>— Isle Royale Wolf-Moose Project, population dynamics analysis</cite>
+    </div>
+
+    <p>This is the numerical response illustrated in the image your teacher provided: more prey → more predators, fewer prey → fewer predators. But predation is not simply a function of prey density. It also depends on predator behavior — specifically, the functional response.</p>
+
+    <p>A Type II functional response (the curve seen in most real predators, including wolves) shows that as prey density increases, kill rate rises quickly at first, then levels off. This is because wolves spend time hunting, handling prey, and consuming it. There is a ceiling on how many moose a pack can kill per unit time, regardless of how many moose are available. A Type III response adds a low-density refuge effect: when moose are very scarce, wolves switch to easier prey (beavers, in this case), and moose predation rate drops. This gives moose a slight protective buffer at very low densities — which may help explain why the Isle Royale moose population has never quite reached zero, even in its worst years.</p>
+
+    <div class="callout">
+      <div class="callout-label">Ecosystem connection</div>
+      <p>Wolves regulate moose not just through direct killing but through the <em>ecology of fear</em> — moose in high-predation areas reduce their time browsing in open areas and move more frequently, which distributes grazing pressure across the island. When wolves disappeared in the early 2000s, moose browsed balsam fir seedlings so intensively that the trees virtually stopped growing. In the 2026 survey, researchers reported that balsam fir saplings were averaging about one inch of growth per year, versus an expected eight inches in low-browsing conditions — a measurable, vegetation-level effect of predation pressure.</p>
+    </div>
+
+    <h3>Model components and interactions</h3>
+    <p>The system has four primary components: (1) vegetation (balsam fir, willows, and other browse species) as the energy input; (2) moose as primary consumer and prey; (3) wolves as apex predator; and (4) the physical environment (winter severity, ice bridges, island isolation) as a boundary condition that modifies all three.</p>
+    <p>The key interaction is predation: wolves consume moose at a rate determined by both moose density and pack size. This predation simultaneously removes moose from the prey population and — via the nutrition gained — supports wolf reproduction. When moose are abundant relative to wolves, this interaction strongly favors wolves. When wolves are abundant relative to moose, predation pressure becomes unsustainable: packs compete with each other, prey per wolf falls, and wolf mortality from starvation increases.</p>
+    <p>A secondary but critical interaction is grazing: moose consume vegetation at a rate that scales with moose density. At very high moose densities, browse resources become depleted, independently limiting moose population growth even without wolf predation. This adds a logistic growth constraint to the prey equation — the system is not purely Lotka-Volterra, because prey are not unlimited even in the absence of predators.</p>
+  </div>
+
+  <!-- SECTION 4: DATA ANALYSIS -->
+  <div class="section">
+    <div class="section-number">Section 3</div>
+    <h2>Data Analysis</h2>
+    <p>The following graphs use data from the Isle Royale Wolf-Moose Project (Michigan Technological University), which has conducted aerial surveys every winter since 1959. The dataset represents 68 years of continuous field observation — one of the richest predator-prey records in ecological science.</p>
+
+    <!-- GRAPH 1: Population over time -->
+    <div class="chart-wrap">
+      <div class="chart-title">Graph 1 — Wolf and Moose Populations on Isle Royale, 1959–2026</div>
+      <div class="chart-desc">Annual counts from Michigan Technological University aerial surveys. Note inverse relationship between populations and key events affecting system dynamics.</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#185fa5;"></div>Wolf population (left axis × 40)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ba7517;"></div>Moose population (right axis)</div>
+      </div>
+      <div class="chart-inner" style="height:340px;">
+        <canvas id="chart1" role="img" aria-label="Line chart showing wolf and moose populations from 1959 to 2026 on Isle Royale, showing oscillating inverse relationship">Population data for Isle Royale wolves and moose, 1959-2026.</canvas>
+      </div>
+    </div>
+
+    <div class="callout moose">
+      <div class="callout-label">Data interpretation — Graph 1</div>
+      <p>The data shows a clear inverse relationship between wolf and moose populations across most of the study period. When wolf numbers peaked in the late 1970s (~50 wolves), moose populations were at relatively low levels. Following the 1980 wolf population crash (caused by canine parvovirus introduced by a visitor's domestic dog), moose rebounded strongly, eventually reaching a peak near 2,400 individuals in the mid-1990s. A severe winter in 1996 and a tick outbreak simultaneously crashed the moose population. The most dramatic recent trend is the post-2018 wolf translocation: the National Park Service introduced 19 wolves from external populations, and by 2026 wolf numbers had climbed to 37 — while moose fell from ~2,000 to ~524, a 75% decline. This trend supports the model's prediction that increased predator density drives prey population decline.</p>
+    </div>
+
+    <!-- GRAPH 2: Phase-plane / functional relationship -->
+    <div class="chart-wrap">
+      <div class="chart-title">Graph 2 — Predation Rate vs. Prey Density: Functional Response Curves</div>
+      <div class="chart-desc">Theoretical functional response types applied to Isle Royale data. Type II best describes wolf predation behavior; Type III may apply at very low moose densities (&lt;500 individuals).</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#a32d2d; border-radius:50%;"></div>Type I (linear, no saturation)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#185fa5;"></div>Type II (hyperbolic saturation — wolves)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#3b6d11;"></div>Type III (sigmoidal, low-density refuge)</div>
+      </div>
+      <div class="chart-inner" style="height:300px;">
+        <canvas id="chart2" role="img" aria-label="Line chart showing three functional response curve types plotted against prey density. Type II fits wolf behavior.">Functional response curves Types I, II, and III showing prey consumption rate vs prey population density.</canvas>
+      </div>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">Data interpretation — Graph 2</div>
+      <p>This trend shows that wolf predation on moose does not increase linearly with moose abundance. Instead, it saturates — wolves can only process a certain number of moose per unit time regardless of how many are available. This is characteristic of a Type II functional response, which is observed in large mammalian predators generally. At the low end of the moose density range (below ~500 animals, where Isle Royale sits in 2026), there is evidence of a shift toward Type III behavior: wolves increasingly supplement their diet with beavers when moose are scarce, effectively reducing predation pressure on moose at their lowest densities. This supports the model because it explains why the moose population has not collapsed to zero even with 37 wolves — the functional response provides a partial refuge.</p>
+    </div>
+
+    <!-- GRAPH 3: Recent decline -->
+    <div class="chart-wrap">
+      <div class="chart-title">Graph 3 — Post-Translocation Population Dynamics, 2018–2026</div>
+      <div class="chart-desc">Following reintroduction of 19 wolves in 2018–2019, moose population declined 75% while wolf population tripled. Data from Michigan Tech annual winter surveys.</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#185fa5;"></div>Wolf count</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ba7517;"></div>Moose count (÷ 50 for scale)</div>
+      </div>
+      <div class="chart-inner" style="height:280px;">
+        <canvas id="chart3" role="img" aria-label="Bar and line chart showing wolf increase and moose decline between 2018 and 2026 following wolf translocation program.">Wolf and moose counts from 2018 to 2026, post-translocation period.</canvas>
+      </div>
+    </div>
+
+    <div class="callout moose">
+      <div class="callout-label">Data interpretation — Graph 3</div>
+      <p>The data from 2018–2026 constitutes a near-experimental test of the predator-prey model. When predator density was externally increased (wolves translocated), prey density fell — rapidly and substantially. This supports the model because it confirms the directional prediction: predator increase → prey decrease. The rate of decline (75% moose reduction over 7 years) is also ecologically consistent with the estimated 24% annual predation mortality rate recorded in the 2026 winter survey. Notably, researchers recorded zero moose calves in the 2026 aerial count — a first in 68 years of surveys — suggesting that predation pressure is now suppressing recruitment as well as adult survival, which would accelerate future population decline beyond what the basic Lotka-Volterra model predicts.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 5: PRIMARY SOURCE INTEGRATION -->
+  <div class="section">
+    <div class="section-number">Section 4</div>
+    <h2>Primary Source Integration</h2>
+    <p>Two primary research articles were selected to ground this model in published science. Both are peer-reviewed and represent primary research (original data collection and analysis, not review articles).</p>
+
+    <div class="source-card">
+      <div class="source-title">Source 1: "Modeling Moose–Wolf interactions in Isle Royale National Park using sparse identification of nonlinear dynamics"</div>
+      <div class="source-meta">Mondal et al. (2025) — <em>Scientific Reports</em> (Nature Publishing Group) · DOI: 10.1038/s41598-025-08874-7</div>
+      <p class="source-body"><strong>Research question:</strong> Can mathematical models be derived directly from 60 years of field data, without pre-assuming the model structure?</p>
+      <br>
+      <p class="source-body"><strong>Methods:</strong> Researchers applied the SINDy algorithm (Sparse Identification of Nonlinear Dynamics) to annual wolf and moose population counts from 1959–2019. Rather than fitting parameters to a pre-chosen model (like Lotka-Volterra), they allowed the mathematical structure to emerge from the data itself.</p>
+      <br>
+      <p class="source-body"><strong>Key findings:</strong> The wolf population ranged from 2 to 50 individuals (mean: 21), and the moose population ranged from 385 to 2,398 (mean: 1,021). The data-derived model revealed oscillatory dynamics consistent with Lotka-Volterra predictions, but also identified periods of "fragility" — years when the system was particularly sensitive to external shocks. These fragile periods correspond closely to known crisis events (the 1980 disease outbreak, the 1996 severe winter).</p>
+      <br>
+      <p class="source-body"><strong>Connection to model:</strong> This study validates the fundamental structure of our initial Lotka-Volterra model, confirming that predator-prey oscillation is a genuine feature of the Isle Royale system — not an artifact of model assumptions. It also motivates our model revision: the identification of "fragile" periods implies that external perturbations (disease, climate, human intervention) can push the system far from the simple equilibrium the basic model predicts.</p>
+    </div>
+
+    <div class="source-card">
+      <div class="source-title">Source 2: "Ecological Studies of Wolves on Isle Royale — Annual Report 2025–2026"</div>
+      <div class="source-meta">Hoy, S. & Peterson, R. (2026) — Michigan Technological University, College of Forest Resources and Environmental Science</div>
+      <p class="source-body"><strong>Research question:</strong> What are current population sizes and predation rates, and what is the trajectory of the wolf-moose system following the 2018–2019 wolf translocation?</p>
+      <br>
+      <p class="source-body"><strong>Methods:</strong> Aerial surveys conducted January 22 – March 3, 2026, in fixed-wing aircraft over the island. Wolf packs were identified individually; moose were counted by transect survey. Predation rate was estimated from kill sites located during surveys and from GPS-collar data on individual wolves.</p>
+      <br>
+      <p class="source-body"><strong>Key findings:</strong> 37 wolves organized in three packs (West, East, Northeast; 10–13 wolves each) and approximately 524 moose. Wolf predation accounted for an estimated 24% of the moose population in the preceding year — near the highest predation rate ever recorded in the study. No moose calves were observed, suggesting recruitment failure in addition to adult mortality. Balsam fir growth remains suppressed (~1 inch/year vs. ~8 inches expected) despite declining moose density.</p>
+      <br>
+      <p class="source-body"><strong>Connection to model:</strong> This study provides the most current empirical data for our model. The 24% annual predation mortality rate is a direct measurement of the parameter β (predation rate) in the Lotka-Volterra equations. The observation of zero calves adds a recruitment dimension that the basic two-variable model does not capture — motivating the revised model's inclusion of age structure and reproductive suppression effects.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 6: MODEL EVALUATION AND REVISION -->
+  <div class="section">
+    <div class="section-number">Section 5</div>
+    <h2>Model Evaluation and Revision</h2>
+
+    <h3>Limitations of the initial model</h3>
+
+    <table>
+      <tr>
+        <th>Limitation</th>
+        <th>What the basic model predicts</th>
+        <th>What the data shows instead</th>
+        <th>Evidence</th>
+      </tr>
+      <tr>
+        <td><strong>Ignores disease and genetics</strong></td>
+        <td>Populations decline only due to predation and starvation; recovery follows a smooth curve</td>
+        <td>In 1980, canine parvovirus (introduced by a visitor's domestic dog) crashed the wolf population from ~50 to ~14 in two years, independent of moose density. The recovery was then delayed for decades by severe inbreeding as the island's isolated wolves lost genetic diversity.</td>
+        <td>Isle Royale Wolf-Moose Project annual reports; Peterson & Vucetich (2023)</td>
+      </tr>
+      <tr>
+        <td><strong>Ignores climate and stochastic events</strong></td>
+        <td>Populations oscillate around a stable equilibrium; extreme years are within normal variation</td>
+        <td>The 1996 winter was described by researchers as "the most severe on record." Combined with an unexpected moose tick outbreak, it crashed the moose population from ~2,400 to under 700 in a single year — far outside normal oscillation amplitude.</td>
+        <td>Hoy & Peterson (2026); Mondal et al. (2025) SINDy fragility analysis</td>
+      </tr>
+      <tr>
+        <td><strong>Assumes closed system</strong></td>
+        <td>Population dynamics are determined entirely by predator-prey interactions; no immigration or emigration</td>
+        <td>Wolf population was rescued twice by outside individuals: once by a single immigrant wolf from Canada in the late 1990s who reversed inbreeding decline, and once by a NPS-managed translocation of 19 wolves in 2018–2019. Without these interventions, the wolf population would likely have gone locally extinct.</td>
+        <td>Hoy & Peterson (2026); Smithsonian Magazine (2026 annual report coverage)</td>
+      </tr>
+      <tr>
+        <td><strong>Uses only two variables</strong></td>
+        <td>System behavior is fully described by predator and prey population sizes</td>
+        <td>The zero-calf observation in 2026 reveals that age structure matters independently. Predation preferentially removes calves (they are easier to catch), so high predation suppresses recruitment even when adult moose survive. The 2026 survey saw no calves — suggesting the next generation is missing entirely, which will cause population decline to accelerate beyond what adult mortality alone predicts.</td>
+        <td>Hoy & Peterson (2026) annual report</td>
+      </tr>
+    </table>
+
+    <h3>Revised model</h3>
+    <p>Based on the evidence above, the revised model incorporates four major changes to the initial Lotka-Volterra structure:</p>
+
+    <div class="diagram-container">
+      <!--
+        Layout plan (viewBox 740 × 560):
+        ROW 1 (top): Perturbations box — centered, x=220 w=300 y=24 h=52
+        ROW 2 (middle): Moose x=30 w=190 | Vegetation x=275 w=190 | Wolf x=520 w=190  — all y=140 h=96
+        ROW 3 (bottom): Moose mortality x=30 w=190 | Wolf mortality x=520 w=190 — y=340 h=48
+        Fear label zone: y=290–320 centered under wolf, clear of all boxes
+
+        Arrows routed to avoid overlap:
+        - Perturbations → Moose: vertical down from x=310 to moose top
+        - Perturbations → Wolf:  vertical down from x=430 to wolf top
+        - Predation (wolf→moose): arc ABOVE the boxes, through y=110
+        - Prey→wolf growth:       arc BELOW the boxes, through y=260
+        - Moose↔Vegetation: two short horizontal stubs with labels at y=175 / y=185
+        - Fear effect (wolf→veg): elbow right-side of wolf, down to y=290, left to veg right edge
+        - Mortality arrows: straight down from box bottoms
+      -->
+      <svg width="100%" viewBox="0 0 740 560" xmlns="http://www.w3.org/2000/svg" role="img">
+        <title>Revised predator-prey model diagram</title>
+        <desc>Revised model with three tiers: external perturbations on top, moose/vegetation/wolf in the middle, mortality boxes on the bottom. Arrows route above and below the main tier to avoid overlapping boxes.</desc>
+        <defs>
+          <marker id="r2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </marker>
+        </defs>
+
+        <!-- ── ROW 1: EXTERNAL PERTURBATIONS ── -->
+        <rect x="220" y="24" width="300" height="52" rx="8" fill="#fbeaf0" stroke="#d4537e" stroke-width="1.2" stroke-dasharray="6 3"/>
+        <text x="370" y="46" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="13" font-weight="600" fill="#4b1528">External perturbations</text>
+        <text x="370" y="64" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#993556">disease · climate · immigration · human management</text>
+
+        <!-- ── ROW 2: THREE MAIN BOXES ── -->
+        <!-- Moose: x=30 w=190 → right edge=220, center-x=125 -->
+        <rect x="30" y="140" width="190" height="96" rx="10" fill="#faeeda" stroke="#ba7517" stroke-width="1.5"/>
+        <text x="125" y="165" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="700" fill="#412402">Moose population</text>
+        <text x="125" y="183" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#854f0b">calves · adults (age-structured)</text>
+        <text x="125" y="199" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#854f0b">body condition index</text>
+        <text x="125" y="215" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#854f0b">tick load · winter severity</text>
+
+        <!-- Vegetation: x=275 w=190 → right edge=465, center-x=370 -->
+        <rect x="275" y="140" width="190" height="96" rx="10" fill="#eaf3de" stroke="#639922" stroke-width="1.2"/>
+        <text x="370" y="165" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="700" fill="#173404">Vegetation</text>
+        <text x="370" y="183" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#3b6d11">balsam fir · willows · shrubs</text>
+        <text x="370" y="199" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#3b6d11">growth rate varies with</text>
+        <text x="370" y="215" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#3b6d11">browse pressure + climate</text>
+
+        <!-- Wolf: x=520 w=190 → right edge=710, center-x=615 -->
+        <rect x="520" y="140" width="190" height="96" rx="10" fill="#e6f1fb" stroke="#185fa5" stroke-width="1.5"/>
+        <text x="615" y="165" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="700" fill="#042c53">Wolf population</text>
+        <text x="615" y="183" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">pups · adults (age-structured)</text>
+        <text x="615" y="199" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">genetic diversity index</text>
+        <text x="615" y="215" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">3 packs · territory size</text>
+
+        <!-- ── PERTURBATION ARROWS (straight down into box tops) ── -->
+        <!-- → Moose: from x=310 (left side of perturbation box) straight down to moose top -->
+        <line x1="310" y1="76" x2="310" y2="138" stroke="#d4537e" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#r2)"/>
+        <!-- → Wolf: from x=430 (right side of perturbation box) straight down, elbow right to wolf top -->
+        <path d="M430 76 L430 120 L615 120 L615 138" fill="none" stroke="#d4537e" stroke-width="1.4" stroke-dasharray="5 3" marker-end="url(#r2)"/>
+
+        <!-- ── PREDATION: wolf → moose, arc ABOVE boxes (y=108) ── -->
+        <!-- Route: wolf top (615,140) → up to y=108 → left to x=125 → down to moose top (125,140) -->
+        <path d="M615 140 L615 108 L125 108 L125 140" fill="none" stroke="#a32d2d" stroke-width="2" marker-end="url(#r2)"/>
+        <!-- Label sits at y=98, clear above the arc line -->
+        <text x="370" y="98" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" font-weight="600" fill="#a32d2d">predation (Type II/III) · calf-biased selection</text>
+
+        <!-- ── PREY FUELS WOLF GROWTH: moose → wolf, arc BELOW boxes (y=268) ── -->
+        <!-- Route: moose bottom (125,236) → down to y=268 → right to x=615 → up to wolf bottom (615,236) -->
+        <path d="M125 236 L125 268 L615 268 L615 236" fill="none" stroke="#185fa5" stroke-width="1.5" marker-end="url(#r2)"/>
+        <!-- Label sits at y=284, below the arc -->
+        <text x="370" y="284" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="11" fill="#185fa5">prey abundance drives wolf reproduction</text>
+
+        <!-- ── MOOSE ↔ VEGETATION (two horizontal stubs at different heights) ── -->
+        <!-- Moose grazes veg: right edge of moose (220) → left edge of veg (275), at y=172 -->
+        <line x1="220" y1="172" x2="273" y2="172" stroke="#ba7517" stroke-width="1.4" marker-end="url(#r2)"/>
+        <text x="247" y="167" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#854f0b">grazing</text>
+        <!-- Veg feeds moose: left edge of veg (275) → right edge of moose (220), at y=198 -->
+        <line x1="275" y1="198" x2="222" y2="198" stroke="#639922" stroke-width="1.4" marker-end="url(#r2)"/>
+        <text x="247" y="213" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#3b6d11">food source</text>
+
+        <!-- ── ECOLOGY OF FEAR: wolf → vegetation, elbow route ── -->
+        <!-- Route: right edge of wolf (710,188) → right to x=726 → down to y=310 → left to veg right edge (465,310) → up to veg bottom (465,236) -->
+        <path d="M710 188 L726 188 L726 310 L467 310 L467 236" fill="none" stroke="#185fa5" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#r2)"/>
+        <!-- Label in the right margin, clear of everything -->
+        <text x="728" y="255" text-anchor="start" font-family="'Source Serif 4', serif" font-size="10" fill="#185fa5">ecology</text>
+        <text x="728" y="268" text-anchor="start" font-family="'Source Serif 4', serif" font-size="10" fill="#185fa5">of fear</text>
+        <text x="728" y="281" text-anchor="start" font-family="'Source Serif 4', serif" font-size="10" fill="#185fa5">→ less</text>
+        <text x="728" y="294" text-anchor="start" font-family="'Source Serif 4', serif" font-size="10" fill="#185fa5">browsing</text>
+
+        <!-- ── ROW 3: MORTALITY BOXES ── -->
+        <!-- Moose mortality: same x=30 w=190, y=340 -->
+        <rect x="30" y="340" width="190" height="48" rx="6" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.7"/>
+        <text x="125" y="361" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="12" font-weight="600" fill="#501313">Moose mortality</text>
+        <text x="125" y="378" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#a32d2d">predation · ticks · starvation · age</text>
+        <line x1="125" y1="236" x2="125" y2="338" stroke="#a32d2d" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#r2)"/>
+
+        <!-- Wolf mortality: same x=520 w=190, y=340 -->
+        <rect x="520" y="340" width="190" height="48" rx="6" fill="#fcebeb" stroke="#e24b4a" stroke-width="0.7"/>
+        <text x="615" y="361" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="12" font-weight="600" fill="#501313">Wolf mortality</text>
+        <text x="615" y="378" text-anchor="middle" font-family="'Source Serif 4', serif" font-size="10" fill="#a32d2d">starvation · disease · age</text>
+        <line x1="615" y1="236" x2="615" y2="338" stroke="#a32d2d" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#r2)"/>
+
+        <!-- ── LEGEND BAR ── -->
+        <rect x="30" y="420" width="680" height="118" rx="4" fill="#f3f0e8" stroke="#e8e3d8" stroke-width="0.5"/>
+        <text x="50" y="440" font-family="'Source Serif 4', serif" font-size="11" font-weight="600" fill="#3a5a7c">Revisions from initial model:</text>
+        <text x="50" y="458" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">① Age-structured populations — calves and adults tracked separately</text>
+        <text x="50" y="474" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">② Genetic diversity variable added to wolf population</text>
+        <text x="50" y="490" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">③ External perturbations (disease, climate, immigration) explicitly modeled</text>
+        <text x="50" y="506" font-family="'Source Serif 4', serif" font-size="11" fill="#6b6761">④ Ecology of fear pathway added (wolves suppress moose browsing → vegetation recovers)</text>
+        <!-- Arrow key -->
+        <line x1="50" y1="526" x2="80" y2="526" stroke="#a32d2d" stroke-width="2"/>
+        <text x="86" y="530" font-family="'Source Serif 4', serif" font-size="10" fill="#6b6761">negative (predation / mortality)</text>
+        <line x1="240" y1="526" x2="270" y2="526" stroke="#185fa5" stroke-width="1.5"/>
+        <text x="276" y="530" font-family="'Source Serif 4', serif" font-size="10" fill="#6b6761">positive (growth / food)</text>
+        <line x1="420" y1="526" x2="450" y2="526" stroke="#d4537e" stroke-width="1.4" stroke-dasharray="5 3"/>
+        <text x="456" y="530" font-family="'Source Serif 4', serif" font-size="10" fill="#6b6761">external perturbation</text>
+        <line x1="590" y1="526" x2="620" y2="526" stroke="#185fa5" stroke-width="1" stroke-dasharray="4 3"/>
+        <text x="626" y="530" font-family="'Source Serif 4', serif" font-size="10" fill="#6b6761">indirect (fear)</text>
+      </svg>
+      <p class="diagram-caption">Figure 2. Revised predator-prey model incorporating age structure, external perturbations, and the ecology of fear pathway. Predation arrow routes above the boxes; prey-growth arrow routes below. The ecology-of-fear pathway exits the right side of the wolf box and loops back to vegetation without crossing other elements.</p>
+    </div>
+
+    <p>The revised model makes four substantive changes. First, both populations are now age-structured: moose are tracked as calves and adults separately, because predation strongly targets calves and the 2026 zero-calf observation cannot be represented in a single-variable moose population. Second, a genetic diversity variable is added to the wolf population — the near-extinction of the wolf population due to inbreeding (down to 2 individuals by 2016) was a major system perturbation invisible to the basic model. Third, external perturbation pathways are explicitly added, representing disease (canine parvovirus), climate (severe winters, tick outbreaks), and immigration/management (wolf translocation). These are modeled as stochastic inputs that can shift populations outside the normal oscillation range. Fourth, the ecology of fear is added as an indirect pathway: wolf presence suppresses moose movement in ways that reduce vegetative browse pressure — a feedback that connects the predator back to the vegetation layer without going through direct predation.</p>
+    <p>These revisions move the model from a simple two-variable oscillator toward a more realistic multi-variable system. The tradeoff is complexity: the revised model is harder to solve analytically and requires numerical simulation or ongoing field data to parameterize. But it makes better predictions — particularly for periods when external shocks push the system far from the Lotka-Volterra equilibrium, which on Isle Royale is most of the time.</p>
+  </div>
+
+  <!-- REFERENCES -->
+  <div class="section references">
+    <div class="section-number">Sources</div>
+    <h2>Works Cited</h2>
+    <ol>
+      <li>Mondal, S., et al. (2025). Modeling moose–wolf interactions in Isle Royale National Park using sparse identification of nonlinear dynamics. <em>Scientific Reports</em>, 15, Article 10234. https://doi.org/10.1038/s41598-025-08874-7</li>
+      <li>Hoy, S., & Peterson, R. (2026). <em>Ecological studies of wolves on Isle Royale: Annual report 2025–2026</em>. Michigan Technological University, College of Forest Resources and Environmental Science. https://www.isleroyalewolf.org</li>
+      <li>Vucetich, J. A., et al. (2011). Predicting prey population dynamics from kill rate, predator-prey ratios and cause-specific mortality. <em>Oikos</em>, 120(6), 956–964.</li>
+      <li>Sand, H., et al. (2012). Assessing the influence of prey-predator ratio, prey age structure and packs dynamics on wolf kill rates. <em>Oikos</em>, 121(10), 1454–1463.</li>
+      <li>Isle Royale Wolf-Moose Project. (2024). Population dynamics. Michigan Technological University. https://www.isleroyalewolf.org/population-dynamics</li>
+      <li>Michigan Technological University. (2026, April 28). Isle Royale wolf population nears historic high as moose numbers plummet. <em>MTU News</em>. https://www.mtu.edu/news/2026/04/isle-royale-wolf-population-nears-historic-high</li>
+    </ol>
+  </div>
+
+  <div class="footer">
+    <span>Biological Systems Model Report — AP Biology</span>
+    <span>Isle Royale Wolf-Moose System</span>
+    <span>June 4, 2026</span>
+  </div>
+
+</div>
+
+<script>
+/* ==== CHART 1: Population Over Time ==== */
+const years = [1959,1961,1963,1965,1967,1969,1971,1973,1975,1977,1979,1981,1983,1985,1987,1989,1991,1993,1995,1997,1999,2001,2003,2005,2007,2009,2011,2013,2015,2017,2019,2020,2022,2024,2026];
+const wolves = [20,22,23,28,26,22,20,24,41,34,50,30,23,22,16,11,12,12,16,24,25,19,31,30,21,24,16,8,3,2,14,14,28,28,37];
+const moose  = [540,600,650,800,1000,1200,1300,1100,1000,900,750,900,1000,1200,1500,1800,2000,1600,2400,700,750,900,850,540,385,650,750,975,1250,1500,2000,1700,1600,1346,524];
+
+const ctx1 = document.getElementById('chart1').getContext('2d');
+new Chart(ctx1, {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      {
+        label: 'Wolves',
+        data: wolves.map(v => v * 40),
+        borderColor: '#185fa5',
+        backgroundColor: 'rgba(24,95,165,0.08)',
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        tension: 0.35,
+        fill: false,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Moose',
+        data: moose,
+        borderColor: '#ba7517',
+        backgroundColor: 'rgba(186,117,23,0.08)',
+        borderWidth: 2,
+        pointRadius: 2,
+        pointHoverRadius: 4,
+        tension: 0.35,
+        fill: false,
+        borderDash: [5,3],
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            if (ctx.datasetIndex === 0) return 'Wolves: ' + Math.round(ctx.raw / 40);
+            return 'Moose: ' + ctx.raw;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { maxTicksLimit: 12, color: '#6b6761', font: { size: 11 } },
+        grid: { color: 'rgba(0,0,0,0.04)' }
+      },
+      y: {
+        ticks: {
+          callback: v => v >= 1000 ? (v/1000).toFixed(1)+'K' : v,
+          color: '#6b6761', font: { size: 11 }, maxTicksLimit: 7
+        },
+        grid: { color: 'rgba(0,0,0,0.04)' }
+      }
+    }
+  }
+});
+
+/* ==== CHART 2: Functional Response Curves ==== */
+const preyDensity = Array.from({length: 40}, (_, i) => Math.round(i * 65));
+function typeI(x)   { return Math.min(x * 0.7, 100); }
+function typeII(x)  { return 100 * x / (x + 800); }
+function typeIII(x) { return 100 * x*x / (x*x + 700*700); }
+
+const ctx2 = document.getElementById('chart2').getContext('2d');
+new Chart(ctx2, {
+  type: 'line',
+  data: {
+    labels: preyDensity,
+    datasets: [
+      {
+        label: 'Type I',
+        data: preyDensity.map(typeI),
+        borderColor: '#a32d2d',
+        borderWidth: 2,
+        borderDash: [6,3],
+        pointRadius: 0,
+        tension: 0.1,
+        fill: false
+      },
+      {
+        label: 'Type II (wolf)',
+        data: preyDensity.map(typeII),
+        borderColor: '#185fa5',
+        borderWidth: 2.5,
+        pointRadius: 0,
+        tension: 0.4,
+        fill: false
+      },
+      {
+        label: 'Type III',
+        data: preyDensity.map(typeIII),
+        borderColor: '#3b6d11',
+        borderWidth: 2,
+        borderDash: [3,3],
+        pointRadius: 0,
+        tension: 0.4,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        title: { display: true, text: 'Moose density (individuals)', color: '#6b6761', font: { size: 11 } },
+        ticks: { color: '#6b6761', font: { size: 11 }, maxTicksLimit: 8 },
+        grid: { color: 'rgba(0,0,0,0.04)' }
+      },
+      y: {
+        title: { display: true, text: 'Kill rate (moose / wolf pack / year)', color: '#6b6761', font: { size: 11 } },
+        ticks: { color: '#6b6761', font: { size: 11 } },
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        min: 0, max: 105
+      }
+    }
+  }
+});
+
+/* ==== CHART 3: Post-Translocation 2018–2026 ==== */
+const recentYears = ['2018','2019','2020','2021','2022','2023','2024','2025','2026'];
+const recentWolves = [6,14,14,null,14,28,28,28,37];
+const recentMoose  = [1500,2000,1700,null,1600,1500,1346,1000,524];
+
+const ctx3 = document.getElementById('chart3').getContext('2d');
+new Chart(ctx3, {
+  type: 'bar',
+  data: {
+    labels: recentYears,
+    datasets: [
+      {
+        label: 'Wolves',
+        data: recentWolves,
+        backgroundColor: 'rgba(24,95,165,0.75)',
+        borderColor: '#185fa5',
+        borderWidth: 1,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Moose (÷ 50)',
+        type: 'line',
+        data: recentMoose.map(v => v == null ? null : Math.round(v / 50)),
+        borderColor: '#ba7517',
+        backgroundColor: 'transparent',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointBackgroundColor: '#ba7517',
+        tension: 0.3,
+        fill: false,
+        yAxisID: 'y',
+        spanGaps: true
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            if (ctx.dataset.label === 'Wolves') return 'Wolves: ' + ctx.raw;
+            return 'Moose: ' + (ctx.raw * 50);
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { color: '#6b6761', font: { size: 11 } },
+        grid: { color: 'rgba(0,0,0,0.04)' }
+      },
+      y: {
+        ticks: {
+          callback: v => v,
+          color: '#6b6761', font: { size: 11 }
+        },
+        grid: { color: 'rgba(0,0,0,0.04)' },
+        min: 0, max: 45
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
