@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criminal Charges Checklist</title>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-light: #ebf8ff;
+            --text-color: #2d3748;
+            --border-color: #e2e8f0;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 32px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #1a202c;
+            margin-top: 0;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            color: #718096;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        /* Progress Bar Styling */
+        .progress-container {
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+            padding: 10px 0 20px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 10;
+        }
+
+        .progress-bar-bg {
+            background-color: var(--border-color);
+            border-radius: 9999px;
+            height: 8px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            background-color: var(--primary-color);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-top: 6px;
+        }
+
+        /* Checklist Styling */
+        .checklist {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .item:hover {
+            border-color: #cbd5e0;
+            background-color: var(--bg-color);
+            transform: translateY(-1px);
+        }
+
+        /* Custom Checkbox Design */
+        .item input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #cbd5e0;
+            border-radius: 4px;
+            margin-right: 12px;
+            display: grid;
+            place-content: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+
+        .item input[type="checkbox"]::before {
+            content: "";
+            width: 10px;
+            height: 10px;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            background-color: white;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+
+        .item input[type="checkbox"]:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .item input[type="checkbox"]:checked::before {
+            transform: scale(1);
+        }
+
+        .item span {
+            font-size: 0.92rem;
+            font-weight: 500;
+            color: var(--text-color);
+            transition: color 0.2s ease;
+        }
+
+        .item input[type="checkbox"]:checked ~ span {
+            color: #a0aec0;
+            text-decoration: line-through;
+        }
+
+        .item.checked-bg {
+            background-color: var(--primary-light);
+            border-color: #bee3f8;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Criminal Charges Master List</h1>
+    <p class="subtitle">Select or track items by checking them off below.</p>
+
+    <div class="progress-container">
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        <div class="progress-text">
+            <span id="progressCount">0 of 0 completed</span>
+            <span id="progressPercent">0%</span>
+        </div>
+    </div>
+
+    <div class="checklist" id="checklist">
+        </div>
+</div>
+
+<script>
+    // List of crimes extracted from the page
+    const crimes = [
+        "Aggravated assault", "Aiding and abetting/accessory", "Arson", "Assault/battery", 
+        "Attempt", "Bribery", "Burglary", "Child abandonment", "Child abuse", 
+        "Child neglect", "Child pornography", "Computer crime", "Conspiracy", 
+        "Counterfeiting", "Credit/debit card fraud", "Criminal contempt of court", 
+        "Cyberbullying", "Disorderly conduct", "Disturbing the peace", "Domestic violence",
