@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Line-Up — Senior Year House Parties</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
+<style>
+:root{
+  --paper:#f2ede2;
+  --paper-dark:#e8e0cf;
+  --ink:#1f1c16;
+  --stub-red:#b5432c;
+  --stub-green:#3f5b45;
+  --stub-mustard:#c99a2e;
+  --line:#1f1c16;
+  --muted:#6b6252;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--paper);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(31,28,22,0.06) 1px, transparent 0);
+  background-size:18px 18px;
+  color:var(--ink);
+  font-family:'Courier New', Courier, monospace;
+}
+h1,h2,h3,.display{
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight:800;
+  letter-spacing:-0.02em;
+}
+.wrap{max-width:900px;margin:0 auto;padding:0 20px;}
+
+/* ---------- HERO ---------- */
+.hero{
+  border-bottom:4px solid var(--ink);
+  padding:60px 0 40px;
+  position:relative;
+}
+.hero .eyebrow{
+  text-transform:uppercase;
+  letter-spacing:0.25em;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.hero h1{
+  font-size:clamp(38px,7vw,72px);
+  margin:0 0 6px;
+  line-height:0.95;
+}
+.hero .sub{
+  font-size:15px;
+  color:var(--muted);
+  max-width:520px;
+  margin-top:14px;
+}
+.stamp{
+  position:absolute;
+  top:40px;right:20px;
+  width:90px;height:90px;
+  border:3px solid var(--stub-red);
+  border-radius:50%;
+  color:var(--stub-red);
+  display:flex;align-items:center;justify-content:center;
+  text-align:center;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:0.05em;
+  transform:rotate(-14deg);
+  text-transform:uppercase;
+  line-height:1.2;
+}
+
+/* ---------- NAV ---------- */
+.tabbar{
+  display:flex;gap:0;
+  border-bottom:2px solid var(--ink);
+  margin-top:10px;
+}
+.tabbar button{
+  font-family:inherit;
+  background:none;
+  border:none;
+  border-right:2px solid var(--ink);
+  padding:12px 18px;
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.1em;
+  cursor:pointer;
+  color:var(--muted);
+}
+.tabbar button:last-child{border-right:none;}
+.tabbar button.active{
+  color:var(--paper);
+  background:var(--ink);
+}
+
+.view{padding:36px 0 80px;display:none;}
+.view.active{display:block;}
+
+/* ---------- TICKETS (event list) ---------- */
+.ticket{
+  display:flex;
+  background:var(--paper-dark);
+  border:2px solid var(--ink);
+  margin-bottom:22px;
+  position:relative;
+  cursor:pointer;
+  transition:transform 0.15s ease;
+}
+.ticket:hover{transform:translateX(4px);}
+.ticket .stub-left{
+  width:110px;
+  flex-shrink:0;
+  border-right:2px dashed var(--ink);
+  padding:16px 10px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.ticket .stub-left .month{
+  font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);
+}
+.ticket .stub-left .day{
+  font-family:Georgia,serif;font-size:38px;font-weight:800;line-height:1;
+}
+.ticket .body{padding:18px 22px;flex:1;}
+.ticket .body h2{font-size:26px;margin:0 0 4px;}
+.ticket .body .meta{font-size:13px;color:var(--muted);}
+.ticket .tag{
+  display:inline-block;
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  padding:3px 8px;
+  border:1px solid var(--ink);
+  margin-top:8px;
+}
+.ticket .arrow{
+  display:flex;align-items:center;padding-right:20px;
+  font-size:22px;
+}
+.ticket.past{opacity:0.55;}
+.ticket .rsvpd-badge{
+  position:absolute;top:-10px;right:16px;
+  background:var(--stub-green);color:var(--paper);
+  font-size:10px;text-transform:uppercase;letter-spacing:0.08em;
+  padding:4px 10px;
+  transform:rotate(-3deg);
+  border:2px solid var(--ink);
+}
+
+/* ---------- EVENT DETAIL ---------- */
+.detail-back{
+  background:none;border:none;font-family:inherit;font-size:13px;
+  text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;color:var(--muted);
+  margin-bottom:20px;
+}
+.detail-header{
+  border-bottom:3px solid var(--ink);padding-bottom:20px;margin-bottom:24px;
+}
+.detail-header h2{font-size:clamp(30px,5vw,46px);margin:0 0 8px;}
+.info-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0;
+  border:2px solid var(--ink);margin-bottom:24px;
+}
+.info-cell{
+  padding:14px 18px;border-bottom:1px solid var(--ink);
+}
+.info-cell:nth-child(odd){border-right:1px solid var(--ink);}
+.info-cell .k{font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);}
+.info-cell .v{font-size:15px;margin-top:2px;}
+.section-block{margin-bottom:26px;}
+.section-block h3{
+  font-size:13px;text-transform:uppercase;letter-spacing:0.12em;
+  border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px;
+  color:var(--stub-red);
+}
+.section-block p{font-size:15px;line-height:1.6;margin:0;}
+.insp-strip{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;}
+.insp-strip img{height:130px;border:2px solid var(--ink);flex-shrink:0;}
+
+/* ---------- FORM ---------- */
+.card{
+  background:var(--paper-dark);
+  border:2px solid var(--ink);
+  padding:26px;
+}
+.field{margin-bottom:16px;}
+.field label{
+  display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--muted);margin-bottom:5px;
+}
+.field input,.field select,.field textarea{
+  width:100%;font-family:inherit;font-size:15px;
+  padding:10px 12px;border:2px solid var(--ink);background:var(--paper);
+  color:var(--ink);
+}
+.field textarea{resize:vertical;min-height:70px;}
+.checkbox-row{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.checkbox-row input{width:auto;}
+.btn{
+  font-family:inherit;background:var(--ink);color:var(--paper);
+  border:2px solid var(--ink);padding:14px 26px;font-size:14px;
+  text-transform:uppercase;letter-spacing:0.1em;cursor:pointer;
+}
+.btn:hover{background:var(--stub-red);border-color:var(--stub-red);}
+.btn.secondary{background:var(--paper);color:var(--ink);}
+.msg{margin-top:14px;font-size:14px;}
+.msg.ok{color:var(--stub-green);}
+.msg.err{color:var(--stub-red);}
+
+/* ---------- ADMIN ---------- */
+.admin-login{max-width:340px;margin:60px auto;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;}
+th,td{border:1px solid var(--ink);padding:8px 10px;text-align:left;vertical-align:top;}
+th{background:var(--ink);color:var(--paper);text-transform:uppercase;font-size:11px;letter-spacing:0.05em;}
+tr:nth-child(even){background:var(--paper-dark);}
+.event-select{margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.count-pill{
+  display:inline-block;background:var(--stub-mustard);border:2px solid var(--ink);
+  padding:2px 10px;font-size:12px;font-weight:800;margin-left:8px;
+}
+.admin-actions{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+
+/* ---------- PHOTOS ---------- */
+.photo-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:12px;margin-top:20px;
+}
+.photo-grid .ph{
+  border:2px solid var(--ink);position:relative;aspect-ratio:1;overflow:hidden;
+  background:var(--paper-dark);
+}
+.photo-grid .ph img{width:100%;height:100%;object-fit:cover;display:block;}
+.photo-grid .ph a.dl{
+  position:absolute;bottom:6px;right:6px;background:var(--ink);color:var(--paper);
+  font-size:10px;text-transform:uppercase;padding:4px 8px;text-decoration:none;
+}
+
+.upload-box{
+  border:2px dashed var(--ink);padding:24px;text-align:center;margin-bottom:20px;
+}
+
+.footer-note{
+  text-align:center;color:var(--muted);font-size:12px;padding:30px 0;
+}
+
+@media(max-width:640px){
+  .info-grid{grid-template-columns:1fr;}
+  .info-cell:nth-child(odd){border-right:none;}
+  .ticket .stub-left{width:80px;}
+  .stamp{width:70px;height:70px;font-size:9px;top:20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="hero">
+    <div class="stamp">Senior<br>Year<br>Series</div>
+    <div class="eyebrow">Est. This House · One Year Only</div>
+    <h1>THE LINE-UP</h1>
+    <div class="sub">A themed party every month until we all leave for school. RSVP below, read the details before you show up, and if you were there, come back after for the photos.</div>
+  </div>
+
+  <div class="tabbar">
+    <button class="tab-btn active" data-view="events">Events</button>
+    <button class="tab-btn" data-view="photos">Photos</button>
+    <button class="tab-btn" data-view="admin">Host View</button>
+  </div>
+
+  <!-- EVENTS LIST VIEW -->
+  <div class="view active" id="view-events">
+    <div id="events-list"></div>
+  </div>
+
+  <!-- EVENT DETAIL + RSVP VIEW -->
+  <div class="view" id="view-detail">
+    <button class="detail-back" id="back-btn">&larr; Back to line-up</button>
+    <div id="detail-content"></div>
+  </div>
+
+  <!-- PHOTOS VIEW -->
+  <div class="view" id="view-photos">
+    <h2 style="margin-top:0;">Photo Dump</h2>
+    <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Pick the party. Upload what you shot, download what everyone else shot.</p>
+    <div class="event-select" id="photo-event-select"></div>
+    <div id="photo-area"></div>
+  </div>
+
+  <!-- ADMIN VIEW -->
+  <div class="view" id="view-admin">
+    <div id="admin-login" class="admin-login">
+      <div class="card">
+        <div class="field">
+          <label>Host Password</label>
+          <input type="password" id="admin-pass" placeholder="•••••••">
+        </div>
+        <button class="btn" id="admin-login-btn">Enter</button>
+        <div class="msg err" id="admin-login-msg"></div>
+      </div>
+    </div>
+    <div id="admin-panel" style="display:none;"></div>
+  </div>
+
+  <div class="footer-note">built by the host, not a committee</div>
+</div>
+
+<script>
+/* =========================================================================
+   FIREBASE CONFIG
+   Replace with your own Firebase project config (Console > Project Settings).
+   Firestore + Storage both need to be enabled in that project.
+   ========================================================================= */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const storage = firebase.storage();
+
+/* =========================================================================
+   ADMIN PASSWORD
+   This is a client-side gate only — good enough to keep randoms out of the
+   host view, not real security. Anyone who reads the page source can find
+   this string. If you want it locked down for real, move this check into
+   a Firebase Cloud Function or Firebase Auth with a custom claim.
+   ========================================================================= */
+const ADMIN_PASSWORD = "linup2026";
+let isAdmin = sessionStorage.getItem("isAdmin") === "true";
+
+/* =========================================================================
+   STATE
+   ========================================================================= */
+let allEvents = [];
+let currentEventId = null;
+let myRsvpIds = JSON.parse(localStorage.getItem("myRsvpIds") || "{}"); // {eventId: rsvpDocId}
+
+/* =========================================================================
+   TAB NAV
+   ========================================================================= */
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+  btn.addEventListener("click", ()=> showView(btn.dataset.view));
+});
+document.getElementById("back-btn").addEventListener("click", ()=> showView("events"));
+
+function showView(name){
+  document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.view===name || (name==="detail" && b.dataset.view==="events")));
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const map = {events:"view-events", detail:"view-detail", photos:"view-photos", admin:"view-admin"};
+  document.getElementById(map[name]).classList.add("active");
+  if(name==="photos") renderPhotoEventSelect();
+  if(name==="admin") renderAdmin();
+}
+
+/* =========================================================================
+   LOAD EVENTS (soonest upcoming first, past events fall to the bottom)
+   ========================================================================= */
+function loadEvents(){
+  db.collection("events").orderBy("date","asc").onSnapshot(snap=>{
+    allEvents = [];
+    snap.forEach(doc=> allEvents.push({id: doc.id, ...doc.data()}));
+    renderEventsList();
+  });
+}
+
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmtMonth(dateStr){
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-US",{month:"short"});
+}
+function fmtDay(dateStr){
+  const d = new Date(dateStr + "T00:00:00");
+  return d.getDate();
+}
+function fmtFullDate(dateStr){
+  const d = new Date(dateStr + "T00:00:00");
+  return d.toLocaleDateString("en-US",{weekday:"long", month:"long", day:"numeric", year:"numeric"});
+}
+
+/* ---------- RENDER: EVENTS LIST ---------- */
+function renderEventsList(){
+  const el = document.getElementById("events-list");
+  if(allEvents.length === 0){
+    el.innerHTML = `<p style="color:var(--muted);">No events posted yet. Check back once the host sets the calendar.</p>`;
+    return;
+  }
+  const today = todayStr();
+  const upcoming = allEvents.filter(e => e.date >= today);
+  const past = allEvents.filter(e => e.date < today).reverse();
+  const ordered = [...upcoming, ...past];
+
+  el.innerHTML = ordered.map(ev => {
+    const isPast = ev.date < today;
+    const rsvpd = myRsvpIds[ev.id];
+    return `
+      <div class="ticket ${isPast ? "past" : ""}" data-id="${ev.id}">
+        ${rsvpd ? '<div class="rsvpd-badge">You\'re In</div>' : ""}
+        <div class="stub-left">
+          <div class="month">${fmtMonth(ev.date)}</div>
+          <div class="day">${fmtDay(ev.date)}</div>
+        </div>
+        <div class="body">
+          <h2>${escapeHtml(ev.name || "Untitled Party")}</h2>
+          <div class="meta">${escapeHtml(ev.location || "Location TBD")} &middot; ${escapeHtml(ev.time || "Time TBD")}</div>
+          ${ev.theme ? `<div class="tag">${escapeHtml(ev.theme)}</div>` : ""}
+        </div>
+        <div class="arrow">${isPast ? "" : "&rarr;"}</div>
+      </div>
+    `;
+  }).join("");
+
+  el.querySelectorAll(".ticket").forEach(t=>{
+    t.addEventListener("click", ()=> openEventDetail(t.dataset.id));
+  });
+}
+
+function escapeHtml(str){
+  if(!str) return "";
+  return String(str).replace(/[&<>"']/g, s => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[s]));
+}
+function nl2br(str){
+  return escapeHtml(str).replace(/\n/g,"<br>");
+}
+
+/* ---------- RENDER: EVENT DETAIL + RSVP FORM ---------- */
+function openEventDetail(id){
+  currentEventId = id;
+  const ev = allEvents.find(e=>e.id===id);
+  if(!ev) return;
+  const el = document.getElementById("detail-content");
+  const already = myRsvpIds[id];
+  const isPast = ev.date < todayStr();
+
+  const inspHtml = (ev.inspirationImages && ev.inspirationImages.length)
+    ? `<div class="section-block"><h3>Inspiration</h3><div class="insp-strip">${
+        ev.inspirationImages.map(u=>`<img src="${escapeHtml(u)}" alt="inspiration">`).join("")
+      }</div></div>` : "";
+
+  el.innerHTML = `
+    <div class="detail-header">
+      <h2>${escapeHtml(ev.name || "Untitled Party")}</h2>
+      ${ev.theme ? `<div class="tag">${escapeHtml(ev.theme)}</div>` : ""}
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="k">Date</div><div class="v">${fmtFullDate(ev.date)}</div></div>
+      <div class="info-cell"><div class="k">Time</div><div class="v">${escapeHtml(ev.time || "TBD")}</div></div>
+      <div class="info-cell"><div class="k">Location</div><div class="v">${escapeHtml(ev.location || "TBD")}</div></div>
+      <div class="info-cell"><div class="k">Parking</div><div class="v">${escapeHtml(ev.parking || "Ask the host")}</div></div>
+    </div>
+    ${ev.dresscode ? `<div class="section-block"><h3>Dress Code</h3><p>${nl2br(ev.dresscode)}</p></div>` : ""}
+    ${ev.rules ? `<div class="section-block"><h3>Rules &amp; Expectations</h3><p>${nl2br(ev.rules)}</p></div>` : ""}
+    ${ev.details ? `<div class="section-block"><h3>What To Know</h3><p>${nl2br(ev.details)}</p></div>` : ""}
+    ${inspHtml}
+    <div class="section-block">
+      <h3>RSVP</h3>
+      ${isPast
+        ? `<p style="color:var(--muted);">This one's already happened. Check the Photos tab.</p>`
+        : already
+          ? renderAlreadyRsvpd(ev)
+          : renderRsvpForm(ev)
+      }
+    </div>
+  `;
+
+  if(!already && !isPast){
+    document.getElementById("rsvp-form").addEventListener("submit", (e)=> submitRsvp(e, ev));
+  }
+  if(already){
+    const cancelBtn = document.getElementById("cancel-rsvp-btn");
+    if(cancelBtn) cancelBtn.addEventListener("click", ()=> cancelRsvp(ev.id));
+  }
+  showView("detail");
+}
+
+function renderAlreadyRsvpd(ev){
+  return `
+    <div class="card">
+      <p style="margin-top:0;">You're on the list for this one. Details above are all you need — see you there.</p>
+      <button class="btn secondary" id="cancel-rsvp-btn">Cancel my RSVP</button>
+    </div>
+  `;
+}
+
+function renderRsvpForm(ev){
+  return `
+    <div class="card">
+      <form id="rsvp-form">
+        <div class="field"><label>Name</label><input type="text" required name="name"></div>
+        <div class="field"><label>Snapchat username</label><input type="text" name="snap"></div>
+        <div class="field"><label>Instagram username</label><input type="text" name="insta"></div>
+        <div class="field"><label>Phone number</label><input type="tel" required name="phone"></div>
+        <div class="field"><label>Expected arrival time</label><input type="time" required name="arrival"></div>
+        ${ev.askBringing ? `
+          <div class="field"><label>What are you bringing?</label><input type="text" name="bringing" placeholder="e.g. speaker, chips, ice"></div>
+        ` : ""}
+        ${ev.allowPlusOne ? `
+          <div class="checkbox-row">
+            <input type="checkbox" id="plusone-check" name="plusOneChecked">
+            <label for="plusone-check" style="margin:0;">Bringing a plus one</label>
+          </div>
+          <div class="field" id="plusone-name-field" style="display:none;">
+            <label>Plus one's name</label><input type="text" name="plusOneName">
+          </div>
+        ` : ""}
+        <button class="btn" type="submit">Lock In My Spot</button>
+        <div class="msg" id="rsvp-msg"></div>
+      </form>
+    </div>
+  `;
+}
+
+document.addEventListener("change", (e)=>{
+  if(e.target && e.target.id === "plusone-check"){
+    const field = document.getElementById("plusone-name-field");
+    if(field) field.style.display = e.target.checked ? "block" : "none";
+  }
+});
+
+function submitRsvp(e, ev){
+  e.preventDefault();
+  const form = e.target;
+  const data = new FormData(form);
+  const msgEl = document.getElementById("rsvp-msg");
+
+  const rsvp = {
+    eventId: ev.id,
+    name: data.get("name") || "",
+    snap: data.get("snap") || "",
+    insta: data.get("insta") || "",
+    phone: data.get("phone") || "",
+    arrival: data.get("arrival") || "",
+    bringing: data.get("bringing") || "",
+    plusOne: !!data.get("plusOneChecked"),
+    plusOneName: data.get("plusOneName") || "",
+    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  db.collection("rsvps").add(rsvp).then(docRef=>{
+    myRsvpIds[ev.id] = docRef.id;
+    localStorage.setItem("myRsvpIds", JSON.stringify(myRsvpIds));
+    msgEl.textContent = "You're locked in.";
+    msgEl.className = "msg ok";
+    setTimeout(()=> openEventDetail(ev.id), 700);
+  }).catch(err=>{
+    msgEl.textContent = "Something went wrong: " + err.message;
+    msgEl.className = "msg err";
+  });
+}
+
+function cancelRsvp(eventId){
+  const rsvpId = myRsvpIds[eventId];
+  if(!rsvpId) return;
+  db.collection("rsvps").doc(rsvpId).delete().then(()=>{
+    delete myRsvpIds[eventId];
+    localStorage.setItem("myRsvpIds", JSON.stringify(myRsvpIds));
+    openEventDetail(eventId);
+  });
+}
+
+/* ---------- PHOTOS ---------- */
+function renderPhotoEventSelect(){
+  const el = document.getElementById("photo-event-select");
+  const today = todayStr();
+  const relevant = allEvents.filter(e=> e.date <= today).sort((a,b)=> b.date.localeCompare(a.date));
+  if(relevant.length === 0){
+    el.innerHTML = `<p style="color:var(--muted);">No past parties yet.</p>`;
+    document.getElementById("photo-area").innerHTML = "";
+    return;
+  }
+  el.innerHTML = relevant.map(ev=>`<button class="btn secondary photo-ev-btn" data-id="${ev.id}">${escapeHtml(ev.name)}</button>`).join("");
+  el.querySelectorAll(".photo-ev-btn").forEach(b=>{
+    b.addEventListener("click", ()=> loadPhotosForEvent(b.dataset.id, relevant.find(e=>e.id===b.dataset.id)));
+  });
+  loadPhotosForEvent(relevant[0].id, relevant[0]);
+}
+
+function loadPhotosForEvent(eventId, ev){
+  const el = document.getElementById("photo-area");
+  el.innerHTML = `
+    <div class="upload-box">
+      <p style="margin-top:0;">Uploading for: <strong>${escapeHtml(ev ? ev.name : "")}</strong></p>
+      <input type="file" id="photo-upload-input" accept="image/*" multiple>
+      <div style="margin-top:10px;"><button class="btn" id="photo-upload-btn">Upload Photos</button></div>
+      <div class="msg" id="upload-msg"></div>
+    </div>
+    <div class="photo-grid" id="photo-grid">Loading...</div>
+  `;
+
+  document.getElementById("photo-upload-btn").addEventListener("click", ()=> uploadPhotos(eventId));
+
+  db.collection("photos").where("eventId","==",eventId).orderBy("createdAt","desc").get().then(snap=>{
+    const grid = document.getElementById("photo-grid");
+    if(snap.empty){
+      grid.innerHTML = `<p style="color:var(--muted);">No photos uploaded yet for this one.</p>`;
+      return;
+    }
+    grid.innerHTML = "";
+    snap.forEach(doc=>{
+      const p = doc.data();
+      const div = document.createElement("div");
+      div.className = "ph";
+      div.innerHTML = `<img src="${p.url}" loading="lazy"><a class="dl" href="${p.url}" download target="_blank">Save</a>`;
+      grid.appendChild(div);
+    });
+  });
+}
+
+function uploadPhotos(eventId){
+  const input = document.getElementById("photo-upload-input");
+  const msgEl = document.getElementById("upload-msg");
+  const files = input.files;
+  if(!files || files.length === 0){
+    msgEl.textContent = "Pick at least one photo first.";
+    msgEl.className = "msg err";
+    return;
+  }
+  msgEl.textContent = `Uploading ${files.length} photo(s)...`;
+  msgEl.className = "msg";
+
+  const uploads = Array.from(files).map(file=>{
+    const path = `events/${eventId}/${Date.now()}_${file.name}`;
+    const ref = storage.ref().child(path);
+    return ref.put(file).then(snap=> snap.ref.getDownloadURL()).then(url=>{
+      return db.collection("photos").add({
+        eventId, url, filename: file.name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    });
+  });
+
+  Promise.all(uploads).then(()=>{
+    msgEl.textContent = "Uploaded. Refreshing gallery...";
+    msgEl.className = "msg ok";
+    const ev = allEvents.find(e=>e.id===eventId);
+    loadPhotosForEvent(eventId, ev);
+  }).catch(err=>{
+    msgEl.textContent = "Upload failed: " + err.message;
+    msgEl.className = "msg err";
+  });
+}
+
+/* ---------- ADMIN / HOST VIEW ---------- */
+document.getElementById("admin-login-btn").addEventListener("click", ()=>{
+  const val = document.getElementById("admin-pass").value;
+  const msg = document.getElementById("admin-login-msg");
+  if(val === ADMIN_PASSWORD){
+    isAdmin = true;
+    sessionStorage.setItem("isAdmin","true");
+    renderAdmin();
+  } else {
+    msg.textContent = "Wrong password.";
+  }
+});
+
+function renderAdmin(){
+  const loginEl = document.getElementById("admin-login");
+  const panelEl = document.getElementById("admin-panel");
+  if(!isAdmin){
+    loginEl.style.display = "block";
+    panelEl.style.display = "none";
+    return;
+  }
+  loginEl.style.display = "none";
+  panelEl.style.display = "block";
+
+  panelEl.innerHTML = `
+    <div class="admin-actions">
+      <button class="btn" id="new-event-btn">+ New Event</button>
+      <button class="btn secondary" id="admin-logout-btn">Log Out</button>
+    </div>
+    <div class="event-select" id="admin-event-select"></div>
+    <div id="admin-event-detail"></div>
+  `;
+
+  document.getElementById("new-event-btn").addEventListener("click", ()=> openEventEditor(null));
+  document.getElementById("admin-logout-btn").addEventListener("click", ()=>{
+    isAdmin = false;
+    sessionStorage.removeItem("isAdmin");
+    renderAdmin();
+  });
+
+  const selEl = document.getElementById("admin-event-select");
+  if(allEvents.length === 0){
+    selEl.innerHTML = `<p style="color:var(--muted);">No events yet. Create your first one.</p>`;
+    document.getElementById("admin-event-detail").innerHTML = "";
+    return;
+  }
+  const sorted = [...allEvents].sort((a,b)=> a.date.localeCompare(b.date));
+  selEl.innerHTML = sorted.map(ev=>`<button class="btn secondary admin-ev-btn" data-id="${ev.id}">${escapeHtml(ev.name)}</button>`).join("");
+  selEl.querySelectorAll(".admin-ev-btn").forEach(b=>{
+    b.addEventListener("click", ()=> showAdminEventDetail(b.dataset.id));
+  });
+  showAdminEventDetail(sorted[0].id);
+}
+
+function showAdminEventDetail(eventId){
+  const ev = allEvents.find(e=>e.id===eventId);
+  const el = document.getElementById("admin-event-detail");
+  el.innerHTML = `<p>Loading RSVPs...</p>`;
+
+  db.collection("rsvps").where("eventId","==",eventId).get().then(snap=>{
+    const rows = [];
+    snap.forEach(doc=> rows.push({id: doc.id, ...doc.data()}));
+    const totalGuests = rows.reduce((sum,r)=> sum + 1 + (r.plusOne ? 1 : 0), 0);
+
+    el.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+        <h2 style="margin:0;">${escapeHtml(ev.name)}<span class="count-pill">${rows.length} RSVPs / ${totalGuests} guests</span></h2>
+        <div>
+          <button class="btn secondary" id="edit-event-btn">Edit Event</button>
+          <button class="btn secondary" id="delete-event-btn">Delete Event</button>
+        </div>
+      </div>
+      <p style="color:var(--muted);font-size:13px;">${fmtFullDate(ev.date)} &middot; ${escapeHtml(ev.time||"")} &middot; ${escapeHtml(ev.location||"")}</p>
+      ${rows.length === 0 ? `<p style="color:var(--muted);">No RSVPs yet.</p>` : `
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th><th>Snap</th><th>Insta</th><th>Phone</th><th>Arrival</th>
+              ${ev.askBringing ? "<th>Bringing</th>" : ""}
+              ${ev.allowPlusOne ? "<th>Plus One</th>" : ""}
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r=>`
+              <tr>
+                <td>${escapeHtml(r.name)}</td>
+                <td>${escapeHtml(r.snap)}</td>
+                <td>${escapeHtml(r.insta)}</td>
+                <td>${escapeHtml(r.phone)}</td>
+                <td>${escapeHtml(r.arrival)}</td>
+                ${ev.askBringing ? `<td>${escapeHtml(r.bringing)}</td>` : ""}
+                ${ev.allowPlusOne ? `<td>${r.plusOne ? escapeHtml(r.plusOneName || "yes") : "-"}</td>` : ""}
+                <td><button class="btn secondary remove-rsvp-btn" data-id="${r.id}" style="padding:6px 10px;font-size:11px;">Remove</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `}
+    `;
+
+    document.getElementById("edit-event-btn").addEventListener("click", ()=> openEventEditor(ev));
+    document.getElementById("delete-event-btn").addEventListener("click", ()=>{
+      if(confirm(`Delete "${ev.name}" and all its RSVPs? This can't be undone.`)){
+        deleteEventAndRsvps(eventId);
+      }
+    });
+    el.querySelectorAll(".remove-rsvp-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        db.collection("rsvps").doc(btn.dataset.id).delete().then(()=> showAdminEventDetail(eventId));
+      });
+    });
+  });
+}
+
+function deleteEventAndRsvps(eventId){
+  db.collection("rsvps").where("eventId","==",eventId).get().then(snap=>{
+    const batch = db.batch();
+    snap.forEach(doc=> batch.delete(doc.ref));
+    batch.delete(db.collection("events").doc(eventId));
+    return batch.commit();
+  }).then(()=> renderAdmin());
+}
+
+function openEventEditor(ev){
+  const el = document.getElementById("admin-event-detail");
+  const isNew = !ev;
+  ev = ev || {name:"",theme:"",date:"",time:"",location:"",parking:"",dresscode:"",rules:"",details:"",askBringing:true,allowPlusOne:true,inspirationImages:[]};
+
+  el.innerHTML = `
+    <h2 style="margin-top:0;">${isNew ? "New Event" : "Edit Event"}</h2>
+    <div class="card">
+      <form id="event-form">
+        <div class="field"><label>Party name</label><input type="text" name="name" required value="${escapeHtml(ev.name)}"></div>
+        <div class="field"><label>Theme tag (short)</label><input type="text" name="theme" value="${escapeHtml(ev.theme)}" placeholder="e.g. All White, 80s Neon"></div>
+        <div class="field"><label>Date</label><input type="date" name="date" required value="${ev.date}"></div>
+        <div class="field"><label>Time</label><input type="text" name="time" value="${escapeHtml(ev.time)}" placeholder="e.g. 8 PM - 12 AM"></div>
+        <div class="field"><label>Location</label><input type="text" name="location" value="${escapeHtml(ev.location)}"></div>
+        <div class="field"><label>Parking instructions</label><input type="text" name="parking" value="${escapeHtml(ev.parking)}"></div>
+        <div class="field"><label>Dress code</label><textarea name="dresscode">${escapeHtml(ev.dresscode)}</textarea></div>
+        <div class="field"><label>Rules &amp; expectations</label><textarea name="rules">${escapeHtml(ev.rules)}</textarea></div>
+        <div class="field"><label>Other details</label><textarea name="details">${escapeHtml(ev.details)}</textarea></div>
+        <div class="field"><label>Inspiration image URLs (one per line)</label><textarea name="inspiration" placeholder="https://...">${(ev.inspirationImages||[]).join("\n")}</textarea></div>
+        <div class="checkbox-row"><input type="checkbox" name="askBringing" ${ev.askBringing ? "checked" : ""}><label>Ask guests what they're bringing</label></div>
+        <div class="checkbox-row"><input type="checkbox" name="allowPlusOne" ${ev.allowPlusOne ? "checked" : ""}><label>Allow plus ones</label></div>
+        <button class="btn" type="submit">${isNew ? "Create Event" : "Save Changes"}</button>
+        <button class="btn secondary" type="button" id="cancel-edit-btn">Cancel</button>
+      </form>
+    </div>
+  `;
+
+  document.getElementById("cancel-edit-btn").addEventListener("click", ()=> renderAdmin());
+  document.getElementById("event-form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const payload = {
+      name: data.get("name"),
+      theme: data.get("theme"),
+      date: data.get("date"),
+      time: data.get("time"),
+      location: data.get("location"),
+      parking: data.get("parking"),
+      dresscode: data.get("dresscode"),
+      rules: data.get("rules"),
+      details: data.get("details"),
+      inspirationImages: (data.get("inspiration")||"").split("\n").map(s=>s.trim()).filter(Boolean),
+      askBringing: !!data.get("askBringing"),
+      allowPlusOne: !!data.get("allowPlusOne")
+    };
+    const save = isNew
+      ? db.collection("events").add(payload)
+      : db.collection("events").doc(ev.id).update(payload);
+    save.then(()=> renderAdmin());
+  });
+}
+
+/* ---------- INIT ---------- */
+loadEvents();
+
+</script>
+</body>
+</html>
