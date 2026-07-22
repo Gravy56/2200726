@@ -6,11 +6,29 @@
 <title>The Line-Up — Senior Year House Parties</title>
 
 <!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyDdFnjqBPDEwhGXJDa_Lr1QI8wjYYGnoSk",
+    authDomain: "project-gravy.firebaseapp.com",
+    projectId: "project-gravy",
+    storageBucket: "project-gravy.firebasestorage.app",
+    messagingSenderId: "118057796985",
+    appId: "1:118057796985:web:ddc1944a82a7461a9adba8",
+    measurementId: "G-BPZ6RRJV38"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 <style>
 :root{
   --paper:#f2ede2;
