@@ -10,6 +10,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+
 <style>
 :root{
   --paper:#f2ede2;
@@ -62,23 +63,6 @@ h1,h2,h3,.display{
   max-width:520px;
   margin-top:14px;
 }
-.stamp{
-  position:absolute;
-  top:40px;right:20px;
-  width:90px;height:90px;
-  border:3px solid var(--stub-red);
-  border-radius:50%;
-  color:var(--stub-red);
-  display:flex;align-items:center;justify-content:center;
-  text-align:center;
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:0.05em;
-  transform:rotate(-14deg);
-  text-transform:uppercase;
-  line-height:1.2;
-}
-
 /* ---------- NAV ---------- */
 .tabbar{
   display:flex;gap:0;
@@ -252,15 +236,10 @@ tr:nth-child(even){background:var(--paper-dark);}
   border:2px dashed var(--ink);padding:24px;text-align:center;margin-bottom:20px;
 }
 
-.footer-note{
-  text-align:center;color:var(--muted);font-size:12px;padding:30px 0;
-}
-
 @media(max-width:640px){
   .info-grid{grid-template-columns:1fr;}
   .info-cell:nth-child(odd){border-right:none;}
   .ticket .stub-left{width:80px;}
-  .stamp{width:70px;height:70px;font-size:9px;top:20px;}
 }
 </style>
 </head>
@@ -268,10 +247,8 @@ tr:nth-child(even){background:var(--paper-dark);}
 
 <div class="wrap">
   <div class="hero">
-    <div class="stamp">Senior<br>Year<br>Series</div>
-    <div class="eyebrow">Est. This House · One Year Only</div>
     <h1>THE LINE-UP</h1>
-    <div class="sub">A themed party every month until we all leave for school. RSVP below, read the details before you show up, and if you were there, come back after for the photos.</div>
+    <div class="sub">RSVP for upcoming parties, check the details before you show up, and grab photos after.</div>
   </div>
 
   <div class="tabbar">
@@ -314,7 +291,6 @@ tr:nth-child(even){background:var(--paper-dark);}
     <div id="admin-panel" style="display:none;"></div>
   </div>
 
-  <div class="footer-note">built by the host, not a committee</div>
 </div>
 
 <script>
@@ -332,7 +308,7 @@ const firebaseConfig = {
   appId: "1:118057796985:web:ddc1944a82a7461a9adba8",
   measurementId: "G-BPZ6RRJV38"
 };
-
+  
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
