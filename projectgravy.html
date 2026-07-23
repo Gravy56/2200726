@@ -236,6 +236,22 @@ tr:nth-child(even){background:var(--paper-dark);}
   border:2px dashed var(--ink);padding:24px;text-align:center;margin-bottom:20px;
 }
 
+/* ---------- HANGOUTS ---------- */
+.hangout-card{
+  background:var(--paper-dark);
+  border:2px solid var(--ink);
+  padding:18px 20px;
+  margin-bottom:16px;
+}
+.hangout-card .htop{
+  display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;
+}
+.hangout-card h3{font-size:20px;margin:0 0 4px;font-family:Georgia,serif;}
+.hangout-card .hmeta{font-size:13px;color:var(--muted);}
+.hangout-card .hdesc{font-size:14px;margin:10px 0;line-height:1.5;}
+.hangout-card .joiners{font-size:12px;color:var(--muted);margin-top:8px;}
+.hangout-card .joiners strong{color:var(--ink);}
+
 @media(max-width:640px){
   .info-grid{grid-template-columns:1fr;}
   .info-cell:nth-child(odd){border-right:none;}
@@ -254,6 +270,7 @@ tr:nth-child(even){background:var(--paper-dark);}
   <div class="tabbar">
     <button class="tab-btn active" data-view="events">Events</button>
     <button class="tab-btn" data-view="photos">Photos</button>
+    <button class="tab-btn" data-view="hangouts">Hangouts</button>
     <button class="tab-btn" data-view="admin">Host View</button>
   </div>
 
@@ -274,6 +291,19 @@ tr:nth-child(even){background:var(--paper-dark);}
     <p style="color:var(--muted);font-size:14px;margin-top:-8px;">Pick the party. Upload what you shot, download what everyone else shot.</p>
     <div class="event-select" id="photo-event-select"></div>
     <div id="photo-area"></div>
+  </div>
+
+  <!-- HANGOUTS VIEW -->
+  <div class="view" id="view-hangouts">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+      <div>
+        <h2 style="margin:0;">Hangouts</h2>
+        <p style="color:var(--muted);font-size:14px;margin-top:4px;">Smaller stuff, no host needed. Bike rides, hikes, a concert, a movie, dinner. Post one, see who's in.</p>
+      </div>
+      <button class="btn" id="new-hangout-btn">+ Request a Hangout</button>
+    </div>
+    <div id="hangout-form-area"></div>
+    <div id="hangouts-list"></div>
   </div>
 
   <!-- ADMIN VIEW -->
@@ -308,7 +338,7 @@ const firebaseConfig = {
   appId: "1:118057796985:web:ddc1944a82a7461a9adba8",
   measurementId: "G-BPZ6RRJV38"
 };
-  
+
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const storage = firebase.storage();
@@ -329,6 +359,7 @@ let isAdmin = sessionStorage.getItem("isAdmin") === "true";
 let allEvents = [];
 let currentEventId = null;
 let myRsvpIds = JSON.parse(localStorage.getItem("myRsvpIds") || "{}"); // {eventId: rsvpDocId}
+let myHangoutJoins = JSON.parse(localStorage.getItem("myHangoutJoins") || "{}"); // {hangoutId: myNameUsedToJoin}
 
 /* =========================================================================
    TAB NAV
@@ -341,9 +372,10 @@ document.getElementById("back-btn").addEventListener("click", ()=> showView("eve
 function showView(name){
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active", b.dataset.view===name || (name==="detail" && b.dataset.view==="events")));
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  const map = {events:"view-events", detail:"view-detail", photos:"view-photos", admin:"view-admin"};
+  const map = {events:"view-events", detail:"view-detail", photos:"view-photos", hangouts:"view-hangouts", admin:"view-admin"};
   document.getElementById(map[name]).classList.add("active");
   if(name==="photos") renderPhotoEventSelect();
+  if(name==="hangouts") renderHangouts();
   if(name==="admin") renderAdmin();
 }
 
@@ -634,6 +666,137 @@ function uploadPhotos(eventId){
   }).catch(err=>{
     msgEl.textContent = "Upload failed: " + err.message;
     msgEl.className = "msg err";
+  });
+}
+
+/* =========================================================================
+   HANGOUTS
+   Lives entirely in its own "hangouts" Firestore collection. Nothing here
+   reads from or writes to "events" or "rsvps" — this is intentional so
+   nothing about the monthly parties can be touched by this feature.
+   Anyone can post a hangout and anyone can join, no admin password needed,
+   since these are meant to be small and self-organized.
+   ========================================================================= */
+let hangoutsListenerAttached = false;
+
+function renderHangouts(){
+  document.getElementById("new-hangout-btn").onclick = () => openHangoutForm();
+  if(!hangoutsListenerAttached){
+    hangoutsListenerAttached = true;
+    db.collection("hangouts").orderBy("createdAt","desc").onSnapshot(snap=>{
+      const list = [];
+      snap.forEach(doc=> list.push({id: doc.id, ...doc.data()}));
+      drawHangoutsList(list);
+    });
+  }
+}
+
+function drawHangoutsList(list){
+  const el = document.getElementById("hangouts-list");
+  if(list.length === 0){
+    el.innerHTML = `<p style="color:var(--muted);">Nothing posted yet. Be the first to throw one out there.</p>`;
+    return;
+  }
+  el.innerHTML = list.map(h => {
+    const joined = myHangoutJoins[h.id];
+    const joiners = h.joiners || [];
+    return `
+      <div class="hangout-card" data-id="${h.id}">
+        <div class="htop">
+          <div>
+            <h3>${escapeHtml(h.title)}</h3>
+            <div class="hmeta">
+              ${h.activityType ? `<span class="tag">${escapeHtml(h.activityType)}</span> &middot; ` : ""}
+              ${h.date ? fmtFullDate(h.date) : "Date TBD"}${h.time ? " &middot; " + escapeHtml(h.time) : ""}
+            </div>
+          </div>
+          <button class="btn ${joined ? "secondary" : ""} hangout-join-btn" data-id="${h.id}">
+            ${joined ? "You're In — Leave" : "I'm In"}
+          </button>
+        </div>
+        ${h.description ? `<div class="hdesc">${nl2br(h.description)}</div>` : ""}
+        <div class="joiners">
+          Posted by <strong>${escapeHtml(h.organizerName)}</strong>
+          ${joiners.length ? ` &middot; In: ${joiners.map(j=>escapeHtml(j.name)).join(", ")}` : " &middot; No one's joined yet"}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  el.querySelectorAll(".hangout-join-btn").forEach(btn=>{
+    btn.addEventListener("click", ()=> toggleHangoutJoin(btn.dataset.id, list.find(h=>h.id===btn.dataset.id)));
+  });
+}
+
+function toggleHangoutJoin(hangoutId, hangout){
+  const alreadyJoined = myHangoutJoins[hangoutId];
+  if(alreadyJoined){
+    const remaining = (hangout.joiners || []).filter(j => j.name !== alreadyJoined);
+    db.collection("hangouts").doc(hangoutId).update({ joiners: remaining }).then(()=>{
+      delete myHangoutJoins[hangoutId];
+      localStorage.setItem("myHangoutJoins", JSON.stringify(myHangoutJoins));
+    });
+    return;
+  }
+  const name = prompt("What's your name? (so people know who's coming)");
+  if(!name) return;
+  const updated = [...(hangout.joiners || []), { name }];
+  db.collection("hangouts").doc(hangoutId).update({ joiners: updated }).then(()=>{
+    myHangoutJoins[hangoutId] = name;
+    localStorage.setItem("myHangoutJoins", JSON.stringify(myHangoutJoins));
+  });
+}
+
+function openHangoutForm(){
+  const el = document.getElementById("hangout-form-area");
+  if(el.innerHTML.trim() !== ""){ el.innerHTML = ""; return; } // toggle closed if already open
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:20px;">
+      <form id="hangout-form">
+        <div class="field"><label>What's the plan?</label><input type="text" name="title" required placeholder="e.g. Sunday hike at Mianus River"></div>
+        <div class="field">
+          <label>Type of thing</label>
+          <select name="activityType">
+            <option value="Bike ride">Bike ride</option>
+            <option value="Hike">Hike</option>
+            <option value="Concert">Concert</option>
+            <option value="Movie">Movie</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field"><label>Date (optional, if you know it)</label><input type="date" name="date"></div>
+        <div class="field"><label>Time (optional)</label><input type="text" name="time" placeholder="e.g. Around 2 PM"></div>
+        <div class="field"><label>Details</label><textarea name="description" placeholder="Where, what to bring, how many spots, whatever people need to know"></textarea></div>
+        <div class="field"><label>Your name</label><input type="text" name="organizerName" required></div>
+        <button class="btn" type="submit">Post It</button>
+        <button class="btn secondary" type="button" id="cancel-hangout-btn">Cancel</button>
+        <div class="msg" id="hangout-msg"></div>
+      </form>
+    </div>
+  `;
+  document.getElementById("cancel-hangout-btn").addEventListener("click", ()=> el.innerHTML = "");
+  document.getElementById("hangout-form").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const msgEl = document.getElementById("hangout-msg");
+    db.collection("hangouts").add({
+      title: data.get("title") || "",
+      activityType: data.get("activityType") || "",
+      date: data.get("date") || "",
+      time: data.get("time") || "",
+      description: data.get("description") || "",
+      organizerName: data.get("organizerName") || "",
+      joiners: [],
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(()=>{
+      msgEl.textContent = "Posted.";
+      msgEl.className = "msg ok";
+      setTimeout(()=> { el.innerHTML = ""; }, 500);
+    }).catch(err=>{
+      msgEl.textContent = "Something went wrong: " + err.message;
+      msgEl.className = "msg err";
+    });
   });
 }
 
