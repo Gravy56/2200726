@@ -5,12 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Whiskey Musikk Vault</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- PapaParse for reliable CSV parsing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen font-sans flex flex-col">
 
-  <!-- Header -->
   <header class="border-b border-zinc-800 bg-zinc-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
       <div class="flex items-center gap-3">
@@ -36,7 +34,6 @@
     </div>
   </header>
 
-  <!-- Main Grid -->
   <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
     <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <div class="col-span-full text-center py-20 text-zinc-500 animate-pulse">Loading music database from CSV...</div>
@@ -44,8 +41,9 @@
   </main>
 
   <script>
-    const SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/1x2eOd0Jc_uoWJj2jCVTwJ2sbgQFfBNXOj5A8VbvU93M/pub?gid=0&single=true&output=csv";
-    const ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/1x2eOd0Jc_uoWJj2jCVTwJ2sbgQFfBNXOj5A8VbvU93M/pub?gid=1206056264&single=true&output=csv";
+    // Update these URLs with your published CSV links (including GIDs if separate tabs)
+    const SONGS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFK6-UVGGAW6bbnfckUwCAjgY2TPq770ydA62KahEozyLLgl_DcBeTQB6UyMOFblf0cm77BnbCcCQH/pub?output=csv";
+    const ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFK6-UVGGAW6bbnfckUwCAjgY2TPq770ydA62KahEozyLLgl_DcBeTQB6UyMOFblf0cm77BnbCcCQH/pub?gid=1206056264&single=true&output=csv";
 
     let allRecommendations = [];
     let currentCategory = 'all';
@@ -62,6 +60,14 @@
       });
     }
 
+    // Helper to search multiple key possibilities in case header names vary
+    function getValue(row, ...keys) {
+      for (let k of keys) {
+        if (row[k] !== undefined && row[k] !== '') return row[k];
+      }
+      return '';
+    }
+
     async function initVault() {
       try {
         const [songsData, albumsData] = await Promise.all([
@@ -71,20 +77,20 @@
 
         const songs = songsData.map(item => ({
           type: 'song',
-          user: item.Username || item.Author || 'Anonymous',
-          title: item['Song Title'] || item.Title || 'Untitled Track',
-          link: item.Link || '',
-          artwork: item.Artwork || item.Cover || '',
-          date: item.Date || ''
+          user: getValue(item, 'Username', 'Author', 'User') || 'Anonymous',
+          title: getValue(item, 'Song Title', 'Title', 'Song', 'Album') || 'Untitled Track',
+          link: getValue(item, 'Link', 'URL', 'Apple Music Link'),
+          artwork: getValue(item, 'Artwork', 'Cover', 'Image'),
+          date: getValue(item, 'Date', 'Timestamp')
         }));
 
         const albums = albumsData.map(item => ({
           type: 'album',
-          user: item.Username || item.Author || 'Anonymous',
-          title: item.Album || item['Album Title'] || 'Untitled Album',
-          link: item.Link || '',
-          artwork: item.Artwork || item.Cover || '',
-          date: item.Date || ''
+          user: getValue(item, 'Username', 'Author', 'User') || 'Anonymous',
+          title: getValue(item, 'Album', 'Album Title', 'Title') || 'Untitled Album',
+          link: getValue(item, 'Link', 'URL', 'Apple Music Link'),
+          artwork: getValue(item, 'Artwork', 'Cover', 'Image'),
+          date: getValue(item, 'Date', 'Timestamp')
         }));
 
         allRecommendations = [...songs, ...albums].sort((a, b) => new Date(b.date) - new Date(a.date));
