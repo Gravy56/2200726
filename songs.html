@@ -1,63 +1,520 @@
-function cleanImageUrl(rawArt) {
-      if (!rawArt) return null;
-      // Extract the first clean http/https URL if text/HTML is mixed into the cell
-      const match = String(rawArt).match(/(https?:\/\/[^\s"<>]+\.(?:jpg|jpeg|png|webp))/i);
-      if (match) return match[1];
-      if (String(rawArt).startsWith('http')) return String(rawArt).split(' ')[0];
-      return null;
-    }
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Whiskey Musikk Vault</title>
+<meta name="theme-color" content="#09090b" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  html { scroll-behavior: smooth; }
+  body { background: #09090b; }
 
-    function renderGrid(items) {
-      const grid = document.getElementById('musicGrid');
-      if (items.length === 0) {
-        grid.innerHTML = `<div class="col-span-full text-center py-16 text-zinc-500 text-xs">No matching recommendations found.</div>`;
-        return;
-      }
+  /* Ambient aurora behind everything. Transform + opacity only, so it stays cheap. */
+  .aurora { position: fixed; inset: 0; overflow: hidden; z-index: -1; pointer-events: none; }
+  .aurora i {
+    position: absolute; width: 55vmax; height: 55vmax; border-radius: 50%;
+    filter: blur(90px); opacity: .22; will-change: transform;
+    animation: drift 26s ease-in-out infinite alternate;
+  }
+  .aurora i:nth-child(1) { background: #7c3aed; top: -25vmax; left: -15vmax; }
+  .aurora i:nth-child(2) { background: #4f46e5; bottom: -30vmax; right: -20vmax; animation-delay: -9s; animation-duration: 32s; }
+  .aurora i:nth-child(3) { background: #c026d3; top: 30vh; left: 35vw; width: 35vmax; height: 35vmax; opacity: .12; animation-delay: -16s; }
+  @keyframes drift {
+    from { transform: translate3d(0,0,0) scale(1); }
+    to   { transform: translate3d(8vmax, 6vmax, 0) scale(1.15); }
+  }
 
-      grid.innerHTML = items.map((item) => {
-        const cleanArt = cleanImageUrl(item.artwork);
-        const gradientArt = generateGradientArt(item.title);
-        const imageSrc = cleanArt ? cleanArt : gradientArt;
-        const badgeColor = item.type === 'song' ? 'bg-purple-900/60 text-purple-300 border-purple-700/50' : 'bg-indigo-900/60 text-indigo-300 border-indigo-700/50';
+  /* Header entrance */
+  .rise { animation: rise .9s var(--ease-out) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 
-        const safeTitle = item.title.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const safeUser = item.user.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        const safeArt = imageSrc.replace(/'/g, "\\'");
-        const safeLink = item.link || '';
+  /* Animated gradient title */
+  .title-grad {
+    background: linear-gradient(100deg, #fff 20%, #c4b5fd 45%, #f0abfc 60%, #fff 80%);
+    background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: sheen 7s linear infinite;
+  }
+  @keyframes sheen { to { background-position: -250% 0; } }
 
-        return `
-          <div class="bg-zinc-950 border border-zinc-800/80 rounded-xl overflow-hidden hover:border-zinc-700 transition flex flex-col group">
-            <div class="relative aspect-square overflow-hidden bg-zinc-900 cursor-pointer" onclick="openPlayer('${safeTitle}', '${safeUser}', '${safeArt}', '${safeLink}', '${item.type}')">
-              <img 
-                src="${imageSrc}" 
-                alt="${safeTitle}" 
-                onerror="this.onerror=null; this.src='${gradientArt}';" 
-                class="w-full h-full object-cover group-hover:scale-105 transition duration-300" 
-              />
-              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                <span class="px-3 py-1.5 bg-purple-600 text-white rounded-full text-xs font-semibold shadow-lg">▶ Play / View</span>
-              </div>
-              <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border backdrop-blur ${badgeColor}">
-                ${item.type}
-              </span>
-            </div>
-            
-            <div class="p-3.5 flex flex-col flex-grow justify-between">
-              <div>
-                <h3 class="font-semibold text-white text-sm line-clamp-1 leading-snug" title="${safeTitle}">${item.title}</h3>
-                <p class="text-xs text-zinc-400 mt-1">Shared by <span class="text-purple-400 font-medium">@${item.user}</span></p>
-              </div>
+  /* Sliding pill behind the filter tabs */
+  .seg { position: relative; }
+  .seg-pill {
+    position: absolute; top: 4px; bottom: 4px; left: 0; width: 0; border-radius: 6px;
+    background: linear-gradient(135deg, #7c3aed, #9333ea); box-shadow: 0 4px 18px rgba(124,58,237,.45);
+    transition: transform .45s var(--ease-spring), width .45s var(--ease-spring);
+  }
+  .seg button { position: relative; z-index: 1; transition: color .2s; }
+  .seg button[aria-pressed="true"] { color: #fff; }
 
-              <div class="mt-3 pt-2.5 border-t border-zinc-900 flex items-center justify-between text-[11px] text-zinc-500">
-                <span>${item.date ? String(item.date).split(' ')[0] : ''}</span>
-                ${item.link ? `
-                  <a href="${item.link}" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 font-medium">
-                    Apple Music ↗
-                  </a>
-                ` : ''}
-              </div>
-            </div>
+  /* Cards: scroll reveal + 3D tilt + cursor glow */
+  .card {
+    opacity: 0; transform: translateY(36px) scale(.97);
+    transition: opacity .7s var(--ease-out), transform .7s var(--ease-out), border-color .3s, box-shadow .3s;
+    transition-delay: var(--d, 0s);
+  }
+  .card.in { opacity: 1; transform: none; }
+  .card.in.tilting { transition: transform .12s ease-out, border-color .3s, box-shadow .3s; transition-delay: 0s; }
+  .card:hover { border-color: rgba(167,139,250,.5); box-shadow: 0 24px 60px -20px rgba(124,58,237,.45); }
+  .card .glow {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s;
+    background: radial-gradient(260px circle at var(--mx,50%) var(--my,50%), rgba(167,139,250,.22), transparent 70%);
+  }
+  .card:hover .glow { opacity: 1; }
+  .card img { transition: transform .8s var(--ease-out), opacity .6s; }
+  .card:hover img { transform: scale(1.08); }
+  .play-btn { transform: scale(.6); opacity: 0; transition: transform .4s var(--ease-spring), opacity .25s; }
+  .card:hover .play-btn, .card:focus-visible .play-btn { transform: scale(1); opacity: 1; }
+
+  /* Skeletons */
+  .skeleton {
+    background: linear-gradient(90deg, #18181b 25%, #27272a 50%, #18181b 75%);
+    background-size: 200% 100%; animation: shimmer 1.5s infinite;
+  }
+  @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+  /* Modal */
+  #playerModal { opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+  #playerModal.open { opacity: 1; visibility: visible; }
+  #playerModal .sheet { transform: translateY(40px) scale(.94); transition: transform .5s var(--ease-spring); }
+  #playerModal.open .sheet { transform: none; }
+  .art-wrap { position: relative; }
+  .art-wrap::after {
+    content: ""; position: absolute; inset: -6px; border-radius: 1.1rem; z-index: -1;
+    background: var(--art-glow, #7c3aed); filter: blur(18px); opacity: 0; transition: opacity .5s;
+  }
+  .playing .art-wrap::after { opacity: .55; }
+  .eq { display: none; gap: 3px; align-items: flex-end; height: 14px; }
+  .playing .eq { display: inline-flex; }
+  .eq b { width: 3px; background: #c4b5fd; border-radius: 2px; height: 100%; transform-origin: bottom; animation: eq 0.9s ease-in-out infinite; }
+  .eq b:nth-child(2) { animation-delay: -.3s; } .eq b:nth-child(3) { animation-delay: -.6s; }
+  @keyframes eq { 0%,100% { transform: scaleY(.25); } 50% { transform: scaleY(1); } }
+
+  #gl { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+  .heart {
+    position: absolute; top: 10px; left: 10px; z-index: 5; width: 34px; height: 34px; border-radius: 50%;
+    background: rgba(9,9,11,.55); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.15);
+    color: #d4d4d8; font-size: 16px; line-height: 1; transition: transform .35s var(--ease-spring), color .2s, background .2s;
+  }
+  .heart:hover { transform: scale(1.15); color: #f9a8d4; }
+  .heart[aria-pressed="true"] { color: #f472b6; background: rgba(131,24,67,.55); animation: pop .5s var(--ease-spring); }
+  @keyframes pop { 40% { transform: scale(1.6); } }
+  .card.spin, .card.in.spin { border-color: #e879f9; transform: scale(1.04); box-shadow: 0 0 0 2px #e879f9, 0 24px 70px -10px rgba(217,70,239,.65); transition-duration: .08s; }
+  .chip { animation: rise .6s var(--ease-out) both; }
+  .glass-title { text-shadow: 0 2px 30px rgba(0,0,0,.6); }
+  :focus-visible { outline: 2px solid #a78bfa; outline-offset: 2px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    .card { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body class="text-zinc-100 min-h-screen font-sans flex flex-col selection:bg-purple-500 selection:text-white">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="aurora" id="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+  <header class="border-b border-white/5 bg-zinc-950/60 backdrop-blur-xl sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3 rise">
+        <div class="w-10 h-10 rounded-xl bg-purple-600/20 border border-purple-500/30 flex items-center justify-center text-xl">🎧</div>
+        <div>
+          <h1 class="text-xl font-bold tracking-tight title-grad">Whiskey Musikk Vault</h1>
+          <p class="text-xs text-zinc-400">Community Discord Music Recommendations <span id="count" class="text-zinc-500"></span></p>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 w-full sm:w-auto rise" style="animation-delay:.12s">
+        <div class="seg inline-flex rounded-lg bg-zinc-900/80 p-1 border border-zinc-800" id="seg" role="group" aria-label="Filter by type">
+          <span class="seg-pill" id="pill"></span>
+          <button data-cat="all" aria-pressed="true" class="px-3 py-1.5 rounded-md text-xs font-semibold text-zinc-400 hover:text-white">All</button>
+          <button data-cat="song" aria-pressed="false" class="px-3 py-1.5 rounded-md text-xs font-semibold text-zinc-400 hover:text-white">Songs</button>
+          <button data-cat="album" aria-pressed="false" class="px-3 py-1.5 rounded-md text-xs font-semibold text-zinc-400 hover:text-white">Albums</button>
+          <button data-cat="fav" aria-pressed="false" class="px-3 py-1.5 rounded-md text-xs font-semibold text-zinc-400 hover:text-white">♥ Saved</button>
+        </div>
+        <input type="search" id="searchInput" placeholder="Search track or user..." aria-label="Search"
+          class="flex-1 sm:flex-none sm:w-60 px-3.5 py-2 bg-zinc-900/80 border border-zinc-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 text-xs text-zinc-200 placeholder-zinc-500 transition-shadow" />
+        <button id="surprise" class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-gradient-to-r from-fuchsia-600 to-purple-600 text-white shadow-lg shadow-purple-900/40 transition hover:-translate-y-0.5 active:translate-y-0">🎲 Surprise me</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    <div id="crew" class="flex flex-wrap items-center gap-2 mb-7"></div>
+    <div id="musicGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </main>
+
+  <div id="playerModal" class="fixed inset-0 bg-black/75 backdrop-blur-md z-50 flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="sheet bg-zinc-900/95 border border-zinc-800 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
+      <button id="closeX" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-lg font-bold transition hover:rotate-90" aria-label="Close">✕</button>
+      <div class="flex items-center gap-4 mb-5" id="modalHead">
+        <div class="art-wrap shrink-0"><img id="modalArt" alt="" class="w-20 h-20 rounded-xl object-cover border border-zinc-800 bg-zinc-800" /></div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <span id="modalType" class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-purple-900/60 text-purple-300 border border-purple-700/50">Song</span>
+            <span class="eq" aria-hidden="true"><b></b><b></b><b></b></span>
           </div>
-        `;
-      }).join('');
-    }
+          <h2 id="modalTitle" class="text-base font-bold text-white mt-1 truncate">Track Title</h2>
+          <p id="modalUser" class="text-xs text-zinc-400 mt-0.5 truncate"></p>
+        </div>
+      </div>
+      <div id="audioContainer" class="mb-5 hidden"><audio id="audioPlayer" controls class="w-full h-10"></audio></div>
+      <div id="noAudioMsg" class="text-xs text-zinc-500 bg-zinc-950 p-3 rounded-xl border border-zinc-800/60 mb-5 text-center">Looking for a preview...</div>
+      <div class="flex gap-3">
+        <a id="modalExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-xl text-center transition hover:-translate-y-0.5 active:translate-y-0">Open in Apple Music ↗</a>
+        <button id="closeBtn" class="px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs font-semibold rounded-xl transition">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="border-t border-zinc-900 py-6 text-center text-xs text-zinc-600">Whiskey Musikk Vault &bull; Powered by GitHub Pages &amp; Google Sheets</footer>
+
+<script>
+const SONGS_CSV_URL  = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFK6-UVGGAW6bbnfckUwCAjgY2TPq770ydA62KahEozyLLgl_DcBeTQB6UyMOFblf0cm77BnbCcCQH/pub?output=csv";
+const ALBUMS_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTFK6-UVGGAW6bbnfckUwCAjgY2TPq770ydA62KahEozyLLgl_DcBeTQB6UyMOFblf0cm77BnbCcCQH/pub?gid=1206056264&single=true&output=csv";
+
+const $ = (id) => document.getElementById(id);
+const grid = $('musicGrid');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canHover = matchMedia('(hover: hover)').matches;
+
+let all = [], visible = [], category = 'all', lastFocus = null;
+const meta = new Map(); // link -> { art, preview } from the iTunes lookup
+
+/* ---------- helpers ---------- */
+const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeUrl = (u) => /^https?:\/\//i.test(u || '') ? u : '';
+
+const fetchCSV = (url) => new Promise((res, rej) =>
+  Papa.parse(url, { download: true, header: true, skipEmptyLines: true, complete: r => res(r.data), error: rej }));
+
+const getValue = (row, ...keys) => {
+  for (const k of keys) if (row[k] !== undefined && String(row[k]).trim() !== '') return String(row[k]).trim();
+  return '';
+};
+
+function gradientArt(text) {
+  let h = 0;
+  for (let i = 0; i < text.length; i++) h = text.charCodeAt(i) + ((h << 5) - h);
+  h = Math.abs(h);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="hsl(${h % 360},70%,30%)"/><stop offset="1" stop-color="hsl(${(h + 60) % 360},60%,14%)"/></linearGradient></defs><rect width="400" height="400" fill="url(#g)"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="rgba(255,255,255,.85)" font-family="sans-serif" font-weight="bold" font-size="26">${esc(text.slice(0, 22))}</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
+const toTime = (d) => { const t = Date.parse(d); return isNaN(t) ? 0 : t; };
+
+/* Apple Music link -> id + storefront, then ask the iTunes lookup API for artwork and a 30s preview. */
+async function enrich(item) {
+  if (!item.link) return null;
+  if (meta.has(item.link)) return meta.get(item.link);
+  const p = (async () => {
+    try {
+      const u = new URL(item.link);
+      if (!/music\.apple\.com$/.test(u.hostname)) return null;
+      const id = u.searchParams.get('i') || (u.pathname.match(/\/(\d+)\/?$/) || [])[1];
+      if (!id) return null;
+      const country = (u.pathname.split('/')[1] || 'us').slice(0, 2);
+      const isAlbum = !u.searchParams.get('i');
+      const api = `https://itunes.apple.com/lookup?id=${id}&country=${country}` + (isAlbum ? '&entity=song&limit=2' : '');
+      const r = await fetch(api); const j = await r.json();
+      const first = j.results.find(x => x.artworkUrl100) || {};
+      const song = j.results.find(x => x.previewUrl) || {};
+      return {
+        art: first.artworkUrl100 ? first.artworkUrl100.replace('100x100', '600x600') : '',
+        preview: song.previewUrl || '',
+        artist: first.artistName || ''
+      };
+    } catch { return null; }
+  })();
+  meta.set(item.link, p);
+  const out = await p; meta.set(item.link, out); return out;
+}
+
+/* ---------- load ---------- */
+function showSkeletons() {
+  grid.innerHTML = Array.from({ length: 8 }, () => `
+    <div class="rounded-xl overflow-hidden border border-zinc-800/80 bg-zinc-950/70">
+      <div class="aspect-square skeleton"></div>
+      <div class="p-3.5 space-y-2"><div class="h-3.5 w-3/4 rounded skeleton"></div><div class="h-3 w-1/2 rounded skeleton"></div></div>
+    </div>`).join('');
+}
+
+async function init() {
+  showSkeletons();
+  try {
+    const [s, a] = await Promise.all([fetchCSV(SONGS_CSV_URL).catch(() => []), fetchCSV(ALBUMS_CSV_URL).catch(() => [])]);
+    const map = (type, titleKeys) => (row) => ({
+      type,
+      user:  getValue(row, 'Username', 'Author', 'User') || 'Anonymous',
+      title: getValue(row, ...titleKeys) || (type === 'song' ? 'Untitled Track' : 'Untitled Album'),
+      link:  safeUrl(getValue(row, 'Link', 'URL', 'Apple Music Link')),
+      artwork: safeUrl(getValue(row, 'Artwork', 'Cover', 'Image')),
+      date:  getValue(row, 'Date', 'Timestamp')
+    });
+    all = [...s.map(map('song', ['Song Title', 'Title', 'Song', 'Album'])), ...a.map(map('album', ['Album', 'Album Title', 'Title']))]
+      .sort((x, y) => toTime(y.date) - toTime(x.date));
+    all.forEach(i => i.key = `${i.type}|${i.title}|${i.user}`);
+    renderCrew(); update();
+  } catch (e) {
+    console.error('CSV Fetch Error:', e);
+    grid.innerHTML = `<div class="col-span-full text-center py-16 text-red-400 text-xs">Failed to load sheet data. Make sure the sheet is published to the web as CSV.</div>`;
+  }
+}
+
+/* ---------- render ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    const el = en.target; io.unobserve(el);
+    el.classList.add('in');
+    const item = visible[+el.dataset.i];
+    if (item && !item.artwork) enrich(item).then(m => {
+      if (m && m.art) { const img = el.querySelector('img'); img.src = m.art; }
+    });
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+function render() {
+  io.disconnect();
+  $('count').textContent = all.length ? `· ${visible.length} of ${all.length}` : '';
+  if (!visible.length) {
+    grid.innerHTML = `<div class="col-span-full text-center py-24 text-zinc-500 text-sm rise">${category === 'fav' && !favs.size ? 'Nothing saved yet. Tap the heart on anything you love.' : 'No matching recommendations found.'}</div>`;
+    return;
+  }
+  grid.innerHTML = visible.map((it, i) => {
+    const badge = it.type === 'song' ? 'bg-purple-900/60 text-purple-300 border-purple-700/50' : 'bg-indigo-900/60 text-indigo-300 border-indigo-700/50';
+    const img = it.artwork || gradientArt(it.title);
+    const date = it.date ? esc(it.date.split(' ')[0]) : '';
+    return `
+    <article class="card relative bg-zinc-950/70 border border-zinc-800/80 rounded-2xl overflow-hidden flex flex-col" data-i="${i}" style="--d:${Math.min(i % 12, 11) * 0.05}s">
+      <span class="glow"></span>
+      <button class="heart" data-fav="${i}" aria-pressed="${favs.has(it.key)}" aria-label="Save ${esc(it.title)}">♥</button>
+      <button class="relative aspect-square overflow-hidden bg-zinc-900 block w-full text-left" data-open="${i}" aria-label="Preview ${esc(it.title)}">
+        <img src="${esc(img)}" alt="" loading="lazy" referrerpolicy="no-referrer" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=gradientArt(this.alt||'♪')" />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 hover:opacity-100 transition flex items-center justify-center">
+          <span class="play-btn px-3.5 py-2 bg-purple-600 text-white rounded-full text-xs font-semibold shadow-lg">▶ Play / View</span>
+        </div>
+        <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border backdrop-blur ${badge}">${it.type}</span>
+      </button>
+      <div class="p-3.5 flex flex-col flex-grow justify-between">
+        <div>
+          <h3 class="font-semibold text-white text-sm truncate" title="${esc(it.title)}">${esc(it.title)}</h3>
+          <p class="text-xs text-zinc-400 mt-1 truncate">Shared by <span class="text-purple-400 font-medium">@${esc(it.user)}</span></p>
+        </div>
+        <div class="mt-3 pt-2.5 border-t border-zinc-900 flex items-center justify-between text-[11px] text-zinc-500">
+          <span>${date}</span>
+          ${it.link ? `<a href="${esc(it.link)}" target="_blank" rel="noopener noreferrer" class="text-purple-400 hover:text-purple-300 font-medium">Apple Music ↗</a>` : ''}
+        </div>
+      </div>
+    </article>`;
+  }).join('');
+  grid.querySelectorAll('.card').forEach(c => io.observe(c));
+}
+
+function update() {
+  const q = $('searchInput').value.trim().toLowerCase();
+  visible = all.filter(it => (category === 'all' || (category === 'fav' ? favs.has(it.key) : it.type === category)) && (!userFilter || it.user === userFilter) &&
+    (!q || it.title.toLowerCase().includes(q) || it.user.toLowerCase().includes(q)));
+  render();
+}
+
+/* ---------- 3D tilt + cursor glow (event delegation, hover devices only) ---------- */
+if (canHover && !reduceMotion) {
+  grid.addEventListener('pointermove', (e) => {
+    const card = e.target.closest('.card'); if (!card || !card.classList.contains('in')) return;
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    card.classList.add('tilting');
+    card.style.transform = `perspective(800px) rotateY(${(x - .5) * 10}deg) rotateX(${(.5 - y) * 10}deg) translateY(-4px) scale(1.02)`;
+    card.style.setProperty('--mx', x * 100 + '%'); card.style.setProperty('--my', y * 100 + '%');
+  });
+  grid.addEventListener('pointerout', (e) => {
+    const card = e.target.closest('.card'); if (!card || card.contains(e.relatedTarget)) return;
+    card.classList.remove('tilting'); card.style.transform = '';
+  });
+}
+
+/* ---------- filter tabs with sliding pill ---------- */
+const seg = $('seg'), pill = $('pill');
+function movePill() {
+  const b = seg.querySelector('[aria-pressed="true"]');
+  pill.style.width = b.offsetWidth + 'px';
+  pill.style.transform = `translateX(${b.offsetLeft}px)`;
+}
+seg.addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b) return;
+  category = b.dataset.cat;
+  seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+  movePill(); update();
+});
+addEventListener('resize', movePill);
+document.fonts && document.fonts.ready.then(movePill);
+movePill();
+
+let t; $('searchInput').addEventListener('input', () => { clearTimeout(t); t = setTimeout(update, 120); });
+
+/* ---------- modal ---------- */
+const modal = $('playerModal'), audio = $('audioPlayer');
+grid.addEventListener('click', (e) => {
+  const h = e.target.closest('[data-fav]');
+  if (h) {
+    const it = visible[+h.dataset.fav];
+    favs.has(it.key) ? favs.delete(it.key) : favs.add(it.key);
+    try { localStorage.setItem('wmv:favs', JSON.stringify([...favs])); } catch {}
+    h.setAttribute('aria-pressed', favs.has(it.key));
+    if (category === 'fav') setTimeout(update, 350);
+    return;
+  }
+  const b = e.target.closest('[data-open]'); if (b) openPlayer(visible[+b.dataset.open], b);
+});
+
+async function openPlayer(it, trigger) {
+  lastFocus = trigger;
+  const art = it.artwork || gradientArt(it.title);
+  $('modalTitle').textContent = it.title;
+  $('modalUser').textContent = `Shared by @${it.user}`;
+  $('modalArt').src = art;
+  $('modalType').textContent = it.type;
+  const ext = $('modalExternalLink');
+  it.link ? ext.setAttribute('href', it.link) : ext.removeAttribute('href');
+  setAudio('');
+  $('noAudioMsg').textContent = it.link ? 'Looking for a preview...' : 'No link was shared for this one.';
+  modal.classList.add('open'); document.body.style.overflow = 'hidden';
+  $('closeBtn').focus();
+
+  const direct = /\.(mp3|m4a)(\?|$)/i.test(it.link) || /preview/i.test(it.link);
+  if (direct) { setAudio(it.link); return; }
+  const m = await enrich(it);
+  if (!modal.classList.contains('open') || $('modalTitle').textContent !== it.title) return;
+  if (m && m.art && !it.artwork) $('modalArt').src = m.art;
+  if (m && m.preview) setAudio(m.preview);
+  else if (it.link) $('noAudioMsg').textContent = 'Preview not available. Use Apple Music below to listen.';
+}
+
+function setAudio(src) {
+  audio.pause();
+  audio.removeAttribute('src');
+  if (src) { audio.src = src; audio.play().catch(() => {}); }
+  $('audioContainer').classList.toggle('hidden', !src);
+  $('noAudioMsg').classList.toggle('hidden', !!src);
+  if (!src) $('modalHead').classList.remove('playing');
+}
+audio.addEventListener('play', () => $('modalHead').classList.add('playing'));
+['pause', 'ended'].forEach(ev => audio.addEventListener(ev, () => $('modalHead').classList.remove('playing')));
+
+function closePlayer() {
+  setAudio('');
+  modal.classList.remove('open'); document.body.style.overflow = '';
+  if (lastFocus) lastFocus.focus();
+}
+$('closeX').onclick = $('closeBtn').onclick = closePlayer;
+modal.addEventListener('click', (e) => { if (e.target === modal) closePlayer(); });
+addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.classList.contains('open')) closePlayer(); });
+
+/* ---------- feature 1: saved tracks (kept in this browser) ---------- */
+let favs = new Set(), userFilter = '', spinning = false;
+try { favs = new Set(JSON.parse(localStorage.getItem('wmv:favs') || '[]')); } catch {}
+
+/* ---------- feature 2: top sharers, tap a name to filter ---------- */
+function renderCrew() {
+  const counts = {};
+  all.forEach(i => counts[i.user] = (counts[i.user] || 0) + 1);
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const el = $('crew');
+  if (!top.length) { el.innerHTML = ''; return; }
+  const base = 'chip px-3 py-1.5 rounded-full text-xs border transition hover:-translate-y-0.5 ';
+  el.innerHTML = `<span class="text-[11px] uppercase tracking-widest text-zinc-500 mr-1">Top sharers</span>` +
+    top.map(([u, n], k) => `<button data-user="${esc(u)}" style="animation-delay:${k * .06}s" class="${base}${u === userFilter ? 'bg-purple-600/30 border-purple-400 text-white' : 'bg-zinc-900/70 border-zinc-800 text-zinc-300 hover:border-purple-500/60'}">@${esc(u)} <span class="text-zinc-500">${n}</span></button>`).join('');
+}
+$('crew').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-user]'); if (!b) return;
+  userFilter = userFilter === b.dataset.user ? '' : b.dataset.user;
+  renderCrew(); update();
+});
+
+/* ---------- feature 3: surprise me, a slot-machine pick ---------- */
+$('surprise').addEventListener('click', () => {
+  if (!visible.length || spinning) return;
+  spinning = true; glBurst();
+  const cards = [...grid.querySelectorAll('.card')];
+  const pick = Math.floor(Math.random() * cards.length);
+  const steps = 16 + Math.floor(Math.random() * 6);
+  let s = 0, last = null;
+  const tick = () => {
+    last && last.classList.remove('spin');
+    last = cards[s >= steps ? pick : Math.floor(Math.random() * cards.length)];
+    last.classList.add('in', 'spin');
+    if (s++ < steps) return setTimeout(tick, 55 + s * s * 1.1);
+    last.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
+    setTimeout(() => { last.classList.remove('spin'); spinning = false; openPlayer(visible[pick], last.querySelector('[data-open]')); }, 750);
+  };
+  tick();
+});
+
+/* ---------- WebGL: domain-warped fbm flow, reacts to cursor, playback and clicks ---------- */
+let glPlay = () => {}, glBurst = () => {};
+(function initGL() {
+  const c = $('gl'), gl = c.getContext('webgl', { antialias: false, alpha: false, powerPreference: 'low-power' });
+  if (!gl) return;
+  const mk = (type, src) => { const sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh); return sh; };
+  const prog = gl.createProgram();
+  gl.attachShader(prog, mk(gl.VERTEX_SHADER, 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}'));
+  gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, `precision mediump float;
+uniform vec2 R,M;uniform float T,P,B;
+float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}
+float fbm(vec2 p){float a=.5,s=0.;for(int i=0;i<5;i++){s+=a*n(p);p=p*2.02+vec2(1.7,9.2);a*=.5;}return s;}
+void main(){
+  vec2 uv=gl_FragCoord.xy/R, p=(gl_FragCoord.xy-.5*R)/R.y, m=(M-.5*R)/R.y;
+  float t=T*(.05+.06*P), d=length(p-m);
+  vec2 q=vec2(fbm(p*1.5+t),fbm(p*1.5+vec2(5.2,1.3)-t));
+  vec2 r=vec2(fbm(p*1.5+3.*q+vec2(1.7,9.2)+t*1.4),fbm(p*1.5+3.*q+vec2(8.3,2.8)-t));
+  float f=fbm(p*1.3+3.5*r)+.4*exp(-d*3.2)*(.6+.4*P);
+  float ring=B*exp(-pow((d-(1.-B)*1.5)*7.,2.));
+  vec3 c=mix(vec3(.03,.02,.07),vec3(.34,.13,.78),smoothstep(.25,.85,f));
+  c=mix(c,vec3(.9,.28,.8),smoothstep(.5,1.,length(q))*.5);
+  c+=vec3(.55,.35,.95)*ring*.55;
+  c*=.5+.4*P+.08*sin(T*6.*P);
+  c*=smoothstep(1.5,.15,length(uv-.5)*1.6);
+  gl_FragColor=vec4(c,1.);
+}`));
+  gl.linkProgram(prog);
+  if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+  gl.useProgram(prog);
+  gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 3,-1, -1,3]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'p'); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+  const U = Object.fromEntries(['R','M','T','P','B'].map(k => [k, gl.getUniformLocation(prog, k)]));
+  const scale = Math.min(devicePixelRatio || 1, 1) * 0.5; // half-res is plenty for soft light
+  let mx = 0.5, my = 0.5, tx = 0.5, ty = 0.5, play = 0, playT = 0, burst = 0;
+  const size = () => { c.width = innerWidth * scale; c.height = innerHeight * scale; gl.viewport(0, 0, c.width, c.height); };
+  size(); addEventListener('resize', size);
+  addEventListener('pointermove', e => { tx = e.clientX / innerWidth; ty = 1 - e.clientY / innerHeight; }, { passive: true });
+  addEventListener('pointerdown', e => { tx = mx = e.clientX / innerWidth; ty = my = 1 - e.clientY / innerHeight; burst = 1; });
+  glPlay = (on) => { playT = on ? 1 : 0; };
+  glBurst = () => { mx = my = 0.5; tx = ty = 0.5; burst = 1; };
+  const t0 = performance.now();
+  const frame = () => {
+    mx += (tx - mx) * .06; my += (ty - my) * .06;
+    play += (playT - play) * .04; burst = Math.max(0, burst - .012);
+    gl.uniform2f(U.R, c.width, c.height); gl.uniform2f(U.M, mx * c.width, my * c.height);
+    gl.uniform1f(U.T, (performance.now() - t0) / 1000); gl.uniform1f(U.P, play); gl.uniform1f(U.B, burst);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    if (!reduceMotion && !document.hidden) requestAnimationFrame(frame);
+  };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !reduceMotion) frame(); });
+  frame();
+  $('aurora').remove(); // WebGL is up, so the CSS fallback isn't needed
+})();
+audio.addEventListener('play', () => glPlay(true));
+['pause', 'ended'].forEach(ev => audio.addEventListener(ev, () => glPlay(false)));
+
+init();
+</script>
+</body>
+</html>
