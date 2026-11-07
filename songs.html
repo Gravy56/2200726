@@ -107,6 +107,16 @@
   .card.spin, .card.in.spin { border-color: #e879f9; transform: scale(1.04); box-shadow: 0 0 0 2px #e879f9, 0 24px 70px -10px rgba(217,70,239,.65); transition-duration: .08s; }
   .chip { animation: rise .6s var(--ease-out) both; }
   .glass-title { text-shadow: 0 2px 30px rgba(0,0,0,.6); }
+  .rate { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
+  .rate button {
+    height: 34px; border-radius: 8px; font-size: 12px; font-weight: 700; color: #a1a1aa;
+    background: #18181b; border: 1px solid #27272a;
+    transition: transform .3s var(--ease-spring), background .25s, color .2s, border-color .25s;
+  }
+  .rate button:hover { transform: translateY(-3px); color: #fff; border-color: #7c3aed; }
+  .rate button.on { color: #fff; background: linear-gradient(160deg, hsl(var(--h) 70% 45%), hsl(var(--h) 70% 30%)); border-color: hsl(var(--h) 70% 55%); }
+  .rate button.cur { transform: translateY(-4px) scale(1.12); box-shadow: 0 8px 20px -6px hsl(var(--h) 80% 50% / .7); }
+  .rchip { position: absolute; bottom: 10px; left: 10px; padding: 2px 9px; border-radius: 999px; font-size: 11px; font-weight: 700; color: #fff; backdrop-filter: blur(8px); animation: pop .5s var(--ease-spring); }
   :focus-visible { outline: 2px solid #a78bfa; outline-offset: 2px; }
 
   @media (prefers-reduced-motion: reduce) {
@@ -162,6 +172,13 @@
           <h2 id="modalTitle" class="text-base font-bold text-white mt-1 truncate">Track Title</h2>
           <p id="modalUser" class="text-xs text-zinc-400 mt-0.5 truncate"></p>
         </div>
+      </div>
+      <div class="mb-5">
+        <div class="flex items-baseline justify-between mb-2">
+          <span class="text-[11px] uppercase tracking-widest text-zinc-500">Your rating</span>
+          <span id="rateLabel" class="text-xs text-zinc-400">Tap a number</span>
+        </div>
+        <div class="rate" id="rate" role="group" aria-label="Rate out of 10"></div>
       </div>
       <div id="audioContainer" class="mb-5 hidden"><audio id="audioPlayer" controls class="w-full h-10"></audio></div>
       <div id="noAudioMsg" class="text-xs text-zinc-500 bg-zinc-950 p-3 rounded-xl border border-zinc-800/60 mb-5 text-center">Looking for a preview...</div>
@@ -299,6 +316,7 @@ function render() {
         <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent opacity-0 hover:opacity-100 transition flex items-center justify-center">
           <span class="play-btn px-3.5 py-2 bg-purple-600 text-white rounded-full text-xs font-semibold shadow-lg">▶ Play / View</span>
         </div>
+        ${ratings[it.key] ? `<span class="rchip" style="background:hsl(${(ratings[it.key] - 1) / 9 * 130} 65% 38% / .85)">${ratings[it.key]}/10</span>` : ''}
         <span class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider border backdrop-blur ${badge}">${it.type}</span>
       </button>
       <div class="p-3.5 flex flex-col flex-grow justify-between">
@@ -380,6 +398,7 @@ async function openPlayer(it, trigger) {
   $('modalUser').textContent = `Shared by @${it.user}`;
   $('modalArt').src = art;
   $('modalType').textContent = it.type;
+  curItem = it; renderRate();
   const ext = $('modalExternalLink');
   it.link ? ext.setAttribute('href', it.link) : ext.removeAttribute('href');
   setAudio('');
@@ -513,6 +532,32 @@ void main(){
 })();
 audio.addEventListener('play', () => glPlay(true));
 ['pause', 'ended'].forEach(ev => audio.addEventListener(ev, () => glPlay(false)));
+
+/* ---------- ratings out of 10, remembered per person in this browser ---------- */
+let ratings = {}, curItem = null;
+try { ratings = JSON.parse(localStorage.getItem('wmv:ratings') || '{}'); } catch {}
+const hue = (r) => (r - 1) / 9 * 130; // red at 1, green at 10
+
+function renderRate() {
+  if (!curItem) return;
+  const r = ratings[curItem.key] || 0;
+  $('rate').innerHTML = Array.from({ length: 10 }, (_, k) => k + 1).map(n =>
+    `<button data-n="${n}" style="--h:${hue(n)}" class="${n <= r ? 'on' : ''} ${n === r ? 'cur' : ''}" aria-pressed="${n === r}" aria-label="${n} out of 10">${n}</button>`).join('');
+  $('rateLabel').textContent = r ? `${r}/10 · tap again to clear` : 'Tap a number';
+}
+$('rate').addEventListener('click', (e) => {
+  const b = e.target.closest('button'); if (!b || !curItem) return;
+  const n = +b.dataset.n, k = curItem.key;
+  ratings[k] === n ? delete ratings[k] : ratings[k] = n;
+  try { localStorage.setItem('wmv:ratings', JSON.stringify(ratings)); } catch {}
+  renderRate();
+  if (ratings[k] >= 9) glBurst();
+  const card = grid.querySelector(`.card[data-i="${visible.indexOf(curItem)}"] [data-open]`);
+  if (card) {
+    card.querySelector('.rchip')?.remove();
+    if (ratings[k]) card.insertAdjacentHTML('beforeend', `<span class="rchip" style="background:hsl(${hue(ratings[k])} 65% 38% / .85)">${ratings[k]}/10</span>`);
+  }
+});
 
 init();
 </script>
