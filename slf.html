@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Scrape Club</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--bg:#fbfaf6;--card:#fff;--ink:#1d2a22;--mute:#6b776f;--acc:#c8402f;--line:#e4e1d6;--ok:#2f7d4f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--card:#1d2620;--ink:#eef2ee;--mute:#9aa89f;--acc:#ef6a58;--line:#2d3a31;--ok:#5fc287}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Georgia,serif}
+main{max-width:560px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:26px;margin:0}
+.sub{color:var(--mute);margin:2px 0 16px;font-size:14px}
+nav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+nav button{flex:1;padding:9px 6px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;font:inherit;font-size:14px;cursor:pointer}
+nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+section.on{display:block}
+h2{font-size:18px;margin:0 0 8px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+input,select,textarea{font:inherit;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);width:100%}
+.btn{padding:10px 14px;border:0;border-radius:8px;background:var(--acc);color:#fff;font:inherit;cursor:pointer}
+.stage{border-left:4px solid var(--acc);padding:2px 10px;margin:10px 0}
+.stage b{display:block}
+.stage span{color:var(--mute);font-size:14px}
+.out{margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;white-space:pre-wrap;font-size:15px}
+.cnt{display:flex;gap:8px}
+.cnt div{flex:1;text-align:center;border:1px solid var(--line);border-radius:10px;padding:10px 4px}
+.cnt strong{display:block;font-size:24px}
+.cnt button{margin:2px;padding:4px 10px;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:6px;cursor:pointer}
+ul{padding-left:18px;margin:8px 0}
+.note{color:var(--mute);font-size:13px}
+</style>
+</head>
+<body>
+<main>
+<h1>🥚 Scrape Club</h1>
+<p class="sub">Organize a community lanternfly scraping event. Concept mockup.</p>
+<nav>
+<button class="on" data-t="id">Identify</button>
+<button data-t="post">Promote</button>
+<button data-t="rsvp">RSVP</button>
+<button data-t="log">Log</button>
+</nav>
+
+<section id="id" class="on">
+<h2>Know what you’re looking at</h2>
+<div class="stage"><b>Egg mass</b><span>Sept to June. Gray, putty-like patch of 30 to 50 eggs. Scrape into a bag with alcohol.</span></div>
+<div class="stage"><b>Nymph</b><span>Spring to July. Black with white spots, later red. Stomp it.</span></div>
+<div class="stage"><b>Adult</b><span>July to December. Gray wings with red hindwings. Stomp it.</span></div>
+<div class="row"><input type="file" accept="image/*" capture="environment" id="cam"></div>
+<button class="btn" onclick="scan()">Identify photo</button>
+<div class="out" id="scanOut">Take a photo to try the camera feature. (Mock result only. A real version would use an image model.)</div>
+</section>
+
+<section id="post">
+<h2>Promote your event</h2>
+<div class="row"><input id="pw" placeholder="Where (e.g. Ridgefield Library lot)"><input id="pd" placeholder="When (e.g. Sat Dec 6, 10am)"></div>
+<button class="btn" onclick="mkPost()">Write post</button>
+<div class="out" id="postOut"></div>
+<button class="btn" style="margin-top:8px" onclick="cp()">Copy</button>
+</section>
+
+<section id="rsvp">
+<h2>Who’s coming</h2>
+<p class="note">In the real app this reads names from your Google Form responses. Here you can add them by hand.</p>
+<div class="row"><input id="nm" placeholder="Name"><button class="btn" onclick="addN()">Add</button></div>
+<ul id="names"><li>Sample Neighbor</li></ul>
+<p class="note" id="nc">1 attending</p>
+</section>
+
+<section id="log">
+<h2>Event tally</h2>
+<div class="cnt" id="cnt"></div>
+<p class="out" id="tot"></p>
+</section>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button,section').forEach(e=>e.classList.remove('on'));
+  b.classList.add('on');$('#'+b.dataset.t).classList.add('on');
+});
+function scan(){
+  if(!$('#cam').files.length){$('#scanOut').textContent='Choose or take a photo first.';return}
+  const r=['Likely egg mass. Scrape it.','Likely nymph. Stomp it.','Likely adult. Stomp it.'];
+  $('#scanOut').textContent=r[Math.floor(Math.random()*3)]+' (Demo only, random result.)';
+}
+function mkPost(){
+  const w=$('#pw').value||'[location]',d=$('#pd').value||'[date and time]';
+  $('#postOut').textContent='Join us to scrape spotted lanternfly eggs! 🪲\n📍 '+w+'\n🗓 '+d+'\nWe’ll teach you to spot eggs, nymphs and adults. All ages welcome. Bring a card and a bag.\n#SpottedLanternfly #ScrapeClub';
+}
+async function cp(){try{await navigator.clipboard.writeText($('#postOut').textContent)}catch(e){}}
+let n=1;
+function addN(){const v=$('#nm').value.trim();if(!v)return;const li=document.createElement('li');li.textContent=v;$('#names').appendChild(li);$('#nm').value='';n++;$('#nc').textContent=n+' attending'}
+const c={Eggs:0,Nymphs:0,Adults:0};
+function draw(){
+  $('#cnt').innerHTML=Object.keys(c).map(k=>'<div>'+k+'<strong>'+c[k]+'</strong><button data-k="'+k+'" data-d="1">+1</button><button data-k="'+k+'" data-d="10">+10</button></div>').join('');
+  $('#cnt').querySelectorAll('button').forEach(b=>b.onclick=()=>{c[b.dataset.k]+=+b.dataset.d;draw()});
+  const eggs=c.Eggs;
+  $('#tot').textContent='Total destroyed: '+(c.Eggs+c.Nymphs+c.Adults)+'. If each egg mass holds about 40 eggs, logging masses instead of eggs is faster.';
+}
+draw();
+</script>
+</body>
+</html>
